@@ -10,8 +10,14 @@ import SwiftUI
 @main
 struct DropSweepApp: App {
     var body: some Scene {
-        WindowGroup {
+        MenuBarExtra {
             ContentView()
+        } label: {
+            Image("MenuBarIcon")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 18, height: 18)
         }
+        .menuBarExtraStyle(.window)
     }
 }

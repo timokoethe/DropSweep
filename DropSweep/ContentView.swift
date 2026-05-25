@@ -9,13 +9,15 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        VStack(alignment: .leading, spacing: 14) {
+            Text("DropSweep")
+                .font(.headline)
         }
         .padding()
+        .frame(width: 260)
+        .onAppear {
+            // summary = sweeper.scan()
+        }
     }
 }
 

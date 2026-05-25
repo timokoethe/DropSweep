@@ -15,9 +15,22 @@
 		259B1BAA2FC36D4600C564A8 /* DropSweep.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DropSweep.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2553A9642FC46A3300076735 /* Exceptions for "DropSweep" folder in "DropSweep" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 259B1BA92FC36D4600C564A8 /* DropSweep */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		259B1BAC2FC36D4600C564A8 /* DropSweep */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2553A9642FC46A3300076735 /* Exceptions for "DropSweep" folder in "DropSweep" target */,
+			);
 			path = DropSweep;
 			sourceTree = "<group>";
 		};
@@ -267,8 +280,10 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DropSweep/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DropSweep;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -303,8 +318,10 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DropSweep/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DropSweep;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
