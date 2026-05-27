@@ -16,7 +16,7 @@ struct DropSweepApp: App {
 
             Divider()
 
-            Button("DropSweep beenden") {
+            Button("Quit DropSweep") {
                 quitApp()
             }
             .keyboardShortcut("q", modifiers: .command)
