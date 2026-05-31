@@ -11,11 +11,19 @@ struct MenuView: View {
     @Bindable var vm: MenuViewModel
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
+            // Header
             Text("DropSweep")
                 .font(.headline)
+            
+            Button("Analyze Downloads",
+                   systemImage: "sparkle.magnifyingglass",
+                   action: vm.scanDownloadsFolder)
+            
+            Divider()
+            
+            Text("Downloads: 3,3 GB - 10 items")
         }
         .padding()
-        .frame(width: 260)
         .onAppear {
             vm.scanDownloadsFolder()
         }

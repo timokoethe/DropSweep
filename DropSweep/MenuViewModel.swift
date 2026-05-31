@@ -13,6 +13,7 @@ class MenuViewModel {
     private let sweeper: Sweeper = .init()
     
     var isScanning: Bool = false
+    var itemsCount: Int = 0
     
     func scanDownloadsFolder() {
         isScanning = true
