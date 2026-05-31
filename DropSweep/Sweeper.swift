@@ -118,4 +118,36 @@ final class Sweeper {
             || filename.contains("bildschirmfoto")
             || filename.contains("cleanshot")
     }
+    
+    @discardableResult
+    func deleteAllInDownloads(moveToTrash: Bool = true) -> (deleted: Int, failures: [(url: URL, error: Error)]) {
+        let items: [URL]
+        do {
+            items = try fileManager.contentsOfDirectory(
+                at: downloadsURL,
+                includingPropertiesForKeys: nil,
+                options: [] // kein .skipsHiddenFiles -> wirklich alles
+            )
+        } catch {
+            return (0, [(downloadsURL, error)])
+        }
+
+        var deleted = 0
+        var failures: [(url: URL, error: Error)] = []
+
+        for item in items {
+            do {
+                if moveToTrash {
+                    try fileManager.trashItem(at: item, resultingItemURL: nil)
+                } else {
+                    try fileManager.removeItem(at: item)
+                }
+                deleted += 1
+            } catch {
+                failures.append((item, error))
+            }
+        }
+
+        return (deleted, failures)
+    }
 }

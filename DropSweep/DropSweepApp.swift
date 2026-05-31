@@ -10,14 +10,15 @@ import SwiftUI
 
 @main
 struct DropSweepApp: App {
+    @State private var vm: MenuViewModel = .init()
     var body: some Scene {
         MenuBarExtra {
-            ContentView()
+            MenuView(vm: vm)
 
             Divider()
 
             Button("Quit DropSweep") {
-                quitApp()
+                vm.quitApp()
             }
             .keyboardShortcut("q", modifiers: .command)
         } label: {
@@ -30,14 +31,10 @@ struct DropSweepApp: App {
         .commands {
             CommandGroup(replacing: .appTermination) {
                 Button("DropSweep beenden") {
-                    quitApp()
+                    vm.quitApp()
                 }
                 .keyboardShortcut("q", modifiers: .command)
             }
         }
-    }
-
-    private func quitApp() {
-        NSApplication.shared.terminate(nil)
     }
 }
