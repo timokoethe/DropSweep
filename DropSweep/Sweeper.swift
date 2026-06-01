@@ -23,34 +23,17 @@ final class Sweeper {
     }
 
     func scanDownloadsFolder() {
-        // error handling
+        resetCounts()
+
+        let items: [URL]
         do {
-            let items = try fileManager.contentsOfDirectory(
+            items = try fileManager.contentsOfDirectory(
                 at: downloadsURL,
                 includingPropertiesForKeys: [.isDirectoryKey, .isRegularFileKey],
                 options: [.skipsHiddenFiles]
             )
-
-            print("Downloads URL:", downloadsURL.path)
-            print("Found items:", items.count)
-
-            for item in items {
-                print(item.lastPathComponent)
-            }
-
         } catch {
             print("Failed to read Downloads folder:", error)
-        }
-        
-        
-        
-        resetCounts()
-
-        guard let items = try? fileManager.contentsOfDirectory(
-            at: downloadsURL,
-            includingPropertiesForKeys: [.isDirectoryKey, .isRegularFileKey],
-            options: [.skipsHiddenFiles]
-        ) else {
             return
         }
 
@@ -126,7 +109,7 @@ final class Sweeper {
             items = try fileManager.contentsOfDirectory(
                 at: downloadsURL,
                 includingPropertiesForKeys: nil,
-                options: [] // kein .skipsHiddenFiles -> wirklich alles
+                options: [.skipsHiddenFiles]
             )
         } catch {
             return (0, [(downloadsURL, error)])

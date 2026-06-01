@@ -5,26 +5,46 @@
 //  Created by Timo Köthe on 24.05.26.
 //
 
+import AppKit
 import SwiftUI
 
 struct MenuView: View {
     @Bindable var vm: MenuViewModel
+
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             // Header
             Text("DropSweep")
                 .font(.headline)
             
-            Button("Analyze Downloads",
-                   systemImage: "sparkle.magnifyingglass",
-                   action: vm.scanDownloadsFolder)
+            Divider()
+            
+            Text("Downloads: \(vm.itemsCount) items")
+
+            if vm.categories.isEmpty {
+                Text("No categories found")
+                    .foregroundStyle(.secondary)
+            } else {
+                VStack {
+                    ForEach(vm.categories) { category in
+                        Text("\(category.title): \(category.count)")
+                    }
+                }
+            }
             
             Divider()
             
-            Text("Downloads: 3,3 GB - 10 items")
+            Button(role: .destructive, action: vm.deleteDownloads) {
+                Label("Move All to Trash", systemImage: "trash")
+            }
+            .disabled(!vm.downloadsHasItems || vm.isScanning)
         }
+        .frame(width: 240)
         .padding()
         .onAppear {
+            vm.scanDownloadsFolder()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSMenu.didBeginTrackingNotification)) { _ in
             vm.scanDownloadsFolder()
         }
     }

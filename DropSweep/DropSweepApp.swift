@@ -30,7 +30,7 @@ struct DropSweepApp: App {
         .menuBarExtraStyle(.menu)
         .commands {
             CommandGroup(replacing: .appTermination) {
-                Button("DropSweep beenden") {
+                Button("Quit DropSweep") {
                     vm.quitApp()
                 }
                 .keyboardShortcut("q", modifiers: .command)
