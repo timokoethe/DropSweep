@@ -11,3 +11,18 @@
 DropSweep is a tiny macOS menu bar app that helps keep your Downloads folder clean.
 
 It shows quick cleanup actions for common clutter like installers, old ZIP files, PDFs, and screenshots.
+
+## Features
+
+- Scan the macOS Downloads folder
+- View downloaded items in a compact menu bar interface
+- Quickly identify clutter such as installers, archives, and old downloads
+
+## Contributing
+
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, and pull request guidance. 
+Please report security issues privately as described in [SECURITY.md](SECURITY.md).
+
+## License
+
+MIT. See [LICENSE](LICENSE).
