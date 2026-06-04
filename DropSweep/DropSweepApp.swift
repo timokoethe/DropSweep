@@ -17,6 +17,10 @@ struct DropSweepApp: App {
 
             Divider()
 
+            Button("About DropSweep") {
+                vm.showAboutPanel()
+            }
+
             Button("Quit DropSweep") {
                 vm.quitApp()
             }
