@@ -8,21 +8,37 @@
 ![macOS](https://img.shields.io/badge/macOS-26-orange)
 ![Apple](https://img.shields.io/badge/Apple-000000?style=flat&logo=apple)
 
-DropSweep is a tiny macOS menu bar app that helps keep your Downloads folder clean.
+DropSweep is a small macOS menu bar app for keeping your Downloads folder tidy.
 
-It shows quick cleanup actions for common clutter like installers, old ZIP files, PDFs, and screenshots.
+It scans common download clutter such as installers, archives, PDFs, screenshots, folders, and other files, then lets you move everything to the Trash from a compact menu bar interface.
 
 ## Features
 
 - Scan the macOS Downloads folder
-- View downloaded items in a compact menu bar interface
-- Quickly identify clutter such as installers, archives, and old downloads
+- Group downloads by common file type
+- Review the current item count from the menu bar
+- Move Downloads items to the Trash
+
+## Requirements
+
+- macOS 26
+- Xcode 26
+- Swift 6
+
+## Development
+
+Open the project in Xcode and run the `DropSweep` scheme:
+
+```sh
+open DropSweep.xcodeproj
+```
 
 ## Contributing
 
-Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, and pull request guidance. 
-Please report security issues privately as described in [SECURITY.md](SECURITY.md).
+Contributions are welcome. Please keep changes focused and see [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
+
+Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+DropSweep is released under the MIT License. See [LICENSE](LICENSE).

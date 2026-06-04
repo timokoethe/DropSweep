@@ -1,48 +1,46 @@
 name: Bug report
-description: Tell us about something in DropSweep that is not working correctly.
+description: Report something that is not working as expected.
 title: "[Bug]: "
 labels:
   - bug
 body:
   - type: markdown
     attributes:
-      value: Thanks for taking the time to report a DropSweep issue.
+      value: Thanks for helping improve DropSweep.
   - type: textarea
-    id: problem
+    id: summary
     attributes:
-      label: What happened?
-      description: Describe what you expected and what happened instead.
-      placeholder: I expected... but instead...
+      label: Summary
+      description: What happened, and what did you expect instead?
+      placeholder: DropSweep should... but it...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      placeholder: |
+        1. Open DropSweep
+        2. Click ...
+        3. See ...
     validations:
       required: true
   - type: input
     id: version
     attributes:
-      label: DropSweep version
-      description: Find this in the downloaded release, Homebrew installation, or update information.
+      label: DropSweep Version
       placeholder: v0.1.0
     validations:
       required: true
   - type: input
     id: macos
     attributes:
-      label: macOS version
+      label: macOS Version
       placeholder: macOS 26.x
-    validations:
-      required: true
-  - type: textarea
-    id: steps
-    attributes:
-      label: Steps to reproduce
-      description: List the smallest sequence that causes the problem.
-      placeholder: |
-        1. Open DropSweep
-        2. Enable ...
-        3. Click ...
     validations:
       required: true
   - type: textarea
     id: context
     attributes:
-      label: Additional context
-      description: Add screenshots, recordings, permission state, or anything else that may help.
+      label: Additional Context
+      description: Add screenshots, recordings, permissions, or anything else that helps.
