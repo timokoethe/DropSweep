@@ -7,6 +7,15 @@ body:
   - type: markdown
     attributes:
       value: Thanks for helping improve DropSweep.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - App
+        - Website
+    validations:
+      required: true
   - type: textarea
     id: summary
     attributes:
@@ -28,17 +37,13 @@ body:
   - type: input
     id: version
     attributes:
-      label: DropSweep Version
+      label: DropSweep Version (App only)
       placeholder: v0.1.0
-    validations:
-      required: true
   - type: input
     id: macos
     attributes:
-      label: macOS Version
+      label: macOS Version (App only)
       placeholder: macOS 26.x
-    validations:
-      required: true
   - type: textarea
     id: context
     attributes:

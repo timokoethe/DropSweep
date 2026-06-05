@@ -7,6 +7,15 @@ body:
   - type: markdown
     attributes:
       value: Thanks for sharing an idea for DropSweep.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - App
+        - Website
+    validations:
+      required: true
   - type: textarea
     id: problem
     attributes:

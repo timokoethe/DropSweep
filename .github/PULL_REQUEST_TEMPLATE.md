@@ -1,5 +1,7 @@
 ## Summary
 
+Area: App / Website
+
 <!-- What changed, and why? -->
 
 ## Testing
@@ -10,4 +12,4 @@
 
 - [ ] The change is focused and easy to review.
 - [ ] I tested the affected behavior.
-- [ ] I considered file safety for Downloads-related changes.
+- [ ] I considered file safety for Downloads-related changes, if applicable.
