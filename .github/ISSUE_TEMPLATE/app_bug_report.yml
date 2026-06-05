@@ -1,21 +1,12 @@
-name: Bug report
-description: Report something that is not working as expected.
-title: "[Bug]: "
+name: App bug report
+description: Report something that is not working in the macOS app.
+title: "[App Bug]: "
 labels:
   - bug
 body:
   - type: markdown
     attributes:
       value: Thanks for helping improve DropSweep.
-  - type: dropdown
-    id: area
-    attributes:
-      label: Area
-      options:
-        - App
-        - Website
-    validations:
-      required: true
   - type: textarea
     id: summary
     attributes:
@@ -37,13 +28,17 @@ body:
   - type: input
     id: version
     attributes:
-      label: DropSweep Version (App only)
+      label: DropSweep Version
       placeholder: v0.1.0
+    validations:
+      required: true
   - type: input
     id: macos
     attributes:
-      label: macOS Version (App only)
+      label: macOS Version
       placeholder: macOS 26.x
+    validations:
+      required: true
   - type: textarea
     id: context
     attributes:

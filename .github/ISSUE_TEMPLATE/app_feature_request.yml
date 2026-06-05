@@ -1,21 +1,12 @@
-name: Feature request
-description: Suggest a small improvement for DropSweep.
-title: "[Feature]: "
+name: App feature request
+description: Suggest a small improvement for the macOS app.
+title: "[App Feature]: "
 labels:
   - enhancement
 body:
   - type: markdown
     attributes:
       value: Thanks for sharing an idea for DropSweep.
-  - type: dropdown
-    id: area
-    attributes:
-      label: Area
-      options:
-        - App
-        - Website
-    validations:
-      required: true
   - type: textarea
     id: problem
     attributes:
