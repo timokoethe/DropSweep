@@ -1,0 +1,235 @@
+name: Release
+run-name: Release ${{ github.ref_name }}
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build & notarize
+    runs-on: macos-26
+    timeout-minutes: 45
+    env:
+      APP_NAME: ${{ vars.APP_NAME || 'DropSweep' }}
+      SCHEME: ${{ vars.SCHEME || 'DropSweep' }}
+      CONFIGURATION: ${{ vars.CONFIGURATION || 'Release' }}
+      TEAM_ID: ${{ vars.APPLE_TEAM_ID || vars.TEAM_ID || secrets.APPLE_TEAM_ID || secrets.TEAM_ID }}
+      NOTARY_PROFILE: github-actions-notary
+      RELEASE_TAG: ${{ github.ref_name }}
+    outputs:
+      release_version: ${{ steps.metadata.outputs.release_version }}
+      release_asset: ${{ steps.asset.outputs.release_asset }}
+
+    steps:
+      - name: Check out tag
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
+
+      - name: Prepare release metadata
+        id: metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          RELEASE_VERSION="${RELEASE_TAG#v}"
+          if [[ ! "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Tag must use semantic versioning, for example v0.3.0."
+            exit 1
+          fi
+          if [[ -z "$TEAM_ID" || ! "$TEAM_ID" =~ ^[A-Z0-9]{10}$ ]]; then
+            echo "::error::APPLE_TEAM_ID must be a 10-character repository variable."
+            exit 1
+          fi
+
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$RELEASE_VERSION"
+          if (( MINOR >= 1000 || PATCH >= 1000 )); then
+            echo "::error::MINOR and PATCH must each be below 1000 for the build-number encoding."
+            exit 1
+          fi
+          BUILD_NUMBER=$(( MAJOR * 1000000 + MINOR * 1000 + PATCH ))
+
+          # Downgrade guard: refuse to publish a build that is not newer than the
+          # one currently advertised in the appcast on main.
+          AUTH_HEADER="$(printf "x-access-token:%s" "$GH_TOKEN" | base64 | tr -d '\n')"
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic ${AUTH_HEADER}" \
+            fetch origin main --depth=1
+          PUBLISHED_BUILD="$(git show origin/main:appcast.xml 2>/dev/null \
+            | sed -n 's@.*<sparkle:version>\([0-9][0-9]*\)</sparkle:version>.*@\1@p' \
+            | head -n1 || true)"
+          if [[ -n "$PUBLISHED_BUILD" && "$BUILD_NUMBER" -le "$PUBLISHED_BUILD" ]]; then
+            echo "::error::Build number $BUILD_NUMBER (tag $RELEASE_TAG) is not greater than the published build $PUBLISHED_BUILD. Refusing to downgrade the appcast."
+            exit 1
+          fi
+
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> "$GITHUB_ENV"
+          echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_ENV"
+          echo "release_version=$RELEASE_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Configure signing and notarization
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          DEVELOPER_ID_CERTIFICATE_BASE64: ${{ secrets.DEVELOPER_ID_CERTIFICATE_BASE64 }}
+          DEVELOPER_ID_CERTIFICATE_PASSWORD: ${{ secrets.DEVELOPER_ID_CERTIFICATE_PASSWORD }}
+        run: .github/scripts/setup-signing.sh
+
+      - name: Build and notarize ZIP
+        run: .github/scripts/build-release.sh
+
+      - name: Record release asset
+        id: asset
+        run: echo "release_asset=$RELEASE_ASSET" >> "$GITHUB_OUTPUT"
+
+      - name: Upload release asset
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: ${{ env.APP_NAME }}-${{ env.RELEASE_VERSION }}
+          path: ${{ env.RELEASE_ASSET }}
+          if-no-files-found: error
+          compression-level: 0
+
+      - name: Clean up signing keychain
+        if: always()
+        run: |
+          if [[ -n "${KEYCHAIN_PATH:-}" && -f "$KEYCHAIN_PATH" ]]; then
+            security delete-keychain "$KEYCHAIN_PATH"
+          fi
+          if [[ -n "${CERTIFICATE_PATH:-}" ]]; then
+            rm -f "$CERTIFICATE_PATH"
+          fi
+
+  release:
+    name: Release
+    needs: build
+    runs-on: macos-26
+    timeout-minutes: 20
+    env:
+      APP_NAME: ${{ vars.APP_NAME || 'DropSweep' }}
+      SCHEME: ${{ vars.SCHEME || 'DropSweep' }}
+      RELEASE_TAG: ${{ github.ref_name }}
+      RELEASE_VERSION: ${{ needs.build.outputs.release_version }}
+      RELEASE_ASSET: ${{ needs.build.outputs.release_asset }}
+
+    steps:
+      - name: Check out tag
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
+
+      - name: Download release asset
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: ${{ env.APP_NAME }}-${{ env.RELEASE_VERSION }}
+
+      - name: Generate Sparkle appcast
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: .github/scripts/generate-appcast.sh
+
+      - name: Verify release artifact
+        run: |
+          test -f "$RELEASE_ASSET"
+          test -f appcast.xml
+          unzip -t "$RELEASE_ASSET"
+          CHECKSUM="$(shasum -a 256 "$RELEASE_ASSET" | awk '{print $1}')"
+          echo "### SHA-256" >> "$GITHUB_STEP_SUMMARY"
+          echo "\`$CHECKSUM\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Generate release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          RELEASE_NOTES_PATH="$RUNNER_TEMP/release-notes.md"
+
+          gh api \
+            --method POST \
+            "repos/$GITHUB_REPOSITORY/releases/generate-notes" \
+            -f tag_name="$RELEASE_TAG" \
+            -f target_commitish="$GITHUB_SHA" \
+            --jq '.body' |
+            sed '/^## New Contributors$/,/^\*\*Full Changelog\*\*/{/^\*\*Full Changelog\*\*/!d;}' |
+            perl -pe '
+              s{(?<!\]\()https://github\.com/([^/]+)/([^/]+)/pull/([0-9]+)}{[#$3](https://github.com/$1/$2/pull/$3)}g;
+              s{\*\*Full Changelog\*\*: https://github\.com/([^/]+)/([^/]+)/compare/([^.\s]+(?:\.[^.\s]+)*)\.\.\.([^\s]+)}{**Full Changelog**: [$3...$4](https://github.com/$1/$2/compare/$3...$4)}g;
+            ' > "$RELEASE_NOTES_PATH"
+
+          echo "RELEASE_NOTES_PATH=$RELEASE_NOTES_PATH" >> "$GITHUB_ENV"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$RELEASE_TAG" \
+            "$RELEASE_ASSET#$APP_NAME $RELEASE_VERSION" \
+            --verify-tag \
+            --notes-file "$RELEASE_NOTES_PATH" \
+            --title "$RELEASE_TAG"
+
+      - name: Publish appcast via pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BRANCH="release/$RELEASE_TAG-metadata"
+          GENERATED_APPCAST="$RUNNER_TEMP/appcast.xml"
+          cp appcast.xml "$GENERATED_APPCAST"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          AUTH_HEADER="$(printf "x-access-token:%s" "$GH_TOKEN" | base64 | tr -d '\n')"
+
+          git restore appcast.xml
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic ${AUTH_HEADER}" \
+            fetch origin main
+          git switch -c "$BRANCH" origin/main
+          cp "$GENERATED_APPCAST" appcast.xml
+
+          if git diff --quiet -- appcast.xml; then
+            echo "appcast.xml already up to date on main; nothing to publish."
+            exit 0
+          fi
+
+          git add appcast.xml
+          git commit -m "Update release metadata for $RELEASE_TAG"
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic ${AUTH_HEADER}" \
+            push origin "$BRANCH"
+
+          PR_URL="$(
+            gh pr create \
+              --base main \
+              --head "$BRANCH" \
+              --title "Update release metadata for $RELEASE_TAG" \
+              --body "Publishes the Sparkle appcast for the $RELEASE_TAG release so it is offered through in-app Check for Updates. Created and merged automatically by the release workflow."
+          )"
+
+          # Squash-merge so main gets exactly one commit titled
+          # "Update release metadata for vX.Y.Z (#N)" that links back to the PR.
+          # Set the subject explicitly (including the PR number) so the result is
+          # independent of the repository's default squash-message setting.
+          # GitHub may need a moment to compute mergeability right after
+          # creation, so retry a few times.
+          PR_NUMBER="${PR_URL##*/}"
+          merged=false
+          for attempt in 1 2 3 4 5; do
+            if gh pr merge "$PR_URL" --squash --delete-branch \
+                --subject "Update release metadata for $RELEASE_TAG (#$PR_NUMBER)" \
+                --body ""; then
+              merged=true
+              break
+            fi
+            echo "Merge attempt $attempt failed; retrying in 10s..."
+            sleep 10
+          done
+          if [[ "$merged" != "true" ]]; then
+            echo "::error::Failed to merge $PR_URL after multiple attempts. Ensure squash merging is enabled under Settings > Pull Requests."
+            exit 1
+          fi

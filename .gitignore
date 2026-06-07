@@ -1,12 +1,18 @@
 ## Mac OS
 .DS_Store
 
+## Local environment
+.env
+.env.*
+
 ## Xcode workspace
 *.xcworkspace
 
 ## Build generated
 build/
 DerivedData/
+*.app/
+*.zip
 
 ## Various settings
 *.pbxuser
