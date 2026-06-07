@@ -1,0 +1,16 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>DropSweep</title>
+        <item>
+            <title>0.1.0</title>
+            <pubDate>Sun, 07 Jun 2026 16:01:18 +0000</pubDate>
+            <link>https://github.com/timokoethe/DropSweep</link>
+            <sparkle:fullReleaseNotesLink>https://github.com/timokoethe/DropSweep/releases/tag/v0.1.0</sparkle:fullReleaseNotesLink>
+            <sparkle:version>1000</sparkle:version>
+            <sparkle:shortVersionString>0.1.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/timokoethe/DropSweep/releases/download/v0.1.0/DropSweep-0.1.0.zip" length="3026911" type="application/octet-stream" sparkle:edSignature="/z6Jf4FTBlxfHCMlPexAxa8hCR0ozykHKkNBVCQzB5i1eEhTi8duC88Y+BeFpAPCgjDhYhXhKeq9TGyiQrncAA=="/>
+        </item>
+    </channel>
+</rss>
