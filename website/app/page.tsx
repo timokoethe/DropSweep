@@ -118,24 +118,33 @@ export default function Home() {
           <p className="mt-5 text-xs text-muted">Free · Open source · macOS</p>
 
           {/* Menu preview */}
-          <div className="mt-16 w-full max-w-xs">
-            <div className="rounded-2xl border border-border bg-card p-4 text-left shadow-sm">
+          <div className="mt-16 w-full max-w-[290px]">
+            <div className="rounded-xl border border-border bg-card px-3 py-2 text-left shadow-sm">
               <p className="text-sm font-semibold">DropSweep</p>
-              <div className="my-3 h-px bg-border" />
+              <div className="my-1.5 h-px bg-border" />
               <p className="text-sm text-muted">Downloads: 24 items</p>
-              <div className="mt-3 space-y-1.5">
+              <div className="mt-1.5 space-y-1">
                 {categories.slice(0, 4).map((c, i) => (
                   <div
                     key={c.title}
-                    className="flex items-center justify-between text-sm"
+                    className="flex items-center justify-between rounded px-1 -mx-1 text-sm hover:bg-slate-500/10"
                   >
                     <span>{c.title}</span>
                     <span className="text-muted">{[6, 4, 3, 8][i]}</span>
                   </div>
                 ))}
               </div>
-              <div className="my-3 h-px bg-border" />
-              <div className="inline-flex items-center gap-2 text-sm font-medium text-red-500">
+              <div className="my-1.5 h-px bg-border" />
+              <div className="space-y-1">
+                <div className="flex items-center justify-between rounded px-1 -mx-1 text-sm hover:bg-slate-500/10">
+                  <span>Check for updates...</span>
+                </div>
+                <div className="flex items-center justify-between rounded px-1 -mx-1 text-sm hover:bg-slate-500/10">
+                  <span>About DropSweep</span>
+                </div>
+              </div>
+              <div className="my-1.5 h-px bg-border" />
+              <div className="flex items-center gap-2 rounded px-1 -mx-1 text-sm font-medium text-red-500 hover:bg-red-500/10">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
