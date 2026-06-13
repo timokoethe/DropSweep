@@ -72,6 +72,15 @@ const categories = [
   { title: "Other", hint: "everything else" },
 ];
 
+const menuPreviewCategories = [
+  { title: "Installer", count: 3 },
+  { title: "Archive", count: 4 },
+  { title: "PDFs", count: 3 },
+  { title: "Screenshots", count: 8 },
+  { title: "Folders", count: 2 },
+  { title: "Other Files", count: 4 },
+];
+
 const features = [
   {
     title: "Scans your Downloads",
@@ -166,35 +175,42 @@ export default async function Home() {
           <p className="mt-5 text-xs text-muted">Free · Open source · macOS</p>
 
           {/* Menu preview */}
-          <div className="mt-16 w-full max-w-[290px]">
-            <div className="rounded-xl border border-border bg-card px-3 py-2 text-left shadow-sm">
-              <p className="text-sm font-semibold">DropSweep</p>
-              <div className="my-1.5 h-px bg-border" />
-              <p className="text-sm text-muted">Downloads: 24 items</p>
-              <div className="mt-1.5 space-y-1">
-                {categories.slice(0, 4).map((c, i) => (
-                  <div
-                    key={c.title}
-                    className="flex items-center justify-between rounded px-1 -mx-1 text-sm hover:bg-slate-500/10"
+          <div className="mt-16 w-full max-w-[272px]">
+            <div className="overflow-hidden rounded-xl border border-border bg-card text-left shadow-sm">
+              <div className="px-4 pt-4 pb-2">
+                <div className="space-y-1 text-sm">
+                  <p>Downloads: 24 items</p>
+                  {menuPreviewCategories.map((category) => (
+                    <p key={category.title}>
+                      {category.title}: {category.count}
+                    </p>
+                  ))}
+                </div>
+                <div className="my-2 h-px bg-border" />
+                <div className="flex items-center gap-2 text-sm font-medium text-red-500">
+                  <svg
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.4"
+                    className="h-4 w-4"
+                    aria-hidden
                   >
-                    <span>{c.title}</span>
-                    <span className="text-muted">{[6, 4, 3, 8][i]}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="my-1.5 h-px bg-border" />
-              <div className="space-y-1">
-                <div className="flex items-center justify-between rounded px-1 -mx-1 text-sm hover:bg-slate-500/10">
-                  <span>Check for updates...</span>
-                </div>
-                <div className="flex items-center justify-between rounded px-1 -mx-1 text-sm hover:bg-slate-500/10">
-                  <span>About DropSweep</span>
+                    <path d="M2.5 4.25h11M6 2.25h4M4.25 4.25l.6 9h6.3l.6-9M6.5 6.5v4.5M9.5 6.5v4.5" />
+                  </svg>
+                  Move All to Trash
                 </div>
               </div>
-              <div className="my-1.5 h-px bg-border" />
-              <div className="flex items-center gap-2 rounded px-1 -mx-1 text-sm font-medium text-red-500 hover:bg-red-500/10">
-                <Logo className="h-4 w-4" />
-                Move All to Trash
+              <div className="h-px bg-border" />
+              <div className="space-y-1 px-3 py-2 text-sm">
+                <div className="rounded px-1">About DropSweep</div>
+                <div className="rounded px-1">Check for Updates…</div>
+                <div className="flex items-center justify-between rounded px-1">
+                  <span>Quit DropSweep</span>
+                  <span className="text-muted">⌘Q</span>
+                </div>
               </div>
             </div>
           </div>

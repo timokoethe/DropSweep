@@ -13,12 +13,6 @@ struct MenuView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            // Header
-            Text("DropSweep")
-                .font(.headline)
-            
-            Divider()
-            
             Text("Downloads: \(vm.itemsCount) items")
 
             if vm.categories.isEmpty {
