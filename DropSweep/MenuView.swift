@@ -16,7 +16,7 @@ struct MenuView: View {
             Text("Downloads: \(vm.itemsCount) items")
 
             if vm.categories.isEmpty {
-                Text("No categories found")
+                Text("No items found")
                     .foregroundStyle(.secondary)
             } else {
                 VStack {
