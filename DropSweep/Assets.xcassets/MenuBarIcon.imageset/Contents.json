@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Icon_DropSweep_Small.png",
+      "filename" : "Icon_18.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Icon_DropSweep_Small-1.png",
+      "filename" : "Icon_36.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Icon_DropSweep_Small-2.png",
+      "filename" : "Icon_54.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

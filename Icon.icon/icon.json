@@ -1,47 +1,47 @@
 {
   "fill" : {
-    "automatic-gradient" : "srgb:1.00000,0.77085,0.55136,1.00000"
+    "automatic-gradient" : "extended-gray:1.00000,1.00000"
   },
   "groups" : [
     {
       "layers" : [
         {
-          "fill-specializations" : [
+          "blend-mode-specializations" : [
             {
-              "value" : "automatic"
+              "appearance" : "dark",
+              "value" : "normal"
+            }
+          ],
+          "image-name-specializations" : [
+            {
+              "value" : "DropSweep 2.svg"
             },
             {
               "appearance" : "dark",
-              "value" : {
-                "solid" : "extended-gray:1.00000,1.00000"
-              }
+              "value" : "DropSweep-w.svg"
             },
             {
               "appearance" : "tinted",
-              "value" : {
-                "solid" : "extended-gray:0.50000,1.00000"
-              }
+              "value" : "DropSweep-m.svg"
             }
           ],
-          "glass" : true,
-          "image-name" : "Icon_DropSweep.svg",
-          "name" : "Icon_DropSweep",
+          "name" : "DropSweep-Black",
           "position" : {
-            "scale" : 1,
+            "scale" : 1.1,
             "translation-in-points" : [
-              -26.9375,
-              25.40625
+              0,
+              0
             ]
           }
         }
       ],
       "shadow" : {
         "kind" : "neutral",
-        "opacity" : 0.5
+        "opacity" : 0.6
       },
       "translucency" : {
         "enabled" : true,
-        "value" : 0.5
+        "value" : 0.2
       }
     }
   ],

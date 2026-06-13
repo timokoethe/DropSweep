@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2553A9622FC467B500076735 /* Icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 2553A9612FC467B500076735 /* Icon.icon */; };
+		252B5A632FDDAC5400A66506 /* Icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 252B5A622FDDAC5400A66506 /* Icon.icon */; };
 		806DCC9B2FD5C1EE0088AF53 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 806DCC9A2FD5C1EE0088AF53 /* Sparkle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2553A9612FC467B500076735 /* Icon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Icon.icon; sourceTree = "<group>"; };
+		252B5A622FDDAC5400A66506 /* Icon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Icon.icon; sourceTree = "<group>"; };
 		259B1BAA2FC36D4600C564A8 /* DropSweep.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DropSweep.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -54,7 +54,7 @@
 			children = (
 				259B1BAC2FC36D4600C564A8 /* DropSweep */,
 				259B1BAB2FC36D4600C564A8 /* Products */,
-				2553A9612FC467B500076735 /* Icon.icon */,
+				252B5A622FDDAC5400A66506 /* Icon.icon */,
 			);
 			sourceTree = "<group>";
 		};
@@ -134,7 +134,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2553A9622FC467B500076735 /* Icon.icon in Resources */,
+				252B5A632FDDAC5400A66506 /* Icon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
