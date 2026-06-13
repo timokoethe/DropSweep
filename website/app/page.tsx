@@ -1,7 +1,67 @@
 import { Logo } from "@/components/Logo";
 
 const REPO_URL = "https://github.com/timokoethe/DropSweep";
-const DOWNLOAD_URL = "#"; // mock — wire up to the latest release later
+const LATEST_RELEASE_URL = `${REPO_URL}/releases/latest`;
+const RELEASE_API_URL =
+  "https://api.github.com/repos/timokoethe/DropSweep/releases/latest";
+
+type GitHubRelease = {
+  tag_name?: string;
+  html_url?: string;
+  assets?: Array<{
+    name?: string;
+    browser_download_url?: string;
+  }>;
+};
+
+type LatestRelease = {
+  version: string | null;
+  downloadUrl: string;
+};
+
+async function getLatestRelease(): Promise<LatestRelease> {
+  try {
+    const response = await fetch(RELEASE_API_URL, {
+      headers: {
+        Accept: "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+      next: { revalidate: 3600 },
+    });
+
+    if (!response.ok) {
+      return { version: null, downloadUrl: LATEST_RELEASE_URL };
+    }
+
+    const release = (await response.json()) as GitHubRelease;
+    const assets = Array.isArray(release.assets) ? release.assets : [];
+    const downloadAsset =
+      assets.find(
+        (asset) =>
+          typeof asset.name === "string" &&
+          asset.name.toLowerCase().endsWith(".dmg"),
+      ) ??
+      assets.find(
+        (asset) =>
+          typeof asset.name === "string" &&
+          asset.name.toLowerCase().endsWith(".zip"),
+      );
+    const assetUrl =
+      typeof downloadAsset?.browser_download_url === "string"
+        ? downloadAsset.browser_download_url
+        : null;
+    const releaseUrl =
+      typeof release.html_url === "string" ? release.html_url : null;
+
+    return {
+      version:
+        typeof release.tag_name === "string" ? release.tag_name : null,
+      downloadUrl: assetUrl ?? releaseUrl ?? LATEST_RELEASE_URL,
+    };
+  } catch {
+    return { version: null, downloadUrl: LATEST_RELEASE_URL };
+  }
+}
 
 const categories = [
   { title: "Installers", hint: ".dmg, .pkg" },
@@ -39,7 +99,12 @@ function GitHubIcon({ className = "" }: { className?: string }) {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const release = await getLatestRelease();
+  const downloadLabel = release.version
+    ? `Download ${release.version}`
+    : "Download for macOS";
+
   return (
     <div className="flex flex-col min-h-full">
       {/* Nav */}
@@ -81,11 +146,11 @@ export default function Home() {
 
           <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
             <a
-              href={DOWNLOAD_URL}
+              href={release.downloadUrl}
               className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-foreground px-6 text-sm font-medium text-background transition-opacity hover:opacity-90"
             >
               <Logo className="h-4 w-4" />
-              Download for macOS
+              {downloadLabel}
             </a>
             <a
               href={REPO_URL}
@@ -181,11 +246,11 @@ export default function Home() {
             Downloads tidy for good.
           </p>
           <a
-            href={DOWNLOAD_URL}
+            href={release.downloadUrl}
             className="mt-8 inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-foreground px-6 text-sm font-medium text-background transition-opacity hover:opacity-90"
           >
             <Logo className="h-4 w-4" />
-            Download for macOS
+            {downloadLabel}
           </a>
         </section>
       </main>
