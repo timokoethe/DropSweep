@@ -27,11 +27,34 @@ It scans common download clutter such as installers, archives, PDFs, screenshots
 
 ## Development
 
+### macOS app
+
 Open the project in Xcode and run the `DropSweep` scheme:
 
 ```sh
 open DropSweep.xcodeproj
 ```
+
+The native SwiftUI app is located in [`DropSweep/`](DropSweep/).
+
+### Website
+
+The DropSweep website is developed separately in [`website/`](website/). Its
+Next.js application code is located in [`website/app/`](website/app/), with the
+landing page in [`website/app/page.tsx`](website/app/page.tsx).
+
+To run the website locally:
+
+```sh
+cd website
+npm install
+npm run dev
+```
+
+The development server is available at
+[http://localhost:3000](http://localhost:3000). See the
+[website README](website/README.md) for the available scripts and deployment
+details.
 
 ## Contributing
 
