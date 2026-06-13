@@ -73,8 +73,8 @@ const categories = [
 ];
 
 const menuPreviewCategories = [
-  { title: "Installer", count: 3 },
-  { title: "Archive", count: 4 },
+  { title: "Installers", count: 3 },
+  { title: "Archives", count: 4 },
   { title: "PDFs", count: 3 },
   { title: "Screenshots", count: 8 },
   { title: "Folders", count: 2 },

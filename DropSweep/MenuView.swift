@@ -13,7 +13,7 @@ struct MenuView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Downloads: \(vm.itemsCount) items")
+            Text(vm.downloadsSummary)
 
             if vm.categories.isEmpty {
                 Text("No items found")
@@ -21,7 +21,7 @@ struct MenuView: View {
             } else {
                 VStack {
                     ForEach(vm.categories) { category in
-                        Text("\(category.title): \(category.count)")
+                        Text("\(category.displayTitle): \(category.count)")
                     }
                 }
             }

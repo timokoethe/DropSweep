@@ -19,6 +19,10 @@ class MenuViewModel {
     var downloadsHasItems: Bool {
         itemsCount > 0
     }
+
+    var downloadsSummary: String {
+        "Downloads: \(itemsCount) \(itemsCount == 1 ? "item" : "items")"
+    }
     
     func scanDownloadsFolder() {
         isScanning = true
@@ -26,12 +30,12 @@ class MenuViewModel {
         sweeper.scanDownloadsFolder()
         itemsCount = sweeper.totalFiles + sweeper.folderCount
         categories = [
-            CategorySummary(title: "Installer", count: sweeper.installerCount),
-            CategorySummary(title: "Archive", count: sweeper.archiveCount),
-            CategorySummary(title: "PDFs", count: sweeper.pdfCount),
-            CategorySummary(title: "Screenshots", count: sweeper.screenshotCount),
-            CategorySummary(title: "Folders", count: sweeper.folderCount),
-            CategorySummary(title: "Other Files", count: sweeper.otherCount)
+            CategorySummary(singularTitle: "Installer", pluralTitle: "Installers", count: sweeper.installerCount),
+            CategorySummary(singularTitle: "Archive", pluralTitle: "Archives", count: sweeper.archiveCount),
+            CategorySummary(singularTitle: "PDF", pluralTitle: "PDFs", count: sweeper.pdfCount),
+            CategorySummary(singularTitle: "Screenshot", pluralTitle: "Screenshots", count: sweeper.screenshotCount),
+            CategorySummary(singularTitle: "Folder", pluralTitle: "Folders", count: sweeper.folderCount),
+            CategorySummary(singularTitle: "Other File", pluralTitle: "Other Files", count: sweeper.otherCount)
         ].filter { $0.count > 0 }
         isScanning = false
     }
@@ -78,12 +82,18 @@ class MenuViewModel {
 
 struct CategorySummary: Identifiable {
     let id: String
-    let title: String
+    let singularTitle: String
+    let pluralTitle: String
     let count: Int
 
-    init(title: String, count: Int) {
-        self.id = title
-        self.title = title
+    var displayTitle: String {
+        count == 1 ? singularTitle : pluralTitle
+    }
+
+    init(singularTitle: String, pluralTitle: String, count: Int) {
+        self.id = singularTitle
+        self.singularTitle = singularTitle
+        self.pluralTitle = pluralTitle
         self.count = count
     }
 }
