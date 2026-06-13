@@ -1,3 +1,5 @@
+import { Logo } from "@/components/Logo";
+
 const REPO_URL = "https://github.com/timokoethe/DropSweep";
 const DOWNLOAD_URL = "#"; // mock — wire up to the latest release later
 
@@ -28,25 +30,6 @@ const features = [
     body: "Items move to the Trash — never permanently deleted — and hidden files are always left untouched.",
   },
 ];
-
-function Logo({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden
-      className={className}
-    >
-      <path
-        d="M5 8.5h14M9 8.5V6.2A2.2 2.2 0 0 1 11.2 4h1.6A2.2 2.2 0 0 1 15 6.2v2.3M7 8.5l1 11.3A1.4 1.4 0 0 0 9.4 21h5.2a1.4 1.4 0 0 0 1.4-1.2L17 8.5"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 function GitHubIcon({ className = "" }: { className?: string }) {
   return (
@@ -145,20 +128,7 @@ export default function Home() {
               </div>
               <div className="my-1.5 h-px bg-border" />
               <div className="flex items-center gap-2 rounded px-1 -mx-1 text-sm font-medium text-red-500 hover:bg-red-500/10">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  aria-hidden
-                  className="h-4 w-4"
-                >
-                  <path
-                    d="M5 8.5h14M9 8.5V6.2A2.2 2.2 0 0 1 11.2 4h1.6A2.2 2.2 0 0 1 15 6.2v2.3M7 8.5l1 11.3A1.4 1.4 0 0 0 9.4 21h5.2a1.4 1.4 0 0 0 1.4-1.2L17 8.5"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Logo className="h-4 w-4" />
                 Move All to Trash
               </div>
             </div>
