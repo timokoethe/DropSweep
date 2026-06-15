@@ -137,7 +137,7 @@ export default async function Home() {
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-6">
         {/* Hero */}
-        <section className="flex flex-col items-center pt-24 pb-20 text-center sm:pt-32">
+        <section className="flex flex-col items-center pt-16 pb-20 text-center sm:pt-24">
           <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
             Lives in your macOS menu bar
