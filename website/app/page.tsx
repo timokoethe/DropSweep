@@ -1,4 +1,5 @@
 import { Logo } from "@/components/Logo";
+import { DownloadButton } from "@/components/DownloadButton";
 
 const REPO_URL = "https://github.com/timokoethe/DropSweep";
 const LATEST_RELEASE_URL = `${REPO_URL}/releases/latest`;
@@ -154,13 +155,11 @@ export default async function Home() {
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
-            <a
+            <DownloadButton
               href={release.downloadUrl}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-foreground px-6 text-sm font-medium text-background transition-opacity hover:opacity-90"
-            >
-              <Logo className="h-4 w-4" />
-              {downloadLabel}
-            </a>
+              label={downloadLabel}
+              version={release.version}
+            />
             <a
               href={REPO_URL}
               target="_blank"
