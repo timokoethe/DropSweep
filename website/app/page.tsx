@@ -186,7 +186,7 @@ export default async function Home() {
                   ))}
                 </div>
                 <div className="my-2 h-px bg-border" />
-                <div className="flex items-center gap-2 text-sm font-medium text-red-500">
+                <div className="grid grid-cols-[1rem_1fr] items-center gap-2 text-sm font-medium text-red-500">
                   <svg
                     viewBox="0 0 16 16"
                     fill="none"
@@ -199,13 +199,14 @@ export default async function Home() {
                   >
                     <path d="M2.5 4.25h11M6 2.25h4M4.25 4.25l.6 9h6.3l.6-9M6.5 6.5v4.5M9.5 6.5v4.5" />
                   </svg>
-                  Move All to Trash
+                  <span>Move all to Trash</span>
                 </div>
               </div>
               <div className="h-px bg-border" />
               <div className="space-y-1 px-3 py-2 text-sm">
-                <div className="rounded px-1">About DropSweep</div>
+                <div className="rounded px-1">Launch at Login</div>
                 <div className="rounded px-1">Check for Updates…</div>
+                <div className="rounded px-1">About DropSweep</div>
                 <div className="flex items-center justify-between rounded px-1">
                   <span>Quit DropSweep</span>
                   <span className="text-muted">⌘Q</span>
