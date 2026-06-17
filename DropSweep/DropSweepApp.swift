@@ -34,17 +34,29 @@ struct DropSweepApp: App {
 
             Divider()
 
-            Button("About DropSweep") {
-                vm.showAboutPanel()
-            }
-
-            Button("Check for Updates…") {
+            Toggle("Launch at Login", isOn: Binding(
+                get: { vm.launchAtLoginEnabled },
+                set: { vm.setLaunchAtLogin($0) }
+            ))
+            
+            Button {
                 updaterController.checkForUpdates(nil)
+            } label: {
+                MenuItemLabel("Check for Updates…")
             }
             .disabled(!checkForUpdatesViewModel.canCheckForUpdates)
+            
+            Button {
+                vm.showAboutPanel()
+            } label: {
+                MenuItemLabel("About DropSweep")
+            }
 
-            Button("Quit DropSweep") {
+            Button {
                 vm.quitApp()
+            }
+            label: {
+                MenuItemLabel("Quit DropSweep")
             }
             .keyboardShortcut("q", modifiers: .command)
         } label: {
