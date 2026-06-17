@@ -39,9 +39,11 @@ struct MenuView: View {
         .padding()
         .onAppear {
             vm.scanDownloadsFolder()
+            vm.refreshLaunchAtLoginStatus()
         }
         .onReceive(NotificationCenter.default.publisher(for: NSMenu.didBeginTrackingNotification)) { _ in
             vm.scanDownloadsFolder()
+            vm.refreshLaunchAtLoginStatus()
         }
     }
 

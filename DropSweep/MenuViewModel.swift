@@ -42,6 +42,10 @@ class MenuViewModel {
         isScanning = false
     }
 
+    func refreshLaunchAtLoginStatus() {
+        launchAtLoginEnabled = SMAppService.mainApp.status == .enabled
+    }
+
     func deleteDownloads() {
         // TODO: Surface delete failures in the UI after the MVP flow is stable.
         sweeper.deleteAllInDownloads()
