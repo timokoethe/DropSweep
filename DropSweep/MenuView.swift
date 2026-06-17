@@ -28,7 +28,9 @@ struct MenuView: View {
             
             Divider()
             
-            Button(role: .destructive, action: vm.deleteDownloads) {
+            Button(role: .destructive) {
+                confirmDeleteDownloads()
+            } label: {
                 Label("Move All to Trash", systemImage: "trash")
             }
             .disabled(!vm.downloadsHasItems || vm.isScanning)
@@ -41,6 +43,23 @@ struct MenuView: View {
         .onReceive(NotificationCenter.default.publisher(for: NSMenu.didBeginTrackingNotification)) { _ in
             vm.scanDownloadsFolder()
         }
+    }
+
+    private func confirmDeleteDownloads() {
+        let itemLabel = vm.itemsCount == 1 ? "item" : "items"
+        let alert = NSAlert()
+
+        alert.messageText = "Move \(vm.itemsCount) \(itemLabel) to the Trash?"
+        alert.informativeText = "This moves every visible item in Downloads to the Trash."
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "Move to Trash")
+        alert.addButton(withTitle: "Cancel")
+
+        guard alert.runModal() == .alertFirstButtonReturn else {
+            return
+        }
+
+        vm.deleteDownloads()
     }
 }
 
