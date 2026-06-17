@@ -7,6 +7,7 @@
 
 import Observation
 import AppKit
+import ServiceManagement
 
 @Observable
 class MenuViewModel {
@@ -15,6 +16,7 @@ class MenuViewModel {
     var isScanning: Bool = false
     var itemsCount: Int = 0
     var categories: [CategorySummary] = []
+    var launchAtLoginEnabled: Bool = SMAppService.mainApp.status == .enabled
 
     var downloadsHasItems: Bool {
         itemsCount > 0
@@ -23,7 +25,7 @@ class MenuViewModel {
     var downloadsSummary: String {
         "Downloads: \(itemsCount) \(itemsCount == 1 ? "item" : "items")"
     }
-    
+
     func scanDownloadsFolder() {
         isScanning = true
 
@@ -40,10 +42,32 @@ class MenuViewModel {
         isScanning = false
     }
 
+    func refreshLaunchAtLoginStatus() {
+        launchAtLoginEnabled = SMAppService.mainApp.status == .enabled
+    }
+
     func deleteDownloads() {
         // TODO: Surface delete failures in the UI after the MVP flow is stable.
         sweeper.deleteAllInDownloads()
         scanDownloadsFolder()
+    }
+
+    func setLaunchAtLogin(_ isEnabled: Bool) {
+        do {
+            if isEnabled {
+                try SMAppService.mainApp.register()
+            } else {
+                try SMAppService.mainApp.unregister()
+            }
+            launchAtLoginEnabled = SMAppService.mainApp.status == .enabled
+        } catch {
+            launchAtLoginEnabled = SMAppService.mainApp.status == .enabled
+            showLaunchAtLoginError(error)
+        }
+    }
+
+    func toggleLaunchAtLogin() {
+        setLaunchAtLogin(!launchAtLoginEnabled)
     }
 
     func showAboutPanel() {
@@ -76,6 +100,16 @@ class MenuViewModel {
     
     func quitApp() {
         NSApplication.shared.terminate(nil)
+    }
+
+    private func showLaunchAtLoginError(_ error: Error) {
+        let alert = NSAlert()
+
+        alert.messageText = "Could Not Update Login Setting"
+        alert.informativeText = error.localizedDescription
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
     }
 }
 
