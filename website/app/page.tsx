@@ -1,7 +1,8 @@
+import { SoftwareApplicationJsonLd } from "@/components/SoftwareApplicationJsonLd";
+import { REPO_URL } from "@/lib/seo";
 import { Logo } from "@/components/Logo";
 import { DownloadButton } from "@/components/DownloadButton";
 
-const REPO_URL = "https://github.com/timokoethe/DropSweep";
 const LATEST_RELEASE_URL = `${REPO_URL}/releases/latest`;
 const RELEASE_API_URL =
   "https://api.github.com/repos/timokoethe/DropSweep/releases/latest";
@@ -117,6 +118,11 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col min-h-full">
+      <SoftwareApplicationJsonLd
+        downloadUrl={release.downloadUrl}
+        version={release.version}
+      />
+
       {/* Nav */}
       <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
