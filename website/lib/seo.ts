@@ -15,10 +15,8 @@ export const SITE_URL = `https://${normalizedSiteUrl}`;
 export const REPO_URL = "https://github.com/timokoethe/DropSweep";
 
 export const SITE_ICON_PATH = "/icon.png";
-export const SITE_ICON_URL = `${SITE_URL}${SITE_ICON_PATH}`;
 
 export const APP_ICON_PATH = "/dropsweep-icon.png";
 export const APP_ICON_URL = `${SITE_URL}${APP_ICON_PATH}`;
 
 export const SOCIAL_IMAGE_PATH = "/SocialPreview.png";
-export const SOCIAL_IMAGE_URL = `${SITE_URL}${SOCIAL_IMAGE_PATH}`;
