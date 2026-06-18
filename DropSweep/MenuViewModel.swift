@@ -47,9 +47,12 @@ class MenuViewModel {
     }
 
     func deleteDownloads() {
-        // TODO: Surface delete failures in the UI after the MVP flow is stable.
-        sweeper.deleteAllInDownloads()
+        let result = sweeper.deleteAllInDownloads()
         scanDownloadsFolder()
+
+        if !result.failures.isEmpty {
+            showDeleteDownloadsError(deletedCount: result.deleted, failures: result.failures)
+        }
     }
 
     func setLaunchAtLogin(_ isEnabled: Bool) {
@@ -107,6 +110,21 @@ class MenuViewModel {
 
         alert.messageText = "Could Not Update Login Setting"
         alert.informativeText = error.localizedDescription
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
+    }
+
+    private func showDeleteDownloadsError(deletedCount: Int, failures: [(url: URL, error: Error)]) {
+        let alert = NSAlert()
+        let failedItems = failures
+            .prefix(5)
+            .map { "\($0.url.lastPathComponent): \($0.error.localizedDescription)" }
+            .joined(separator: "\n")
+        let remainingItems = failures.count > 5 ? "\n…and \(failures.count - 5) more" : ""
+
+        alert.messageText = "Could Not Move All Items to the Trash"
+        alert.informativeText = "\(deletedCount) item\(deletedCount == 1 ? "" : "s") moved to the Trash. \(failures.count) item\(failures.count == 1 ? "" : "s") could not be moved.\n\n\(failedItems)\(remainingItems)"
         alert.alertStyle = .warning
         alert.addButton(withTitle: "OK")
         alert.runModal()
