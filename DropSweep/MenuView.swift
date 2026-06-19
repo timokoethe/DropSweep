@@ -31,7 +31,7 @@ struct MenuView: View {
             Button(role: .destructive) {
                 confirmDeleteDownloads()
             } label: {
-                MenuItemLabel("Move all to Trash", systemImage: "trash")
+                MenuItemLabel("Move All Items to Trash", systemImage: "trash")
             }
             .disabled(!vm.downloadsHasItems || vm.isScanning)
         }
