@@ -1,4 +1,5 @@
 import { SoftwareApplicationJsonLd } from "@/components/SoftwareApplicationJsonLd";
+import { WebSiteJsonLd } from "@/components/WebSiteJsonLd";
 import { REPO_URL } from "@/lib/seo";
 import { Logo } from "@/components/Logo";
 import { DownloadButton } from "@/components/DownloadButton";
@@ -118,6 +119,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col min-h-full">
+      <WebSiteJsonLd />
       <SoftwareApplicationJsonLd
         downloadUrl={release.downloadUrl}
         version={release.version}
