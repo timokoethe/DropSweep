@@ -12,9 +12,12 @@ import ServiceManagement
 @Observable
 class MenuViewModel {
     private let sweeper: Sweeper = .init()
+    @ObservationIgnored private var scanTask: Task<Void, Never>?
+    @ObservationIgnored private var deleteTask: Task<Void, Never>?
     
     var isScanning: Bool = false
     var itemsCount: Int = 0
+    var totalSizeBytes: Int64 = 0
     var categories: [CategorySummary] = []
     var launchAtLoginEnabled: Bool = SMAppService.mainApp.status == .enabled
 
@@ -23,23 +26,36 @@ class MenuViewModel {
     }
 
     var downloadsSummary: String {
-        "Downloads: \(itemsCount) \(itemsCount == 1 ? "item" : "items")"
+        "Downloads: \(itemsCount) \(itemsCount == 1 ? "item" : "items") · \(Self.sizeFormatter.string(fromByteCount: totalSizeBytes))"
     }
 
     func scanDownloadsFolder() {
+        scanTask?.cancel()
         isScanning = true
 
-        sweeper.scanDownloadsFolder()
-        itemsCount = sweeper.totalFiles + sweeper.folderCount
+        scanTask = Task {
+            let result = await sweeper.scanDownloadsFolder()
+
+            guard !Task.isCancelled else {
+                return
+            }
+
+            applyScanResult(result)
+            isScanning = false
+        }
+    }
+
+    private func applyScanResult(_ result: DownloadsScanResult) {
+        itemsCount = result.totalFiles + result.folderCount
+        totalSizeBytes = result.totalSizeBytes
         categories = [
-            CategorySummary(singularTitle: "Installer", pluralTitle: "Installers", count: sweeper.installerCount),
-            CategorySummary(singularTitle: "Archive", pluralTitle: "Archives", count: sweeper.archiveCount),
-            CategorySummary(singularTitle: "PDF", pluralTitle: "PDFs", count: sweeper.pdfCount),
-            CategorySummary(singularTitle: "Screenshot", pluralTitle: "Screenshots", count: sweeper.screenshotCount),
-            CategorySummary(singularTitle: "Folder", pluralTitle: "Folders", count: sweeper.folderCount),
-            CategorySummary(singularTitle: "Other File", pluralTitle: "Other Files", count: sweeper.otherCount)
+            CategorySummary(singularTitle: "Installer", pluralTitle: "Installers", count: result.installerCount, sizeBytes: result.installerSizeBytes),
+            CategorySummary(singularTitle: "Archive", pluralTitle: "Archives", count: result.archiveCount, sizeBytes: result.archiveSizeBytes),
+            CategorySummary(singularTitle: "PDF", pluralTitle: "PDFs", count: result.pdfCount, sizeBytes: result.pdfSizeBytes),
+            CategorySummary(singularTitle: "Screenshot", pluralTitle: "Screenshots", count: result.screenshotCount, sizeBytes: result.screenshotSizeBytes),
+            CategorySummary(singularTitle: "Folder", pluralTitle: "Folders", count: result.folderCount, sizeBytes: result.folderSizeBytes),
+            CategorySummary(singularTitle: "Other File", pluralTitle: "Other Files", count: result.otherCount, sizeBytes: result.otherSizeBytes)
         ].filter { $0.count > 0 }
-        isScanning = false
     }
 
     func refreshLaunchAtLoginStatus() {
@@ -47,11 +63,24 @@ class MenuViewModel {
     }
 
     func deleteDownloads() {
-        let result = sweeper.deleteAllInDownloads()
-        scanDownloadsFolder()
+        scanTask?.cancel()
+        deleteTask?.cancel()
+        isScanning = true
 
-        if !result.failures.isEmpty {
-            showDeleteDownloadsError(deletedCount: result.deleted, failures: result.failures)
+        deleteTask = Task {
+            let deleteResult = await sweeper.deleteAllInDownloads()
+            let scanResult = await sweeper.scanDownloadsFolder()
+
+            guard !Task.isCancelled else {
+                return
+            }
+
+            applyScanResult(scanResult)
+            isScanning = false
+
+            if !deleteResult.failures.isEmpty {
+                showDeleteDownloadsError(deletedCount: deleteResult.deleted, failures: deleteResult.failures)
+            }
         }
     }
 
@@ -129,6 +158,12 @@ class MenuViewModel {
         alert.addButton(withTitle: "OK")
         alert.runModal()
     }
+
+    private static let sizeFormatter: ByteCountFormatter = {
+        let formatter = ByteCountFormatter()
+        formatter.countStyle = .file
+        return formatter
+    }()
 }
 
 
@@ -137,15 +172,21 @@ struct CategorySummary: Identifiable {
     let singularTitle: String
     let pluralTitle: String
     let count: Int
+    let sizeBytes: Int64
 
     var displayTitle: String {
         count == 1 ? singularTitle : pluralTitle
     }
 
-    init(singularTitle: String, pluralTitle: String, count: Int) {
+    var displaySize: String {
+        ByteCountFormatter.string(fromByteCount: sizeBytes, countStyle: .file)
+    }
+
+    init(singularTitle: String, pluralTitle: String, count: Int, sizeBytes: Int64) {
         self.id = singularTitle
         self.singularTitle = singularTitle
         self.pluralTitle = pluralTitle
         self.count = count
+        self.sizeBytes = sizeBytes
     }
 }

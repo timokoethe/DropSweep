@@ -7,41 +7,42 @@
 
 import Foundation
 
-final class Sweeper {
+actor Sweeper {
     private let fileManager = FileManager.default
-
-    var totalFiles: Int = 0
-    var installerCount: Int = 0
-    var archiveCount: Int = 0
-    var pdfCount: Int = 0
-    var screenshotCount: Int = 0
-    var folderCount: Int = 0
-    var otherCount: Int = 0
+    private var sizeCache: [URL: CachedSize] = [:]
 
     private var downloadsURL: URL {
         fileManager.urls(for: .downloadsDirectory, in: .userDomainMask).first!
     }
 
-    func scanDownloadsFolder() {
-        resetCounts()
+    func scanDownloadsFolder() -> DownloadsScanResult {
+        var result = DownloadsScanResult()
+        var visitedCacheURLs = Set<URL>()
 
         let items: [URL]
         do {
             items = try fileManager.contentsOfDirectory(
                 at: downloadsURL,
-                includingPropertiesForKeys: [.isDirectoryKey, .isRegularFileKey],
+                includingPropertiesForKeys: Self.resourceKeys,
                 options: [.skipsHiddenFiles]
             )
         } catch {
             print("Failed to read Downloads folder:", error)
-            return
+            return result
         }
 
         for item in items {
+            guard !Task.isCancelled else {
+                return result
+            }
+
             let values = try? item.resourceValues(forKeys: [.isDirectoryKey, .isRegularFileKey])
 
             if values?.isDirectory == true {
-                folderCount += 1
+                result.folderCount += 1
+                let sizeBytes = sizeOfDirectory(item, visitedCacheURLs: &visitedCacheURLs)
+                result.folderSizeBytes += sizeBytes
+                result.totalSizeBytes += sizeBytes
                 continue
             }
 
@@ -49,30 +50,83 @@ final class Sweeper {
                 continue
             }
 
-            totalFiles += 1
+            let sizeBytes = sizeOfFile(item, visitedCacheURLs: &visitedCacheURLs)
+            result.totalFiles += 1
+            result.totalSizeBytes += sizeBytes
 
             if isInstaller(item) {
-                installerCount += 1
+                result.installerCount += 1
+                result.installerSizeBytes += sizeBytes
             } else if isArchive(item) {
-                archiveCount += 1
+                result.archiveCount += 1
+                result.archiveSizeBytes += sizeBytes
             } else if isPDF(item) {
-                pdfCount += 1
+                result.pdfCount += 1
+                result.pdfSizeBytes += sizeBytes
             } else if isScreenshot(item) {
-                screenshotCount += 1
+                result.screenshotCount += 1
+                result.screenshotSizeBytes += sizeBytes
             } else {
-                otherCount += 1
+                result.otherCount += 1
+                result.otherSizeBytes += sizeBytes
             }
         }
+
+        sizeCache = sizeCache.filter { visitedCacheURLs.contains($0.key) }
+        return result
     }
 
-    private func resetCounts() {
-        totalFiles = 0
-        installerCount = 0
-        archiveCount = 0
-        pdfCount = 0
-        screenshotCount = 0
-        folderCount = 0
-        otherCount = 0
+    private func sizeOfFile(_ url: URL, visitedCacheURLs: inout Set<URL>) -> Int64 {
+        visitedCacheURLs.insert(url)
+
+        guard let values = try? url.resourceValues(forKeys: Set(Self.cacheKeys)) else {
+            return 0
+        }
+
+        if let cachedSize = sizeCache[url], cachedSize.matches(values: values) {
+            return cachedSize.sizeBytes
+        }
+
+        let sizeBytes = Int64(
+            values.totalFileSize
+                ?? values.fileSize
+                ?? values.totalFileAllocatedSize
+                ?? values.fileAllocatedSize
+                ?? 0
+        )
+
+        sizeCache[url] = CachedSize(values: values, sizeBytes: sizeBytes)
+        return sizeBytes
+    }
+
+    private func sizeOfDirectory(_ url: URL, visitedCacheURLs: inout Set<URL>) -> Int64 {
+        visitedCacheURLs.insert(url)
+
+        guard let enumerator = fileManager.enumerator(
+            at: url,
+            includingPropertiesForKeys: Self.cacheKeys,
+            options: []
+        ) else {
+            return 0
+        }
+
+        var sizeBytes: Int64 = 0
+
+        for case let item as URL in enumerator {
+            guard !Task.isCancelled else {
+                return sizeBytes
+            }
+
+            let values = try? item.resourceValues(forKeys: [.isRegularFileKey])
+
+            guard values?.isRegularFile == true else {
+                continue
+            }
+
+            sizeBytes += sizeOfFile(item, visitedCacheURLs: &visitedCacheURLs)
+        }
+
+        return sizeBytes
     }
 
     private func isInstaller(_ url: URL) -> Bool {
@@ -101,6 +155,19 @@ final class Sweeper {
             || filename.contains("bildschirmfoto")
             || filename.contains("cleanshot")
     }
+
+    private static let resourceKeys: [URLResourceKey] = [
+        .isDirectoryKey,
+        .isRegularFileKey,
+        .fileSizeKey,
+        .fileAllocatedSizeKey,
+        .totalFileSizeKey,
+        .totalFileAllocatedSizeKey
+    ]
+
+    private static let cacheKeys: [URLResourceKey] = resourceKeys + [
+        .contentModificationDateKey
+    ]
     
     @discardableResult
     func deleteAllInDownloads(moveToTrash: Bool = true) -> (deleted: Int, failures: [(url: URL, error: Error)]) {
@@ -125,12 +192,60 @@ final class Sweeper {
                 } else {
                     try fileManager.removeItem(at: item)
                 }
+                sizeCache[item] = nil
                 deleted += 1
             } catch {
                 failures.append((item, error))
             }
         }
 
+        if failures.isEmpty {
+            sizeCache.removeAll()
+        }
+
         return (deleted, failures)
+    }
+}
+
+nonisolated struct DownloadsScanResult {
+    var totalFiles: Int = 0
+    var installerCount: Int = 0
+    var archiveCount: Int = 0
+    var pdfCount: Int = 0
+    var screenshotCount: Int = 0
+    var folderCount: Int = 0
+    var otherCount: Int = 0
+    var totalSizeBytes: Int64 = 0
+    var installerSizeBytes: Int64 = 0
+    var archiveSizeBytes: Int64 = 0
+    var pdfSizeBytes: Int64 = 0
+    var screenshotSizeBytes: Int64 = 0
+    var folderSizeBytes: Int64 = 0
+    var otherSizeBytes: Int64 = 0
+}
+
+nonisolated private struct CachedSize {
+    let modificationDate: Date?
+    let fileSize: Int?
+    let fileAllocatedSize: Int?
+    let totalFileSize: Int?
+    let totalFileAllocatedSize: Int?
+    let sizeBytes: Int64
+
+    init(values: URLResourceValues, sizeBytes: Int64) {
+        self.modificationDate = values.contentModificationDate
+        self.fileSize = values.fileSize
+        self.fileAllocatedSize = values.fileAllocatedSize
+        self.totalFileSize = values.totalFileSize
+        self.totalFileAllocatedSize = values.totalFileAllocatedSize
+        self.sizeBytes = sizeBytes
+    }
+
+    func matches(values: URLResourceValues) -> Bool {
+        modificationDate == values.contentModificationDate
+            && fileSize == values.fileSize
+            && fileAllocatedSize == values.fileAllocatedSize
+            && totalFileSize == values.totalFileSize
+            && totalFileAllocatedSize == values.totalFileAllocatedSize
     }
 }

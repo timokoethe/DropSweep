@@ -21,7 +21,7 @@ struct MenuView: View {
             } else {
                 VStack {
                     ForEach(vm.categories) { category in
-                        Text("\(category.displayTitle): \(category.count)")
+                        Text("\(category.displayTitle): \(category.count) · \(category.displaySize)")
                     }
                 }
             }
