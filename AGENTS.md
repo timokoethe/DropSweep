@@ -9,6 +9,7 @@ DropSweep is a small macOS menu-bar app that scans the user's Downloads folder, 
 - `DropSweep/MenuViewModel.swift`: observable UI state and app actions.
 - `DropSweep/Sweeper.swift`: Downloads scanning, classification, and trashing logic.
 - `website/`: separate Next.js site; follow `website/AGENTS.md` before editing it.
+- `.agents/skills/`: shared agent workflows usable by Codex, Claude, and other assistants.
 
 ## Development Guidelines
 
@@ -18,6 +19,7 @@ DropSweep is a small macOS menu-bar app that scans the user's Downloads folder, 
 - Do not broaden cleanup scope beyond Downloads unless the user explicitly asks for it.
 - Hidden files are intentionally skipped during scans and cleanup; keep that behavior unless changing product requirements.
 - Avoid introducing an Xcode-project dependency or build-system change unless it is needed for the requested work.
+- When native app UI changes should be reflected on the website, follow `.agents/skills/sync-app-ui-to-website/SKILL.md`.
 
 ## Verification
 
