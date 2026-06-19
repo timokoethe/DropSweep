@@ -79,7 +79,7 @@ class MenuViewModel {
         let build = bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "Unknown"
         let currentYear = Calendar.current.component(.year, from: Date())
         let sourceText = "Source on GitHub"
-        let copyrightText = "Copyright (c) \(currentYear) Timo Köthe"
+        let copyrightText = "Copyright © \(currentYear) Timo Köthe"
         let credits = NSMutableAttributedString(string: "\(sourceText)\n\(copyrightText)")
         let sourceRange = NSRange(location: 0, length: "Source on GitHub".count)
         let copyrightRange = NSRange(location: sourceText.count + 1, length: copyrightText.count)
