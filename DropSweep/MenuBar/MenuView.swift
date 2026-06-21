@@ -12,16 +12,18 @@ struct MenuView: View {
     @Bindable var vm: MenuViewModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 12) {
             Text(vm.downloadsSummary)
+                .fontWeight(.semibold)
 
             if vm.categories.isEmpty {
                 Text("No items found")
                     .foregroundStyle(.secondary)
             } else {
-                VStack {
+                VStack(alignment: .leading, spacing: 6) {
                     ForEach(vm.categories) { category in
-                        Text("\(category.displayTitle): \(category.count) · \(category.displaySize)")
+                        Text(category.displaySummary)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }

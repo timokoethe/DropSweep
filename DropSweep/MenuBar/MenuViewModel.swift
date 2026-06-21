@@ -26,7 +26,15 @@ class MenuViewModel {
     }
 
     var downloadsSummary: String {
-        "Downloads: \(itemsCount) \(itemsCount == 1 ? "item" : "items") · \(Self.sizeFormatter.string(fromByteCount: totalSizeBytes))"
+        "Downloads: \(itemsSummary) · \(totalDisplaySize)"
+    }
+
+    var itemsSummary: String {
+        "\(itemsCount) \(itemsCount == 1 ? "item" : "items")"
+    }
+
+    var totalDisplaySize: String {
+        Self.sizeFormatter.string(fromByteCount: totalSizeBytes)
     }
 
     func scanDownloadsFolder() {

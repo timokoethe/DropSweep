@@ -22,6 +22,14 @@ struct CategorySummary: Identifiable {
         ByteCountFormatter.string(fromByteCount: sizeBytes, countStyle: .file)
     }
 
+    var countSummary: String {
+        "\(count) \(count == 1 ? "item" : "items")"
+    }
+
+    var displaySummary: String {
+        "\(displayTitle): \(countSummary) · \(displaySize)"
+    }
+
     init(singularTitle: String, pluralTitle: String, count: Int, sizeBytes: Int64) {
         self.id = singularTitle
         self.singularTitle = singularTitle
