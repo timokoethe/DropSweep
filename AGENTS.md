@@ -4,10 +4,11 @@ DropSweep is a small macOS menu-bar app that scans the user's Downloads folder, 
 
 ## Project Shape
 
-- `DropSweep/DropSweepApp.swift`: app entry point and `MenuBarExtra`.
-- `DropSweep/MenuView.swift`: menu UI.
-- `DropSweep/MenuViewModel.swift`: observable UI state and app actions.
-- `DropSweep/Sweeper.swift`: Downloads scanning, classification, and trashing logic.
+- `DropSweep/App/DropSweepApp.swift`: app entry point and `MenuBarExtra`.
+- `DropSweep/MenuBar/`: menu UI, menu state, and menu-specific presentation models/components.
+- `DropSweep/Services/Sweeper.swift`: Downloads scanning, classification, and trashing logic.
+- `DropSweep/Updates/CheckForUpdatesViewModel.swift`: Sparkle update state.
+- `DropSweep/Info.plist`: app bundle configuration.
 - `website/`: separate Next.js site; follow `website/AGENTS.md` before editing it.
 
 ## Development Guidelines
