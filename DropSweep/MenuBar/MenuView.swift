@@ -35,12 +35,11 @@ struct MenuView: View {
             } label: {
                 MenuItemLabel("Move All Items to Trash", systemImage: "trash")
             }
-            .disabled(!vm.downloadsHasItems || vm.isScanning)
+            .disabled(!vm.canDeleteDownloads)
         }
         .frame(width: 240)
         .padding()
         .onAppear {
-            vm.scanDownloadsFolder()
             vm.refreshLaunchAtLoginStatus()
         }
         .onReceive(NotificationCenter.default.publisher(for: NSMenu.didBeginTrackingNotification)) { _ in
