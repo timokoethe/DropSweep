@@ -16,13 +16,22 @@ class MenuViewModel {
     @ObservationIgnored private var deleteTask: Task<Void, Never>?
     
     var isScanning: Bool = false
+    var isDeleting: Bool = false
     var itemsCount: Int = 0
     var totalSizeBytes: Int64 = 0
     var categories: [CategorySummary] = []
     var launchAtLoginEnabled: Bool = SMAppService.mainApp.status == .enabled
 
+    init() {
+        scanDownloadsFolder()
+    }
+
     var downloadsHasItems: Bool {
         itemsCount > 0
+    }
+
+    var canDeleteDownloads: Bool {
+        !isDeleting && downloadsHasItems
     }
 
     var downloadsSummary: String {
@@ -74,6 +83,7 @@ class MenuViewModel {
         scanTask?.cancel()
         deleteTask?.cancel()
         isScanning = true
+        isDeleting = true
 
         deleteTask = Task {
             let deleteResult = await sweeper.deleteAllInDownloads()
@@ -85,6 +95,7 @@ class MenuViewModel {
 
             applyScanResult(scanResult)
             isScanning = false
+            isDeleting = false
 
             if !deleteResult.failures.isEmpty {
                 showDeleteDownloadsError(deletedCount: deleteResult.deleted, failures: deleteResult.failures)
