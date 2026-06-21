@@ -32,6 +32,8 @@ struct DropSweepApp: App {
         MenuBarExtra {
             MenuView(vm: vm)
 
+            
+            // MARK: App Actions
             Divider()
 
             Toggle("Launch at Login", isOn: Binding(
