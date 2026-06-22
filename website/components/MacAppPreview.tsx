@@ -1,10 +1,10 @@
 const menuPreviewCategories = [
-  { title: "Installers", count: 3 },
-  { title: "Archives", count: 4 },
-  { title: "PDFs", count: 3 },
-  { title: "Screenshots", count: 8 },
-  { title: "Folders", count: 2 },
-  { title: "Other Files", count: 4 },
+  { title: "Installers", count: 3, size: "684 MB" },
+  { title: "Archives", count: 4, size: "412 MB" },
+  { title: "PDFs", count: 3, size: "18 MB" },
+  { title: "Screenshots", count: 8, size: "42 MB" },
+  { title: "Folders", count: 2, size: "296 MB" },
+  { title: "Other Files", count: 4, size: "91 MB" },
 ];
 
 export function MacAppPreview() {
@@ -13,10 +13,10 @@ export function MacAppPreview() {
       <div className="overflow-hidden rounded-xl border border-border bg-card text-left shadow-sm">
         <div className="px-4 pt-4 pb-2">
           <div className="space-y-1 text-sm">
-            <p>Downloads: 24 items</p>
+            <p>Downloads: 24 items · 1.5 GB</p>
             {menuPreviewCategories.map((category) => (
               <p key={category.title}>
-                {category.title}: {category.count}
+                {category.title}: {category.count} items · {category.size}
               </p>
             ))}
           </div>
