@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sync App UI to Website"
+  short_description: "Mirror DropSweep app UI changes on the website"
+  default_prompt: "Use $sync-app-ui-to-website to mirror this DropSweep app UI change on the website."
