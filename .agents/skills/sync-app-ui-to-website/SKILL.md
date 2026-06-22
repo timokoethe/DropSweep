@@ -1,6 +1,6 @@
 ---
 name: sync-app-ui-to-website
-description: Mirror DropSweep native macOS app UI changes into the Next.js marketing website. Use when SwiftUI menu text, category rows, controls, previewable state, screenshots, product messaging, or visual behavior in DropSweep/ changes and the website UI or copy should stay aligned, especially website/app/page.tsx menu previews and feature descriptions.
+description: Mirror DropSweep native macOS app UI changes into the Next.js marketing website. Use when SwiftUI menu text, category rows, controls, previewable state, screenshots, product messaging, or visual behavior in DropSweep/ changes and the website UI or copy should stay aligned, especially website/components/MacAppPreview.tsx menu previews and website/app/page.tsx feature descriptions.
 ---
 
 # Sync App UI to Website
@@ -17,13 +17,16 @@ Keep the DropSweep website's product UI preview and copy aligned with the native
    - The relevant Next.js guide under `website/node_modules/next/dist/docs/` before editing website code, as required by `website/AGENTS.md`.
 
 2. Inspect the app UI source:
-   - Start with `DropSweep/MenuView.swift` for visible menu text, row structure, button labels, spacing, and menu width.
-   - Read `DropSweep/MenuViewModel.swift` for formatted summary strings, category names, counts, size labels, and action labels.
-   - Read `DropSweep/Sweeper.swift` only when category logic, hidden-file behavior, filesystem behavior, or scan totals changed.
+   - Start with `DropSweep/MenuBar/MenuView.swift` for visible menu text, row structure, button labels, spacing, and menu width.
+   - Read `DropSweep/MenuBar/MenuViewModel.swift` for downloads summary strings, category ordering, counts, and size inputs.
+   - Read `DropSweep/MenuBar/CategorySummary.swift` for visible category row formatting, singular/plural category labels, count text, and size text.
+   - Read `DropSweep/App/DropSweepApp.swift` for menu-bar app actions such as Launch at Login, Check for Updates, About, Quit, and keyboard shortcuts.
+   - Read `DropSweep/Services/Sweeper.swift` only when category logic, hidden-file behavior, filesystem behavior, or scan totals changed.
 
 3. Inspect the website representation:
-   - Start with `website/app/page.tsx`.
-   - Check `menuPreviewCategories`, hero copy, feature copy, category copy, and any JSX that renders the menu preview.
+   - Start with `website/components/MacAppPreview.tsx` for the product menu preview.
+   - Check `menuPreviewCategories`, sample counts, summary text, menu action labels, dividers, keyboard hints, and any JSX that renders the menu preview.
+   - Then read `website/app/page.tsx` for hero copy, feature copy, category copy, and where `MacAppPreview` is placed.
    - Check `website/app/globals.css` only when tokens, typography, or theme behavior need to reflect the app-facing change.
 
 4. Map app UI changes to website changes:
@@ -36,11 +39,12 @@ Keep the DropSweep website's product UI preview and copy aligned with the native
 5. Keep the website realistic, not exhaustive:
    - Use plausible sample counts and sizes; do not expose real user filesystem data.
    - Keep preview labels close to the SwiftUI labels, but avoid overfitting to exact runtime values.
-   - Prefer small, local edits in `website/app/page.tsx`.
+   - Prefer small, local edits in `website/components/MacAppPreview.tsx` for menu UI preview changes.
+   - Edit `website/app/page.tsx` only when app behavior or marketing copy changes.
    - Do not broaden website claims beyond Downloads cleanup.
 
 6. Verify:
-   - For app changes, run `xcodebuild -project DropSweep.xcodeproj -scheme DropSweep build` when practical.
+   - Run `xcodebuild -project DropSweep.xcodeproj -scheme DropSweep build` when the current diff includes Swift app changes or the sync depends on changed app behavior, when practical.
    - For website changes, run the existing website checks from `website/package.json`, typically `npm run lint` and `npm run build` from `website/`.
    - If a check cannot run, report the reason and provide manual verification steps.
 
