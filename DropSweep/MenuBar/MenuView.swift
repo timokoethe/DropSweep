@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  MenuView.swift
 //  DropSweep
 //
 //  Created by Timo Köthe on 24.05.26.
@@ -12,16 +12,18 @@ struct MenuView: View {
     @Bindable var vm: MenuViewModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 12) {
             Text(vm.downloadsSummary)
+                .fontWeight(.semibold)
 
             if vm.categories.isEmpty {
                 Text("No items found")
                     .foregroundStyle(.secondary)
             } else {
-                VStack {
+                VStack(alignment: .leading, spacing: 6) {
                     ForEach(vm.categories) { category in
-                        Text("\(category.displayTitle): \(category.count) · \(category.displaySize)")
+                        Text(category.displaySummary)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }
@@ -33,12 +35,11 @@ struct MenuView: View {
             } label: {
                 MenuItemLabel("Move All Items to Trash", systemImage: "trash")
             }
-            .disabled(!vm.downloadsHasItems || vm.isScanning)
+            .disabled(!vm.canDeleteDownloads)
         }
         .frame(width: 240)
         .padding()
         .onAppear {
-            vm.scanDownloadsFolder()
             vm.refreshLaunchAtLoginStatus()
         }
         .onReceive(NotificationCenter.default.publisher(for: NSMenu.didBeginTrackingNotification)) { _ in
@@ -67,25 +68,4 @@ struct MenuView: View {
 
 #Preview {
     MenuView(vm: MenuViewModel())
-}
-
-struct MenuItemLabel: View {
-    let title: String
-    let systemImage: String?
-    let showsIcon: Bool
-
-    init(_ title: String, systemImage: String? = nil, showsIcon: Bool = true) {
-        self.title = title
-        self.systemImage = systemImage
-        self.showsIcon = showsIcon
-    }
-
-    var body: some View {
-        if let systemImage, showsIcon {
-            Label(title, systemImage: systemImage)
-                .labelStyle(.titleAndIcon)
-        } else {
-            Text(title)
-        }
-    }
 }

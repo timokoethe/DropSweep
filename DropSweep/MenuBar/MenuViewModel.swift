@@ -16,17 +16,34 @@ class MenuViewModel {
     @ObservationIgnored private var deleteTask: Task<Void, Never>?
     
     var isScanning: Bool = false
+    var isDeleting: Bool = false
     var itemsCount: Int = 0
     var totalSizeBytes: Int64 = 0
     var categories: [CategorySummary] = []
     var launchAtLoginEnabled: Bool = SMAppService.mainApp.status == .enabled
 
+    init() {
+        scanDownloadsFolder()
+    }
+
     var downloadsHasItems: Bool {
         itemsCount > 0
     }
 
+    var canDeleteDownloads: Bool {
+        !isDeleting && downloadsHasItems
+    }
+
     var downloadsSummary: String {
-        "Downloads: \(itemsCount) \(itemsCount == 1 ? "item" : "items") · \(Self.sizeFormatter.string(fromByteCount: totalSizeBytes))"
+        "Downloads: \(itemsSummary) · \(totalDisplaySize)"
+    }
+
+    var itemsSummary: String {
+        "\(itemsCount) \(itemsCount == 1 ? "item" : "items")"
+    }
+
+    var totalDisplaySize: String {
+        Self.sizeFormatter.string(fromByteCount: totalSizeBytes)
     }
 
     func scanDownloadsFolder() {
@@ -66,6 +83,7 @@ class MenuViewModel {
         scanTask?.cancel()
         deleteTask?.cancel()
         isScanning = true
+        isDeleting = true
 
         deleteTask = Task {
             let deleteResult = await sweeper.deleteAllInDownloads()
@@ -77,6 +95,7 @@ class MenuViewModel {
 
             applyScanResult(scanResult)
             isScanning = false
+            isDeleting = false
 
             if !deleteResult.failures.isEmpty {
                 showDeleteDownloadsError(deletedCount: deleteResult.deleted, failures: deleteResult.failures)
@@ -164,29 +183,4 @@ class MenuViewModel {
         formatter.countStyle = .file
         return formatter
     }()
-}
-
-
-struct CategorySummary: Identifiable {
-    let id: String
-    let singularTitle: String
-    let pluralTitle: String
-    let count: Int
-    let sizeBytes: Int64
-
-    var displayTitle: String {
-        count == 1 ? singularTitle : pluralTitle
-    }
-
-    var displaySize: String {
-        ByteCountFormatter.string(fromByteCount: sizeBytes, countStyle: .file)
-    }
-
-    init(singularTitle: String, pluralTitle: String, count: Int, sizeBytes: Int64) {
-        self.id = singularTitle
-        self.singularTitle = singularTitle
-        self.pluralTitle = pluralTitle
-        self.count = count
-        self.sizeBytes = sizeBytes
-    }
 }
