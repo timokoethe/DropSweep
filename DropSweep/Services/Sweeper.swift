@@ -136,7 +136,7 @@ actor Sweeper {
 
     private func isArchive(_ url: URL) -> Bool {
         let ext = url.pathExtension.lowercased()
-        return ext == "zip" || ext == "rar" || ext == "7z" || ext == "tar" || ext == "gz"
+        return ext == "zip" || ext == "xip" || ext == "rar" || ext == "7z" || ext == "tar" || ext == "gz"
     }
 
     private func isPDF(_ url: URL) -> Bool {
