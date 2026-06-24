@@ -39,6 +39,7 @@ actor Sweeper {
             let values = try? item.resourceValues(forKeys: [.isDirectoryKey, .isRegularFileKey])
 
             if values?.isDirectory == true {
+                result.items.append(item)
                 result.folderCount += 1
                 let sizeBytes = sizeOfDirectory(item, visitedCacheURLs: &visitedCacheURLs)
                 result.folderSizeBytes += sizeBytes
@@ -51,6 +52,7 @@ actor Sweeper {
             }
 
             let sizeBytes = sizeOfFile(item, visitedCacheURLs: &visitedCacheURLs)
+            result.items.append(item)
             result.totalFiles += 1
             result.totalSizeBytes += sizeBytes
 
@@ -170,22 +172,19 @@ actor Sweeper {
     ]
     
     @discardableResult
-    func deleteAllInDownloads(moveToTrash: Bool = true) -> (deleted: Int, failures: [(url: URL, error: Error)]) {
-        let items: [URL]
-        do {
-            items = try fileManager.contentsOfDirectory(
-                at: downloadsURL,
-                includingPropertiesForKeys: nil,
-                options: [.skipsHiddenFiles]
-            )
-        } catch {
-            return (0, [(downloadsURL, error)])
-        }
-
+    func deleteItemsInDownloads(_ items: [URL], moveToTrash: Bool = true) -> (deleted: Int, failures: [(url: URL, error: Error)]) {
+        let downloadsURL = downloadsURL.standardizedFileURL
         var deleted = 0
         var failures: [(url: URL, error: Error)] = []
 
         for item in items {
+            let item = item.standardizedFileURL
+
+            guard item.deletingLastPathComponent() == downloadsURL else {
+                failures.append((item, CocoaError(.fileNoSuchFile)))
+                continue
+            }
+
             do {
                 if moveToTrash {
                     try fileManager.trashItem(at: item, resultingItemURL: nil)
@@ -208,6 +207,7 @@ actor Sweeper {
 }
 
 nonisolated struct DownloadsScanResult {
+    var items: [URL] = []
     var totalFiles: Int = 0
     var installerCount: Int = 0
     var archiveCount: Int = 0

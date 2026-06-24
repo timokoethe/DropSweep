@@ -21,6 +21,7 @@ class MenuViewModel {
     var totalSizeBytes: Int64 = 0
     var categories: [CategorySummary] = []
     var launchAtLoginEnabled: Bool = SMAppService.mainApp.status == .enabled
+    @ObservationIgnored private var deletableItems: [URL] = []
 
     init() {
         scanDownloadsFolder()
@@ -63,6 +64,7 @@ class MenuViewModel {
     }
 
     private func applyScanResult(_ result: DownloadsScanResult) {
+        deletableItems = result.items
         itemsCount = result.totalFiles + result.folderCount
         totalSizeBytes = result.totalSizeBytes
         categories = [
@@ -84,9 +86,10 @@ class MenuViewModel {
         deleteTask?.cancel()
         isScanning = true
         isDeleting = true
+        let itemsToDelete = deletableItems
 
         deleteTask = Task {
-            let deleteResult = await sweeper.deleteAllInDownloads()
+            let deleteResult = await sweeper.deleteItemsInDownloads(itemsToDelete)
             let scanResult = await sweeper.scanDownloadsFolder()
 
             guard !Task.isCancelled else {
