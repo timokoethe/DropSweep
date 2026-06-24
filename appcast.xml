@@ -3,14 +3,14 @@
     <channel>
         <title>DropSweep</title>
         <item>
-            <title>0.3.0</title>
-            <pubDate>Mon, 22 Jun 2026 15:50:11 +0000</pubDate>
+            <title>0.3.1</title>
+            <pubDate>Wed, 24 Jun 2026 15:57:26 +0000</pubDate>
             <link>https://github.com/timokoethe/DropSweep</link>
-            <sparkle:fullReleaseNotesLink>https://github.com/timokoethe/DropSweep/releases/tag/v0.3.0</sparkle:fullReleaseNotesLink>
-            <sparkle:version>3000</sparkle:version>
-            <sparkle:shortVersionString>0.3.0</sparkle:shortVersionString>
+            <sparkle:fullReleaseNotesLink>https://github.com/timokoethe/DropSweep/releases/tag/v0.3.1</sparkle:fullReleaseNotesLink>
+            <sparkle:version>3001</sparkle:version>
+            <sparkle:shortVersionString>0.3.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/timokoethe/DropSweep/releases/download/v0.3.0/DropSweep-0.3.0.zip" length="2628818" type="application/octet-stream" sparkle:edSignature="4fk7mS/LkJlfX/UZxE2NgKrzd5uo1Gh2DeLSby5n4/vefwPvNjc9mi8HjeVKgGDGybXhXdUxHEQsNMFs4iCnDQ=="/>
+            <enclosure url="https://github.com/timokoethe/DropSweep/releases/download/v0.3.1/DropSweep-0.3.1.zip" length="2631994" type="application/octet-stream" sparkle:edSignature="Ep+X1BvnaycKJiKQby4ce804nkfIo4wvVGadAZI/nUOCWIhwA2zsQvRx5XFEdl62ngWaiYckh2B+Q3e688qiAQ=="/>
         </item>
     </channel>
 </rss>
