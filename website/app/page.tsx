@@ -69,7 +69,7 @@ async function getLatestRelease(): Promise<LatestRelease> {
 
 const categories = [
   { title: "Installers", hint: ".dmg, .pkg" },
-  { title: "Archives", hint: ".zip, .tar" },
+  { title: "Archives", hint: ".zip, .xip, .tar" },
   { title: "PDFs", hint: "documents" },
   { title: "Screenshots", hint: "captures" },
   { title: "Folders", hint: "directories" },
