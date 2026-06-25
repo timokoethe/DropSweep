@@ -169,13 +169,16 @@ class MenuViewModel {
     private func showDeleteDownloadsError(deletedCount: Int, failures: [(url: URL, error: Error)]) {
         let alert = NSAlert()
         let failedItems = failures
-            .prefix(5)
-            .map { "\($0.url.lastPathComponent): \($0.error.localizedDescription)" }
+            .prefix(3)
+            .map { $0.url.lastPathComponent }
             .joined(separator: "\n")
-        let remainingItems = failures.count > 5 ? "\n…and \(failures.count - 5) more" : ""
+        let remainingItems = failures.count > 3 ? "\n…and \(failures.count - 3) more" : ""
+        let failureReason = failures.allSatisfy { failure in
+            (failure.error as NSError).code == NSFileNoSuchFileError
+        } ? "They may have already been moved or deleted while the confirmation was open." : "Some items may have changed or could not be accessed."
 
         alert.messageText = "Could Not Move All Items to the Trash"
-        alert.informativeText = "\(deletedCount) item\(deletedCount == 1 ? "" : "s") moved to the Trash. \(failures.count) item\(failures.count == 1 ? "" : "s") could not be moved.\n\n\(failedItems)\(remainingItems)"
+        alert.informativeText = "\(deletedCount) item\(deletedCount == 1 ? "" : "s") moved to the Trash. \(failures.count) item\(failures.count == 1 ? "" : "s") could not be moved.\n\(failureReason)\n\n\(failedItems)\(remainingItems)"
         alert.alertStyle = .warning
         alert.addButton(withTitle: "OK")
         alert.runModal()
