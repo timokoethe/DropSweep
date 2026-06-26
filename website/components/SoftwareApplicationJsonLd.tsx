@@ -22,6 +22,7 @@ export function SoftwareApplicationJsonLd({
     description: SITE_DESCRIPTION,
     url: SITE_URL,
     image: APP_ICON_URL,
+    downloadUrl,
     codeRepository: REPO_URL,
     operatingSystem: "macOS",
     applicationCategory: "UtilitiesApplication",
