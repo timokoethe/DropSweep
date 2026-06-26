@@ -177,7 +177,7 @@ class MenuViewModel {
             (failure.error as NSError).code == NSFileNoSuchFileError
         } ? "They may have already been moved or deleted while the confirmation was open." : "Some items may have changed or could not be accessed."
 
-        alert.messageText = "Could Not Move All Items to the Trash"
+        alert.messageText = "Some Items Could Not Be Moved to the Trash"
         alert.informativeText = "\(deletedCount) item\(deletedCount == 1 ? "" : "s") moved to the Trash. \(failures.count) item\(failures.count == 1 ? "" : "s") could not be moved.\n\(failureReason)\n\n\(failedItems)\(remainingItems)"
         alert.alertStyle = .warning
         alert.addButton(withTitle: "OK")

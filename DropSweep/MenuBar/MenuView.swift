@@ -53,7 +53,7 @@ struct MenuView: View {
         let alert = NSAlert()
 
         alert.messageText = "Move \(vm.itemsCount) \(itemLabel) to the Trash?"
-        alert.informativeText = "This moves every visible item in Downloads to the Trash."
+        alert.informativeText = "This moves all listed items from Downloads to the Trash."
         alert.alertStyle = .warning
         alert.addButton(withTitle: "Move to Trash")
         alert.addButton(withTitle: "Cancel")
