@@ -5,10 +5,10 @@ on:
   push:
     tags:
       - "v*"
-  workflow_dispatch:
 
 permissions:
   contents: read
+  deployments: write
 
 concurrency:
   group: website-deploy-${{ github.ref }}
@@ -21,7 +21,6 @@ jobs:
     timeout-minutes: 15
     environment:
       name: Production
-      url: ${{ steps.deploy.outputs.url }}
     defaults:
       run:
         working-directory: website
@@ -54,8 +53,4 @@ jobs:
         run: npx --yes vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
 
       - name: Deploy production build
-        id: deploy
-        run: |
-          deployment_url="$(npx --yes vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN" --meta releaseTag="$GITHUB_REF_NAME")"
-          echo "$deployment_url"
-          echo "url=$deployment_url" >> "$GITHUB_OUTPUT"
+        run: npx --yes vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN" --meta releaseTag="$GITHUB_REF_NAME"
