@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  deployments: write
   pull-requests: write
 
 concurrency:
@@ -233,3 +234,41 @@ jobs:
             echo "::error::Failed to merge $PR_URL after multiple attempts. Ensure squash merging is enabled under Settings > Pull Requests."
             exit 1
           fi
+
+  deploy-website:
+    name: Deploy website
+    needs: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: Production
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+    steps:
+      - name: Check out tag
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
+
+      - name: Verify Vercel secrets
+        run: |
+          missing=()
+          for secret_name in VERCEL_ORG_ID VERCEL_PROJECT_ID VERCEL_TOKEN; do
+            if [[ -z "${!secret_name}" ]]; then
+              missing+=("$secret_name")
+            fi
+          done
+
+          if (( ${#missing[@]} > 0 )); then
+            printf 'Missing required GitHub secret: %s\n' "${missing[@]}" >&2
+            exit 1
+          fi
+
+      - name: Pull Vercel production environment
+        run: npx --yes vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Deploy production build
+        run: npx --yes vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN" --meta releaseTag="$GITHUB_REF_NAME"

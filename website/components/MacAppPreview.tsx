@@ -34,7 +34,7 @@ export function MacAppPreview() {
             >
               <path d="M2.5 4.25h11M6 2.25h4M4.25 4.25l.6 9h6.3l.6-9M6.5 6.5v4.5M9.5 6.5v4.5" />
             </svg>
-            <span>Move All Items to Trash</span>
+            <span>Move Listed Items to Trash</span>
           </div>
         </div>
         <div className="h-px bg-border" />
