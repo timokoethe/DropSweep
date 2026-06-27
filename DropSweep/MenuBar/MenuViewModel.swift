@@ -20,6 +20,7 @@ class MenuViewModel {
     var itemsCount: Int = 0
     var totalSizeBytes: Int64 = 0
     var categories: [CategorySummary] = []
+    var scanErrorMessage: String?
     var launchAtLoginEnabled: Bool = SMAppService.mainApp.status == .enabled
     @ObservationIgnored private var deletableItems: [URL] = []
 
@@ -64,6 +65,7 @@ class MenuViewModel {
     }
 
     private func applyScanResult(_ result: DownloadsScanResult) {
+        scanErrorMessage = result.scanErrorMessage
         deletableItems = result.items
         itemsCount = result.totalFiles + result.folderCount
         totalSizeBytes = result.totalSizeBytes

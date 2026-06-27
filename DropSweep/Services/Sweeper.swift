@@ -28,6 +28,7 @@ actor Sweeper {
             )
         } catch {
             print("Failed to read Downloads folder:", error)
+            result.scanErrorMessage = "Could not read Downloads folder."
             return result
         }
 
@@ -208,6 +209,7 @@ actor Sweeper {
 
 nonisolated struct DownloadsScanResult {
     var items: [URL] = []
+    var scanErrorMessage: String?
     var totalFiles: Int = 0
     var installerCount: Int = 0
     var archiveCount: Int = 0
