@@ -16,7 +16,10 @@ struct MenuView: View {
             Text(vm.downloadsSummary)
                 .fontWeight(.semibold)
 
-            if vm.categories.isEmpty {
+            if let scanErrorMessage = vm.scanErrorMessage {
+                Text(scanErrorMessage)
+                    .foregroundStyle(.secondary)
+            } else if vm.categories.isEmpty {
                 Text("No items found")
                     .foregroundStyle(.secondary)
             } else {
