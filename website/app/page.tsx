@@ -242,12 +242,12 @@ export default async function Home() {
           </div>
           <div className="flex items-center gap-6">
             <a
-              href={REPO_URL}
+              href="https://itstimo.me"
               target="_blank"
               rel="noreferrer"
               className="transition-colors hover:text-foreground"
             >
-              GitHub
+              Timo Köthe
             </a>
             <span>© {new Date().getFullYear()}</span>
           </div>
