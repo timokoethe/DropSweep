@@ -91,7 +91,7 @@ const features = [
   },
   {
     title: "Safe by design",
-    body: "Items move to the Trash — never permanently deleted — and hidden files are always left untouched.",
+    body: "Items move to the Trash — never permanently deleted — while hidden items at the top level of Downloads stay untouched.",
   },
 ];
 

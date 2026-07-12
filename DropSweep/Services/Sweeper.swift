@@ -24,6 +24,8 @@ actor Sweeper {
             items = try fileManager.contentsOfDirectory(
                 at: downloadsURL,
                 includingPropertiesForKeys: Self.resourceKeys,
+                // Only hidden items at the Downloads root are excluded. Hidden
+                // contents of a visible folder move to the Trash with that folder.
                 options: [.skipsHiddenFiles]
             )
         } catch {

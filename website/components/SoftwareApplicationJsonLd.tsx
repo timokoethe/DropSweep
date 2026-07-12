@@ -34,7 +34,7 @@ export function SoftwareApplicationJsonLd({
       "Group downloads by common file type",
       "Review the current item count from the menu bar",
       "Move Downloads items to the Trash",
-      "Skip hidden files during scanning and cleanup",
+      "Skip hidden items at the top level of the Downloads folder",
     ],
     author: {
       "@type": "Person",
