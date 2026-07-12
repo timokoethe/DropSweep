@@ -18,7 +18,7 @@ DropSweep is a small macOS menu-bar app that scans the user's Downloads folder, 
 - Prefer SwiftUI for menu UI and AppKit only for macOS-specific APIs such as `NSApplication`, `NSMenu`, `NSColor`, or file trashing behavior.
 - Treat filesystem operations carefully. DropSweep targets the user's Downloads folder, so prefer `FileManager.trashItem` over permanent deletion and preserve failure reporting paths where possible.
 - Do not broaden cleanup scope beyond Downloads unless the user explicitly asks for it.
-- Hidden files are intentionally skipped during scans and cleanup; keep that behavior unless changing product requirements.
+- Hidden items directly in the Downloads root are intentionally skipped during scans and cleanup. Hidden contents inside a visible subfolder are moved to the Trash together with that folder; keep this behavior unless changing product requirements.
 - Avoid introducing an Xcode-project dependency or build-system change unless it is needed for the requested work.
 - When native app UI changes should be reflected on the website, follow `.agents/skills/sync-app-ui-to-website/SKILL.md`.
 

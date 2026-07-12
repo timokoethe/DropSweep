@@ -18,6 +18,7 @@ It scans common download clutter such as installers, archives, PDFs, screenshots
 - Group downloads by common file type
 - Review the current item count from the menu bar
 - Move Downloads items to the Trash
+- Skip hidden items in the Downloads root; hidden contents inside visible folders move with their folder
 
 ## Requirements
 
