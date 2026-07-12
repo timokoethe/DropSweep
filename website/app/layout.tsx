@@ -3,8 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import {
-  REPO_URL,
   SITE_DESCRIPTION,
+  SITE_AUTHOR,
   SITE_ICON_PATH,
   SITE_NAME,
   SITE_URL,
@@ -38,8 +38,8 @@ export const metadata: Metadata = {
     "Mac cleanup app",
     "open source macOS app",
   ],
-  authors: [{ name: "Timo Koethe", url: REPO_URL }],
-  creator: "Timo Koethe",
+  authors: [SITE_AUTHOR],
+  creator: SITE_AUTHOR.name,
   publisher: SITE_NAME,
   alternates: {
     canonical: "/",

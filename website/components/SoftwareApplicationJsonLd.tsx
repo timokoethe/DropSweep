@@ -1,6 +1,7 @@
 import {
   APP_ICON_URL,
   REPO_URL,
+  SITE_AUTHOR,
   SITE_DESCRIPTION,
   SITE_NAME,
   SITE_URL,
@@ -26,6 +27,10 @@ export function SoftwareApplicationJsonLd({
     codeRepository: REPO_URL,
     operatingSystem: "macOS",
     applicationCategory: "UtilitiesApplication",
+    author: {
+      "@type": "Person",
+      ...SITE_AUTHOR,
+    },
     softwareVersion: version ?? undefined,
     offers: {
       "@type": "Offer",

@@ -16,6 +16,11 @@ export const SITE_URL = `https://${normalizedSiteUrl}`;
 
 export const REPO_URL = "https://github.com/timokoethe/DropSweep";
 
+export const SITE_AUTHOR = {
+  name: "Timo Köthe",
+  url: "https://itstimo.me/",
+} as const;
+
 export const SITE_ICON_PATH = "/icon.png";
 
 export const APP_ICON_PATH = "/dropsweep-icon.png";
