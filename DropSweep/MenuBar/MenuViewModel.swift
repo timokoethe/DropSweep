@@ -84,13 +84,21 @@ class MenuViewModel {
     }
 
     func deleteDownloads() {
+        guard !isDeleting else {
+            return
+        }
+
         scanTask?.cancel()
-        deleteTask?.cancel()
         isScanning = true
         isDeleting = true
         let itemsToDelete = deletableItems
 
         deleteTask = Task {
+            defer {
+                isScanning = false
+                isDeleting = false
+            }
+
             let deleteResult = await sweeper.deleteItemsInDownloads(itemsToDelete)
             let scanResult = await sweeper.scanDownloadsFolder()
 
@@ -99,8 +107,6 @@ class MenuViewModel {
             }
 
             applyScanResult(scanResult)
-            isScanning = false
-            isDeleting = false
 
             if !deleteResult.failures.isEmpty {
                 showDeleteDownloadsError(deletedCount: deleteResult.deleted, failures: deleteResult.failures)
