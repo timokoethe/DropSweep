@@ -180,6 +180,7 @@ export default async function Home() {
 
         {/* Features */}
         <section className="border-t border-border py-20">
+          <h2 className="sr-only">How DropSweep works</h2>
           <div className="grid gap-x-12 gap-y-10 sm:grid-cols-2">
             {features.map((f) => (
               <div key={f.title}>

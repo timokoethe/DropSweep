@@ -3,8 +3,6 @@ export const SITE_NAME = "DropSweep";
 export const SITE_DESCRIPTION =
   "Clean up your Mac Downloads folder from the menu bar. DropSweep groups clutter and moves what you no longer need to the Trash in one click.";
 
-export const SITE_LAST_MODIFIED = "2026-06-24";
-
 const configuredSiteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ?? process.env.VERCEL_PROJECT_PRODUCTION_URL;
 
@@ -15,6 +13,11 @@ const normalizedSiteUrl = configuredSiteUrl
 export const SITE_URL = `https://${normalizedSiteUrl}`;
 
 export const REPO_URL = "https://github.com/timokoethe/DropSweep";
+
+export const SITE_AUTHOR = {
+  name: "Timo Köthe",
+  url: "https://itstimo.me/",
+} as const;
 
 export const SITE_ICON_PATH = "/icon.png";
 
