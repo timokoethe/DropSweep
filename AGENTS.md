@@ -2,6 +2,10 @@
 
 DropSweep is a small macOS menu-bar app that scans the user's Downloads folder, groups common clutter, and moves selected items to the Trash. The native app lives in `DropSweep/` and uses Swift 6, SwiftUI, AppKit, and the Observation framework.
 
+## Public Repository Safety
+
+This repository is public and DropSweep is a released product. Treat every committed file and all Git history as publicly accessible. Never add secrets, API keys, access tokens, credentials, signing material, private URLs, personal information, user data, or other sensitive values. Use documented placeholders and environment variables where configuration is required, and verify staged changes for accidental disclosures before committing.
+
 ## Project Shape
 
 - `DropSweep/App/DropSweepApp.swift`: app entry point and `MenuBarExtra`.
