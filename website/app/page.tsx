@@ -4,6 +4,7 @@ import { REPO_URL } from "@/lib/seo";
 import { Logo } from "@/components/Logo";
 import { DownloadButton } from "@/components/DownloadButton";
 import { MacAppPreview } from "@/components/MacAppPreview";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const LATEST_RELEASE_URL = `${REPO_URL}/releases/latest`;
 const RELEASE_API_URL =
@@ -124,15 +125,18 @@ export default async function Home() {
             <Logo className="h-5 w-5" />
             DropSweep
           </div>
-          <a
-            href={REPO_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-foreground"
-          >
-            <GitHubIcon className="h-4 w-4" />
-            GitHub
-          </a>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <a
+              href={REPO_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-foreground"
+            >
+              <GitHubIcon className="h-4 w-4" />
+              GitHub
+            </a>
+          </div>
         </div>
       </header>
 
