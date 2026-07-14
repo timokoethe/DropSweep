@@ -33,7 +33,7 @@ class MenuViewModel {
     }
 
     var canDeleteDownloads: Bool {
-        !isDeleting && downloadsHasItems
+        !isScanning && !isDeleting && downloadsHasItems
     }
 
     var downloadsSummary: String {
@@ -84,7 +84,7 @@ class MenuViewModel {
     }
 
     func deleteDownloads() {
-        guard !isDeleting else {
+        guard canDeleteDownloads else {
             return
         }
 
