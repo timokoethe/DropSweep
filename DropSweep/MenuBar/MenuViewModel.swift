@@ -37,7 +37,11 @@ class MenuViewModel {
     }
 
     var downloadsSummary: String {
-        "Downloads: \(itemsSummary) · \(totalDisplaySize)"
+        guard totalSizeBytes > 0 else {
+            return "Downloads: \(itemsSummary)"
+        }
+
+        return "Downloads: \(itemsSummary) · \(totalDisplaySize)"
     }
 
     var itemsSummary: String {

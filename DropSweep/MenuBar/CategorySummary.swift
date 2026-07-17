@@ -27,7 +27,11 @@ struct CategorySummary: Identifiable {
     }
 
     var displaySummary: String {
-        "\(displayTitle): \(countSummary) · \(displaySize)"
+        guard sizeBytes > 0 else {
+            return "\(displayTitle): \(countSummary)"
+        }
+
+        return "\(displayTitle): \(countSummary) · \(displaySize)"
     }
 
     init(singularTitle: String, pluralTitle: String, count: Int, sizeBytes: Int64) {
