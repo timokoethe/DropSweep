@@ -1,10 +1,60 @@
+import type { Metadata } from "next";
 import { SoftwareApplicationJsonLd } from "@/components/SoftwareApplicationJsonLd";
 import { WebSiteJsonLd } from "@/components/WebSiteJsonLd";
-import { REPO_URL } from "@/lib/seo";
+import {
+  PORTFOLIO_URL,
+  REPO_URL,
+  SITE_DESCRIPTION,
+  SITE_KEYWORDS,
+  SITE_NAME,
+  SITE_TITLE,
+  SOCIAL_IMAGE_PATH,
+} from "@/lib/seo";
 import { Logo } from "@/components/Logo";
 import { DownloadButton } from "@/components/DownloadButton";
 import { MacAppPreview } from "@/components/MacAppPreview";
 import { ThemeToggle } from "@/components/ThemeToggle";
+
+export const metadata: Metadata = {
+  title: { absolute: SITE_TITLE },
+  description: SITE_DESCRIPTION,
+  keywords: SITE_KEYWORDS,
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: "/",
+    siteName: SITE_NAME,
+    images: [
+      {
+        url: SOCIAL_IMAGE_PATH,
+        width: 1200,
+        height: 630,
+        alt: "DropSweep app preview",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [{ url: SOCIAL_IMAGE_PATH, alt: "DropSweep app preview" }],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  category: "technology",
+};
 
 const LATEST_RELEASE_URL = `${REPO_URL}/releases/latest`;
 const RELEASE_API_URL =
@@ -59,8 +109,7 @@ async function getLatestRelease(): Promise<LatestRelease> {
       typeof release.html_url === "string" ? release.html_url : null;
 
     return {
-      version:
-        typeof release.tag_name === "string" ? release.tag_name : null,
+      version: typeof release.tag_name === "string" ? release.tag_name : null,
       downloadUrl: assetUrl ?? releaseUrl ?? LATEST_RELEASE_URL,
     };
   } catch {
@@ -98,7 +147,12 @@ const features = [
 
 function GitHubIcon({ className = "" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden className={className}>
+    <svg
+      viewBox="0 0 16 16"
+      fill="currentColor"
+      aria-hidden
+      className={className}
+    >
       <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
     </svg>
   );
@@ -246,6 +300,12 @@ export default async function Home() {
             <span>DropSweep</span>
           </div>
           <div className="flex items-center gap-6">
+            <a
+              href={PORTFOLIO_URL}
+              className="transition-colors hover:text-foreground"
+            >
+              Implementation
+            </a>
             <a
               href="https://itstimo.me"
               target="_blank"
