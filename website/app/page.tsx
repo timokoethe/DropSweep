@@ -203,7 +203,7 @@ export default async function Home() {
           </span>
 
           <h1 className="max-w-2xl text-balance text-4xl font-semibold tracking-tight sm:text-6xl">
-            Keep your Downloads folder clean.
+            Keep your Mac Downloads folder clean.
           </h1>
 
           <p className="mt-6 max-w-xl text-balance text-lg text-muted">
@@ -230,6 +230,7 @@ export default async function Home() {
           </div>
 
           <p className="mt-5 text-xs text-muted">Free · Open source · macOS</p>
+          <p className="mt-2 text-xs text-muted">Requires macOS 26 or later.</p>
 
           <div className="mt-16">
             <MacAppPreview />
