@@ -1,10 +1,13 @@
 import {
   APP_ICON_URL,
   REPO_URL,
+  SITE_AUTHOR_ID,
   SITE_AUTHOR,
   SITE_DESCRIPTION,
   SITE_NAME,
   SITE_URL,
+  SOFTWARE_ID,
+  WEBPAGE_ID,
 } from "@/lib/seo";
 
 type SoftwareApplicationJsonLdProps = {
@@ -19,9 +22,11 @@ export function SoftwareApplicationJsonLd({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
+    "@id": SOFTWARE_ID,
     name: SITE_NAME,
     description: SITE_DESCRIPTION,
-    url: SITE_URL,
+    url: `${SITE_URL}/`,
+    mainEntityOfPage: { "@id": WEBPAGE_ID },
     image: APP_ICON_URL,
     downloadUrl,
     codeRepository: REPO_URL,
@@ -38,6 +43,7 @@ export function SoftwareApplicationJsonLd({
     ],
     author: {
       "@type": "Person",
+      "@id": SITE_AUTHOR_ID,
       ...SITE_AUTHOR,
     },
     softwareVersion: version ?? undefined,

@@ -10,6 +10,9 @@
 
 DropSweep is a small macOS menu bar app for keeping your Downloads folder tidy.
 
+[Product website](https://dropsweep.itstimo.me) ·
+[Implementation reference](https://itstimo.me/projects/dropsweep)
+
 It scans common download clutter such as installers, archives, PDFs, screenshots, folders, and other files, then lets you move everything to the Trash from a compact menu bar interface.
 
 ## Features

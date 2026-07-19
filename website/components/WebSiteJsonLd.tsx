@@ -1,12 +1,34 @@
-import { SITE_NAME, SITE_URL } from "@/lib/seo";
+import {
+  SOFTWARE_ID,
+  SITE_NAME,
+  SITE_TITLE,
+  SITE_URL,
+  WEBPAGE_ID,
+  WEBSITE_ID,
+} from "@/lib/seo";
 
 export function WebSiteJsonLd() {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: SITE_NAME,
-    alternateName: "DropSweep for macOS",
-    url: `${SITE_URL}/`,
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": WEBSITE_ID,
+        name: SITE_NAME,
+        alternateName: "DropSweep for macOS",
+        url: `${SITE_URL}/`,
+      },
+      {
+        "@type": "WebPage",
+        "@id": WEBPAGE_ID,
+        name: SITE_TITLE,
+        url: `${SITE_URL}/`,
+        isPartOf: { "@id": WEBSITE_ID },
+        about: { "@id": SOFTWARE_ID },
+        mainEntity: { "@id": SOFTWARE_ID },
+        inLanguage: "en",
+      },
+    ],
   };
 
   return (
