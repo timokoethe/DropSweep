@@ -1,12 +1,11 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_LAST_MODIFIED, SITE_URL } from "@/lib/seo";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
       url: SITE_URL,
-      changeFrequency: "monthly",
-      priority: 1,
+      lastModified: SITE_LAST_MODIFIED,
     },
   ];
 }
