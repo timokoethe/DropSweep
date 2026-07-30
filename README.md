@@ -1,8 +1,8 @@
 # DropSweep for macOS
 
+[![GitHub Release](https://img.shields.io/github/v/release/timokoethe/dropsweep?label=release)](https://github.com/timokoethe/dropsweep/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-orange)](https://opensource.org/license/mit)
 ![Framework](https://img.shields.io/badge/SwiftUI-orange)
-![Swift](https://img.shields.io/badge/Swift-6-orange)
 ![Platform](https://img.shields.io/badge/Platforms-macOS-orange)
 ![Xcode](https://img.shields.io/badge/Xcode-26-orange)
 ![macOS](https://img.shields.io/badge/macOS-26-orange)
@@ -15,6 +15,12 @@ DropSweep is a small macOS menu bar app for keeping your Downloads folder tidy.
 
 It scans common download clutter such as installers, archives, PDFs, screenshots, folders, and other files, then lets you move everything to the Trash from a compact menu bar interface.
 
+## Installation
+
+1. Download the latest version from [GitHub Releases](https://github.com/timokoethe/DropSweep/releases/latest).
+2. Unzip the downloaded archive.
+3. Move `DropSweep.app` to your Applications folder and open it.
+
 ## Features
 
 - Scan the macOS Downloads folder
@@ -23,15 +29,19 @@ It scans common download clutter such as installers, archives, PDFs, screenshots
 - Move Downloads items to the Trash
 - Skip hidden items in the Downloads root; hidden contents inside visible folders move with their folder
 
-## Requirements
+## System Requirements
 
-- macOS 26
-- Xcode 26
-- Swift 6
+- macOS 26 or later
+
+## Privacy
+
+DropSweep scans your Downloads folder locally and does not upload file names or contents. Network access is only used to check for and download app updates through Sparkle.
 
 ## Development
 
 ### macOS app
+
+Development requires Xcode 26.
 
 Open the project in Xcode and run the `DropSweep` scheme:
 
