@@ -47,7 +47,3 @@ Keep the DropSweep website's product UI preview and copy aligned with the native
    - Run `xcodebuild -project DropSweep.xcodeproj -scheme DropSweep build` when the current diff includes Swift app changes or the sync depends on changed app behavior, when practical.
    - For website changes, run the existing website checks from `website/package.json`, typically `npm run lint` and `npm run build` from `website/`.
    - If a check cannot run, report the reason and provide manual verification steps.
-
-## Project Reference
-
-Read `references/dropsweep-ui-map.md` when you need exact file responsibilities or a checklist for mapping native UI changes to website UI changes.

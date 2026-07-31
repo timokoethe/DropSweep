@@ -1,3 +1,7 @@
+# DropSweep Website Agent Instructions
+
+Before editing website code, ensure the local Next.js documentation is available under `node_modules/next/dist/docs/`. If it is missing, run `npm install` from the `website/` directory first.
+
 <!-- BEGIN:nextjs-agent-rules -->
 # This is NOT the Next.js you know
 
