@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { SoftwareApplicationJsonLd } from "@/components/SoftwareApplicationJsonLd";
 import { WebSiteJsonLd } from "@/components/WebSiteJsonLd";
 import {
-  PORTFOLIO_URL,
   REPO_URL,
   SITE_DESCRIPTION,
   SITE_KEYWORDS,
@@ -13,7 +12,8 @@ import {
 import { Logo } from "@/components/Logo";
 import { DownloadButton } from "@/components/DownloadButton";
 import { MacAppPreview } from "@/components/MacAppPreview";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 
 export const metadata: Metadata = {
   title: { absolute: SITE_TITLE },
@@ -172,27 +172,7 @@ export default async function Home() {
         version={release.version}
       />
 
-      {/* Nav */}
-      <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
-          <div className="flex items-center gap-2 font-semibold tracking-tight">
-            <Logo className="h-5 w-5" />
-            DropSweep
-          </div>
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            <a
-              href={REPO_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-foreground"
-            >
-              <GitHubIcon className="h-4 w-4" />
-              GitHub
-            </a>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-6">
         {/* Hero */}
@@ -293,32 +273,7 @@ export default async function Home() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border">
-        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 px-6 py-8 text-sm text-muted sm:flex-row">
-          <div className="flex items-center gap-2">
-            <Logo className="h-4 w-4" />
-            <span>DropSweep</span>
-          </div>
-          <div className="flex items-center gap-6">
-            <a
-              href={PORTFOLIO_URL}
-              className="transition-colors hover:text-foreground"
-            >
-              Implementation
-            </a>
-            <a
-              href="https://itstimo.me"
-              target="_blank"
-              rel="noreferrer"
-              className="transition-colors hover:text-foreground"
-            >
-              Timo Köthe
-            </a>
-            <span>© {new Date().getFullYear()}</span>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
