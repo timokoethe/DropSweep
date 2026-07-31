@@ -16,6 +16,7 @@ open DropSweep.xcodeproj
 - Follow the existing Swift and SwiftUI style.
 - Be careful with file system changes. DropSweep works with the user's Downloads folder.
 - Prefer moving files to the Trash over permanent deletion.
+- Add or update the corresponding file in [`docs/features/`](docs/features/) when changing a native app feature; use [`_template.md`](docs/features/_template.md) for new features.
 - Include clear manual test steps in your pull request.
 
 ## Issues

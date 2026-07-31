@@ -23,11 +23,14 @@ It scans common download clutter such as installers, archives, PDFs, screenshots
 
 ## Features
 
-- Scan the macOS Downloads folder
-- Group downloads by common file type
-- Review the current item count from the menu bar
-- Move Downloads items to the Trash
-- Skip hidden items in the Downloads root; hidden contents inside visible folders move with their folder
+- [Access DropSweep from the menu bar](docs/features/menu-bar-access.md)
+- [Scan the macOS Downloads folder](docs/features/downloads-scanning.md)
+- [Group downloads by common file type and size](docs/features/download-categories.md)
+- [Move listed Downloads items to the Trash](docs/features/move-to-trash.md)
+- [Launch DropSweep at login](docs/features/launch-at-login.md)
+- [Check for app updates](docs/features/app-updates.md)
+
+Detailed behavior and acceptance criteria for each native app feature are documented in [`docs/features/`](docs/features/).
 
 ## System Requirements
 
