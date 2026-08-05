@@ -77,6 +77,8 @@ details.
 
 Contributions are welcome. Please keep changes focused and see [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 
+Maintainers can follow the documented [release process](docs/release.md) when publishing a new version.
+
 Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## License

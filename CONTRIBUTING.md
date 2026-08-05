@@ -24,3 +24,7 @@ open DropSweep.xcodeproj
 Use GitHub Issues for bugs and feature requests. Please include your DropSweep version, macOS version, and steps to reproduce.
 
 For security issues, follow [SECURITY.md](SECURITY.md).
+
+## Releases
+
+Maintainers should follow the documented [release process](docs/release.md) when publishing a new version of DropSweep.
