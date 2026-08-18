@@ -22,7 +22,7 @@ class MenuViewModel {
     var categories: [CategorySummary] = []
     var scanErrorMessage: String?
     var launchAtLoginEnabled: Bool = SMAppService.mainApp.status == .enabled
-    @ObservationIgnored private var deletableItems: [URL] = []
+    @ObservationIgnored private var deletableItems: [DownloadsItem] = []
 
     init() {
         scanDownloadsFolder()
