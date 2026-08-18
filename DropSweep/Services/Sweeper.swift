@@ -39,10 +39,14 @@ actor Sweeper {
                 return result
             }
 
-            let values = try? item.resourceValues(forKeys: [.isDirectoryKey, .isRegularFileKey])
+            let values = try? item.resourceValues(forKeys: [.isDirectoryKey, .isRegularFileKey, .fileResourceIdentifierKey])
+            let downloadsItem = DownloadsItem(
+                url: item,
+                fileResourceIdentifier: values?.fileResourceIdentifier as? Data
+            )
 
             if values?.isDirectory == true {
-                result.items.append(item)
+                result.items.append(downloadsItem)
                 result.folderCount += 1
                 let sizeBytes = sizeOfDirectory(item, visitedCacheURLs: &visitedCacheURLs)
                 result.folderSizeBytes += sizeBytes
@@ -55,7 +59,7 @@ actor Sweeper {
             }
 
             let sizeBytes = sizeOfFile(item, visitedCacheURLs: &visitedCacheURLs)
-            result.items.append(item)
+            result.items.append(downloadsItem)
             result.totalFiles += 1
             result.totalSizeBytes += sizeBytes
 
@@ -175,29 +179,37 @@ actor Sweeper {
     ]
     
     @discardableResult
-    func deleteItemsInDownloads(_ items: [URL], moveToTrash: Bool = true) -> (deleted: Int, failures: [(url: URL, error: Error)]) {
+    func deleteItemsInDownloads(_ items: [DownloadsItem], moveToTrash: Bool = true) -> (deleted: Int, failures: [(url: URL, error: Error)]) {
         let downloadsURL = downloadsURL.standardizedFileURL
         var deleted = 0
         var failures: [(url: URL, error: Error)] = []
 
         for item in items {
-            let item = item.standardizedFileURL
+            let url = item.url.standardizedFileURL
 
-            guard item.deletingLastPathComponent() == downloadsURL else {
-                failures.append((item, CocoaError(.fileNoSuchFile)))
+            guard url.deletingLastPathComponent() == downloadsURL else {
+                failures.append((url, CocoaError(.fileNoSuchFile)))
                 continue
             }
 
             do {
-                if moveToTrash {
-                    try fileManager.trashItem(at: item, resultingItemURL: nil)
-                } else {
-                    try fileManager.removeItem(at: item)
+                let currentIdentifier = try url.resourceValues(forKeys: [.fileResourceIdentifierKey])
+                    .fileResourceIdentifier as? Data
+
+                guard let scannedIdentifier = item.fileResourceIdentifier,
+                      currentIdentifier == scannedIdentifier else {
+                    throw CocoaError(.fileReadUnknown)
                 }
-                sizeCache[item] = nil
+
+                if moveToTrash {
+                    try fileManager.trashItem(at: url, resultingItemURL: nil)
+                } else {
+                    try fileManager.removeItem(at: url)
+                }
+                sizeCache[url] = nil
                 deleted += 1
             } catch {
-                failures.append((item, error))
+                failures.append((url, error))
             }
         }
 
@@ -210,7 +222,7 @@ actor Sweeper {
 }
 
 nonisolated struct DownloadsScanResult {
-    var items: [URL] = []
+    var items: [DownloadsItem] = []
     var scanErrorMessage: String?
     var totalFiles: Int = 0
     var installerCount: Int = 0
@@ -226,6 +238,11 @@ nonisolated struct DownloadsScanResult {
     var screenshotSizeBytes: Int64 = 0
     var folderSizeBytes: Int64 = 0
     var otherSizeBytes: Int64 = 0
+}
+
+nonisolated struct DownloadsItem: Sendable {
+    let url: URL
+    let fileResourceIdentifier: Data?
 }
 
 nonisolated private struct CachedSize {
