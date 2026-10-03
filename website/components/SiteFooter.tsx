@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
-import { PORTFOLIO_URL } from "@/lib/seo";
 
 export function SiteFooter() {
   return (
@@ -26,12 +25,6 @@ export function SiteFooter() {
           >
             Privacy
           </Link>
-          <a
-            href={PORTFOLIO_URL}
-            className="transition-colors hover:text-foreground"
-          >
-            Implementation
-          </a>
           <a
             href="https://itstimo.me"
             target="_blank"
