@@ -10,8 +10,6 @@ export const SITE_URL = "https://dropsweep.itstimo.me";
 
 export const SITE_LAST_MODIFIED = "2026-07-31";
 
-export const PORTFOLIO_URL = "https://itstimo.me/projects/dropsweep";
-
 export const WEBSITE_ID = `${SITE_URL}/#website`;
 export const WEBPAGE_ID = `${SITE_URL}/#webpage`;
 export const SOFTWARE_ID = `${SITE_URL}/#software`;

@@ -1,5 +1,4 @@
 import {
-  PORTFOLIO_URL,
   REPO_URL,
   SITE_DESCRIPTION,
   SITE_NAME,
@@ -34,7 +33,6 @@ the Mac; nothing is uploaded. macOS 26 or later is required. MIT licensed.
 ## Source
 
 - [GitHub repository](${REPO_URL}): Source code, releases, and issue tracker.
-- [Project page](${PORTFOLIO_URL}): Background on the project by its author.
 
 ## Usage
 
