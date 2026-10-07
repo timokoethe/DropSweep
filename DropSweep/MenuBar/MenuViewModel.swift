@@ -78,6 +78,7 @@ class MenuViewModel {
             CategorySummary(singularTitle: "Archive", pluralTitle: "Archives", count: result.archiveCount, sizeBytes: result.archiveSizeBytes),
             CategorySummary(singularTitle: "PDF", pluralTitle: "PDFs", count: result.pdfCount, sizeBytes: result.pdfSizeBytes),
             CategorySummary(singularTitle: "Screenshot", pluralTitle: "Screenshots", count: result.screenshotCount, sizeBytes: result.screenshotSizeBytes),
+            CategorySummary(singularTitle: "Image", pluralTitle: "Images", count: result.imageCount, sizeBytes: result.imageSizeBytes),
             CategorySummary(singularTitle: "Folder", pluralTitle: "Folders", count: result.folderCount, sizeBytes: result.folderSizeBytes),
             CategorySummary(singularTitle: "Other File", pluralTitle: "Other Files", count: result.otherCount, sizeBytes: result.otherSizeBytes)
         ].filter { $0.count > 0 }

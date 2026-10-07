@@ -122,6 +122,7 @@ const categories = [
   { title: "Archives", hint: ".zip, .xip, .tar" },
   { title: "PDFs", hint: "documents" },
   { title: "Screenshots", hint: "captures" },
+  { title: "Images", hint: ".png, .jpg, .svg" },
   { title: "Folders", hint: "directories" },
   { title: "Other", hint: "everything else" },
 ];
@@ -133,7 +134,7 @@ const features = [
   },
   {
     title: "Groups the clutter",
-    body: "Installers, archives, PDFs, screenshots and stray folders are sorted into clear categories at a glance.",
+    body: "Installers, archives, PDFs, screenshots, images and stray folders are sorted into clear categories at a glance.",
   },
   {
     title: "One-click cleanup",
