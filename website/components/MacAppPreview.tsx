@@ -3,8 +3,9 @@ const menuPreviewCategories = [
   { title: "Archives", count: 4, size: "412 MB" },
   { title: "PDFs", count: 3, size: "18 MB" },
   { title: "Screenshots", count: 8, size: "42 MB" },
+  { title: "Images", count: 3, size: "64 MB" },
   { title: "Folders", count: 2, size: "296 MB" },
-  { title: "Other Files", count: 4, size: "91 MB" },
+  { title: "Other Files", count: 1, size: "27 MB" },
 ];
 
 export function MacAppPreview() {

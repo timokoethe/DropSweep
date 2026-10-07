@@ -75,6 +75,9 @@ actor Sweeper {
             } else if isScreenshot(item) {
                 result.screenshotCount += 1
                 result.screenshotSizeBytes += sizeBytes
+            } else if isImage(item) {
+                result.imageCount += 1
+                result.imageSizeBytes += sizeBytes
             } else {
                 result.otherCount += 1
                 result.otherSizeBytes += sizeBytes
@@ -165,6 +168,15 @@ actor Sweeper {
             || filename.contains("cleanshot")
     }
 
+    private func isImage(_ url: URL) -> Bool {
+        Self.imageExtensions.contains(url.pathExtension.lowercased())
+    }
+
+    private static let imageExtensions: Set<String> = [
+        "png", "jpg", "jpeg", "svg", "gif", "webp", "heic", "heif",
+        "tif", "tiff", "bmp", "avif", "ico"
+    ]
+
     private static let resourceKeys: [URLResourceKey] = [
         .isDirectoryKey,
         .isRegularFileKey,
@@ -229,6 +241,7 @@ nonisolated struct DownloadsScanResult {
     var archiveCount: Int = 0
     var pdfCount: Int = 0
     var screenshotCount: Int = 0
+    var imageCount: Int = 0
     var folderCount: Int = 0
     var otherCount: Int = 0
     var totalSizeBytes: Int64 = 0
@@ -236,6 +249,7 @@ nonisolated struct DownloadsScanResult {
     var archiveSizeBytes: Int64 = 0
     var pdfSizeBytes: Int64 = 0
     var screenshotSizeBytes: Int64 = 0
+    var imageSizeBytes: Int64 = 0
     var folderSizeBytes: Int64 = 0
     var otherSizeBytes: Int64 = 0
 }
