@@ -39,6 +39,11 @@ actor Sweeper {
                 return result
             }
 
+            // Check before classifying directories: Safari downloads can be bundles.
+            guard !Self.incompleteDownloadExtensions.contains(item.pathExtension.lowercased()) else {
+                continue
+            }
+
             let values = try? item.resourceValues(forKeys: [.isDirectoryKey, .isRegularFileKey, .fileResourceIdentifierKey])
             let downloadsItem = DownloadsItem(
                 url: item,
@@ -171,6 +176,10 @@ actor Sweeper {
     private func isImage(_ url: URL) -> Bool {
         Self.imageExtensions.contains(url.pathExtension.lowercased())
     }
+
+    private static let incompleteDownloadExtensions: Set<String> = [
+        "crdownload", "download", "part", "partial", "opdownload", "filepart"
+    ]
 
     private static let imageExtensions: Set<String> = [
         "png", "jpg", "jpeg", "svg", "gif", "webp", "heic", "heif",
