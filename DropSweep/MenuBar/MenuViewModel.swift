@@ -88,15 +88,22 @@ class MenuViewModel {
         launchAtLoginEnabled = SMAppService.mainApp.status == .enabled
     }
 
-    func deleteDownloads() {
+    func itemsForDeletionConfirmation() -> [DownloadsItem]? {
         guard canDeleteDownloads else {
+            return nil
+        }
+
+        return deletableItems
+    }
+
+    func deleteDownloads(_ confirmedItems: [DownloadsItem]) {
+        guard !isDeleting && !confirmedItems.isEmpty else {
             return
         }
 
         scanTask?.cancel()
         isScanning = true
         isDeleting = true
-        let itemsToDelete = deletableItems
 
         deleteTask = Task {
             defer {
@@ -104,7 +111,7 @@ class MenuViewModel {
                 isDeleting = false
             }
 
-            let deleteResult = await sweeper.deleteItemsInDownloads(itemsToDelete)
+            let deleteResult = await sweeper.deleteItemsInDownloads(confirmedItems)
             let scanResult = await sweeper.scanDownloadsFolder()
 
             guard !Task.isCancelled else {

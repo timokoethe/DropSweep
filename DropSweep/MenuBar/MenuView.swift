@@ -52,10 +52,14 @@ struct MenuView: View {
     }
 
     private func confirmDeleteDownloads() {
-        let itemLabel = vm.itemsCount == 1 ? "item" : "items"
+        guard let confirmedItems = vm.itemsForDeletionConfirmation() else {
+            return
+        }
+
+        let itemLabel = confirmedItems.count == 1 ? "item" : "items"
         let alert = NSAlert()
 
-        alert.messageText = "Move \(vm.itemsCount) \(itemLabel) to the Trash?"
+        alert.messageText = "Move \(confirmedItems.count) \(itemLabel) to the Trash?"
         alert.informativeText = "This moves all listed items from Downloads to the Trash."
         alert.alertStyle = .warning
         alert.addButton(withTitle: "Move to Trash")
@@ -65,7 +69,7 @@ struct MenuView: View {
             return
         }
 
-        vm.deleteDownloads()
+        vm.deleteDownloads(confirmedItems)
     }
 }
 
