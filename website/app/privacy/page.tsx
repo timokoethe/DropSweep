@@ -27,7 +27,7 @@ export default function PrivacyPage() {
           <h2 className={headingClassName}>The DropSweep app</h2>
           <p className={paragraphClassName}>
             DropSweep scans your Downloads folder locally on your Mac. File
-            names, file contents, category results, and cleanup selections are
+            names, file contents, category results, and confirmed cleanup actions are
             not uploaded to the DropSweep website or its developer. The app
             does not require an account and does not include advertising or
             product analytics.
