@@ -5,9 +5,6 @@
 .env
 .env.*
 
-## Xcode workspace
-*.xcworkspace
-
 ## Build generated
 build/
 DerivedData/
@@ -45,3 +42,6 @@ cpd-output.xml
 ## Swift Package Manager
 # Packages/
 .build/
+
+# Local Xcode signing overrides
+/Config/Local.xcconfig

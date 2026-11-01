@@ -1,0 +1,9 @@
+// Portable defaults. Build unsigned with CODE_SIGNING_ALLOWED=NO.
+DROPSWEEP_DEVELOPMENT_TEAM =
+DROPSWEEP_BUNDLE_IDENTIFIER = com.timokoethe.DropSweep
+
+// Optional per-developer signing and bundle identifier overrides.
+#include? "Local.xcconfig"
+
+DEVELOPMENT_TEAM = $(DROPSWEEP_DEVELOPMENT_TEAM)
+PRODUCT_BUNDLE_IDENTIFIER = $(DROPSWEEP_BUNDLE_IDENTIFIER)
