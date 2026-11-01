@@ -30,44 +30,18 @@ struct DropSweepApp: App {
 
     var body: some Scene {
         MenuBarExtra {
-            MenuView(vm: vm)
-
-            
-            // MARK: App Actions
-            Divider()
-
-            Toggle("Launch at Login", isOn: Binding(
-                get: { vm.launchAtLoginEnabled },
-                set: { vm.setLaunchAtLogin($0) }
-            ))
-            
-            Button {
-                updaterController.checkForUpdates(nil)
-            } label: {
-                MenuItemLabel("Check for Updates…")
-            }
-            .disabled(!checkForUpdatesViewModel.canCheckForUpdates)
-            
-            Button {
-                vm.showAboutPanel()
-            } label: {
-                MenuItemLabel("About DropSweep")
-            }
-
-            Button {
-                vm.quitApp()
-            }
-            label: {
-                MenuItemLabel("Quit DropSweep")
-            }
-            .keyboardShortcut("q", modifiers: .command)
+            MenuView(
+                vm: vm,
+                canCheckForUpdates: checkForUpdatesViewModel.canCheckForUpdates,
+                checkForUpdates: { updaterController.checkForUpdates(nil) }
+            )
         } label: {
             Image("MenuBarIcon")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 18, height: 18)
         }
-        .menuBarExtraStyle(.menu)
+        .menuBarExtraStyle(.window)
         .commands {
             CommandGroup(replacing: .appTermination) {
                 Button("Quit DropSweep") {
