@@ -4,11 +4,9 @@ export const SITE_TITLE =
   "DropSweep - Clean up your Downloads from the menu bar";
 
 export const SITE_DESCRIPTION =
-  "Clean up your Mac Downloads folder from the menu bar. DropSweep groups clutter and moves what you no longer need to the Trash in one click.";
+  "See what is in your Downloads, then move all listed items to the Trash after confirmation. Free, open source, and local to your Mac. Requires macOS 26 or later.";
 
 export const SITE_URL = "https://dropsweep.itstimo.me";
-
-export const SITE_LAST_MODIFIED = "2026-07-31";
 
 export const WEBSITE_ID = `${SITE_URL}/#website`;
 export const WEBPAGE_ID = `${SITE_URL}/#webpage`;

@@ -38,7 +38,7 @@ export function SoftwareApplicationJsonLd({
       "Scan the macOS Downloads folder",
       "Group downloads by common file type",
       "Review the current item count from the menu bar",
-      "Move Downloads items to the Trash",
+      "Move all listed Downloads items to the Trash after confirmation",
       "Skip hidden items at the top level of the Downloads folder",
     ],
     author: {

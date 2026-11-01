@@ -22,7 +22,11 @@ the Mac; nothing is uploaded. macOS 26 or later is required. MIT licensed.
 
 ## Key facts
 
-- Categories: installers, archives, PDFs, screenshots, other files, and folders.
+- Categories: installers, archives, PDFs, screenshots, images, other files, and folders.
+- Cleanup includes all listed items; individual selection and automatic cleanup are not supported.
+- Recognized incomplete downloads are skipped.
+- Category grouping is a summary, not file organization.
+- Files can be restored while still in the Trash. DropSweep does not empty it or immediately free disk space.
 - Items are moved to the macOS Trash, never permanently deleted, and only after confirmation.
 - Only visible top-level entries in Downloads are scanned; hidden items in the Downloads root are skipped.
 - Hidden contents inside a visible folder move to the Trash together with that folder.

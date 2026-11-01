@@ -11,7 +11,7 @@ import {
 } from "@/lib/seo";
 import { Logo } from "@/components/Logo";
 import { DownloadButton } from "@/components/DownloadButton";
-import { MacAppPreview } from "@/components/MacAppPreview";
+import Image from "next/image";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 
@@ -94,12 +94,12 @@ async function getLatestRelease(): Promise<LatestRelease> {
       assets.find(
         (asset) =>
           typeof asset.name === "string" &&
-          asset.name.toLowerCase().endsWith(".dmg"),
+          asset.name.toLowerCase().endsWith(".zip"),
       ) ??
       assets.find(
         (asset) =>
           typeof asset.name === "string" &&
-          asset.name.toLowerCase().endsWith(".zip"),
+          asset.name.toLowerCase().endsWith(".dmg"),
       );
     const assetUrl =
       typeof downloadAsset?.browser_download_url === "string"
@@ -130,19 +130,19 @@ const categories = [
 const features = [
   {
     title: "Scans your Downloads",
-    body: "Opens straight from the menu bar and reads what's piling up — no setup, no folders to configure.",
+    body: "See what is in your Downloads from the menu bar. No folders to configure.",
   },
   {
     title: "Groups the clutter",
-    body: "Installers, archives, PDFs, screenshots, images and stray folders are sorted into clear categories at a glance.",
+    body: "Files and folders are shown by category, with item counts and sizes.",
   },
   {
-    title: "One-click cleanup",
-    body: "Send everything you don't need to the Trash in a single tap, then get back to what you were doing.",
+    title: "Confirm before moving",
+    body: "Review the summary before confirming that all listed items should move.",
   },
   {
-    title: "Safe by design",
-    body: "Items move to the Trash — never permanently deleted — while hidden items at the top level of Downloads stay untouched.",
+    title: "Moves items to the Trash",
+    body: "DropSweep moves items to the macOS Trash without emptying it.",
   },
 ];
 
@@ -161,9 +161,7 @@ function GitHubIcon({ className = "" }: { className?: string }) {
 
 export default async function Home() {
   const release = await getLatestRelease();
-  const downloadLabel = release.version
-    ? `Download ${release.version}`
-    : "Download for macOS";
+  const downloadLabel = "Download for macOS";
 
   return (
     <div className="flex flex-col min-h-full">
@@ -175,47 +173,65 @@ export default async function Home() {
 
       <SiteHeader />
 
-      <main className="mx-auto w-full max-w-5xl flex-1 px-6">
-        {/* Hero */}
-        <section className="flex flex-col items-center pt-16 pb-20 text-center sm:pt-24">
-          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            Lives in your macOS menu bar
-          </span>
-
-          <h1 className="max-w-2xl text-balance text-4xl font-semibold tracking-tight sm:text-6xl">
-            Keep your Mac Downloads folder clean.
-          </h1>
-
-          <p className="mt-6 max-w-xl text-balance text-lg text-muted">
-            DropSweep scans your Downloads, groups the clutter into clear
-            categories, and moves what you don&apos;t need to the Trash — all in
-            a single click.
-          </p>
-
-          <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
-            <DownloadButton
-              href={release.downloadUrl}
-              label={downloadLabel}
-              version={release.version}
+      <main className="mx-auto w-full max-w-[1480px] flex-1 px-6 lg:px-10">
+        <section className="home-hero">
+          <div className="hero-copy">
+            <span className="hero-badge">
+              <span
+                aria-hidden="true"
+                className="h-2 w-2 rounded-full bg-emerald-500"
+              />
+              A tiny app for your Mac&apos;s menu bar
+            </span>
+            <h1>
+              Clear your
+              <br />
+              Downloads.
+              <br />
+              Get back to work.
+            </h1>
+            <p className="hero-description">
+              See what&apos;s in your Downloads, then move all listed items to
+              the Trash after confirmation.
+            </p>
+            <div className="hero-actions">
+              <DownloadButton
+                href={release.downloadUrl}
+                label="Download for macOS"
+                version={release.version}
+              />
+              <a
+                href={REPO_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-3 text-muted transition-colors hover:text-foreground"
+              >
+                <GitHubIcon className="h-6 w-6" />
+                View on GitHub
+              </a>
+            </div>
+            <p className="mt-4 text-sm text-muted">
+              Free · Open source · macOS 26+
+            </p>
+            <ul className="hero-reassurance">
+              <li>Files go to the Trash.</li>
+              <li>File names and contents stay on your Mac.</li>
+            </ul>
+          </div>
+          <figure className="hero-preview">
+            <Image
+              src="/Image.png"
+              width={1600}
+              height={1100}
+              unoptimized
+              preload
+              alt="DropSweep in the macOS menu bar, showing Downloads grouped by category and a Move Listed Items to Trash button."
+              className="h-auto w-full rounded-[20px] border border-border shadow-2xl"
             />
-            <a
-              href={REPO_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-border px-6 text-sm font-medium transition-colors hover:bg-card"
-            >
-              <GitHubIcon className="h-4 w-4" />
-              View on GitHub
-            </a>
-          </div>
-
-          <p className="mt-5 text-xs text-muted">Free · Open source · macOS</p>
-          <p className="mt-2 text-xs text-muted">Requires macOS 26 or later.</p>
-
-          <div className="mt-16">
-            <MacAppPreview />
-          </div>
+            <figcaption className="mt-4 text-center text-sm text-muted">
+              Your Downloads, at a glance.
+            </figcaption>
+          </figure>
         </section>
 
         {/* Features */}
@@ -236,11 +252,11 @@ export default async function Home() {
         {/* Categories */}
         <section className="border-t border-border py-20">
           <h2 className="text-2xl font-semibold tracking-tight">
-            Everything, sorted.
+            Your Downloads, grouped.
           </h2>
           <p className="mt-2 max-w-md text-sm text-muted">
-            DropSweep recognises the files that usually pile up and keeps them
-            grouped so you always know what you&apos;re clearing.
+            See the types of files in Downloads and how much space each category
+            uses.
           </p>
           <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
             {categories.map((c) => (
@@ -255,14 +271,104 @@ export default async function Home() {
           </div>
         </section>
 
+        <section className="grid gap-8 border-t border-border py-16 md:grid-cols-[1fr_1.2fr] md:gap-16">
+          <div>
+            <p className="text-sm font-medium text-muted">Getting started</p>
+            <h2 className="mt-3 max-w-sm text-3xl font-semibold tracking-tight">
+              From download
+              <br />
+              to menu bar.
+            </h2>
+            <p className="mt-4 max-w-sm text-sm leading-6 text-muted">
+              A quick setup, then your Downloads are a glance away.
+            </p>
+          </div>
+          <ol className="divide-y divide-border">
+            {[
+              {
+                title: "Download & unzip",
+                body: "Download DropSweep for macOS and unzip the file.",
+              },
+              {
+                title: "Move to Applications",
+                body: "Drag DropSweep into your Applications folder.",
+              },
+              {
+                title: "Open & find DropSweep",
+                body: "Open the app, then look for its icon in your Mac’s menu bar.",
+              },
+            ].map((step, index) => (
+              <li
+                key={step.title}
+                className="flex gap-5 py-5 first:pt-0 last:pb-0"
+              >
+                <span
+                  aria-hidden="true"
+                  className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-card text-sm font-medium"
+                >
+                  {index + 1}
+                </span>
+                <div>
+                  <h3 className="font-medium">{step.title}</h3>
+                  <p className="mt-1 text-sm leading-6 text-muted">
+                    {step.body}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="border-t border-border py-16">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Before you sweep.
+          </h2>
+          <div className="mt-8 grid gap-8 md:grid-cols-3">
+            <div>
+              <h3 className="font-semibold">What gets moved?</h3>
+              <p className="mt-3 text-sm leading-7 text-muted">
+                After confirmation, DropSweep attempts to move all listed files
+                and folders from Downloads to the Trash. You cannot select
+                individual items. Hidden items directly in Downloads and
+                recognized incomplete downloads are skipped. A listed folder
+                moves with all its contents, including hidden files. Any
+                failures are reported.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold">Can I recover my files?</h3>
+              <p className="mt-3 text-sm leading-7 text-muted">
+                Yes, while they are still in the Trash. Open the Trash in Finder
+                and use Put Back to restore an item. DropSweep does not empty
+                the Trash. Moving items there does not immediately free their
+                disk space.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold">What do I need?</h3>
+              <p className="mt-3 text-sm leading-7 text-muted">
+                A Mac running macOS 26 or later. DropSweep is free and open
+                source. Scanning and moving files happen locally; file names and
+                contents stay on your Mac.
+              </p>
+            </div>
+          </div>
+          <a
+            href="/faq"
+            className="mt-8 inline-block text-sm underline underline-offset-4"
+          >
+            Read all FAQs
+          </a>
+        </section>
+
         {/* CTA */}
         <section className="border-t border-border py-20 text-center">
           <h2 className="text-2xl font-semibold tracking-tight">
             Ready to sweep?
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm text-muted">
-            Tiny download, lives quietly in your menu bar, and keeps your
-            Downloads tidy for good.
+            Review your Downloads from the menu bar and decide when to move all
+            listed items to the Trash.
           </p>
           <a
             href={release.downloadUrl}

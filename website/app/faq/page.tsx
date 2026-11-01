@@ -20,12 +20,12 @@ const questions = [
   {
     question: "Does DropSweep permanently delete my files?",
     answer:
-      "No. DropSweep moves confirmed items to the macOS Trash instead of permanently deleting them. You can review the item count and categories before starting a sweep.",
+      "No. DropSweep moves confirmed items to the macOS Trash instead of permanently deleting them. You can review the item count and categories before starting a sweep. All listed items are included; individual selection is not supported. While items remain in the Trash, you can restore them using Put Back in Finder. DropSweep does not empty the Trash, and moving files there does not immediately free disk space.",
   },
   {
     question: "Which files does DropSweep scan?",
     answer:
-      "It scans visible top-level entries in Downloads and groups regular files as installers, archives, PDFs, screenshots, or other files. Visible folders are listed separately and their size is included in the summary.",
+      "It scans visible top-level entries in Downloads and groups regular files as installers, archives, PDFs, screenshots, images, or other files. Visible folders are listed separately and their size is included in the summary. Recognized incomplete downloads are skipped.",
   },
   {
     question: "What happens to hidden items?",
