@@ -1,44 +1,58 @@
-# DropSweep for macOS
+<p align="center">
+  <img src="website/public/dropsweep-icon.png" alt="DropSweep app icon" width="112" height="112">
+</p>
 
-[![GitHub Release](https://img.shields.io/github/v/release/timokoethe/dropsweep?label=release)](https://github.com/timokoethe/dropsweep/releases/latest)
-[![License: MIT](https://img.shields.io/badge/license-MIT-orange)](https://opensource.org/license/mit)
-![Framework](https://img.shields.io/badge/SwiftUI-orange)
-![Platform](https://img.shields.io/badge/Platforms-macOS-orange)
-![Xcode](https://img.shields.io/badge/Xcode-26-orange)
-![macOS](https://img.shields.io/badge/macOS-26-orange)
-![Apple](https://img.shields.io/badge/Apple-000000?style=flat&logo=apple)
+<h1 align="center">DropSweep</h1>
 
-DropSweep is a small macOS menu bar app for keeping your Downloads folder tidy.
+<p align="center">
+  <strong>A tidier Downloads folder. Right from your menu bar.</strong><br>
+  A small, native macOS app that groups download clutter and moves it to the Trash.
+</p>
 
-[Product website](https://dropsweep.itstimo.me) ·
-[Implementation reference](https://itstimo.me/projects/dropsweep)
+<p align="center">
+  <a href="https://github.com/timokoethe/DropSweep/releases/latest"><img src="https://img.shields.io/github/v/release/timokoethe/dropsweep?style=flat&label=release&color=3875F6" alt="Latest release"></a>
+  <img src="https://img.shields.io/badge/macOS-26%2B-3875F6?style=flat" alt="Requires macOS 26 or later">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-6B7280?style=flat" alt="MIT license"></a>
+</p>
 
-It scans common download clutter such as installers, archives, PDFs, screenshots, images, folders, and other files, then lets you move everything to the Trash from a compact menu bar interface.
+<p align="center">
+  <a href="https://github.com/timokoethe/DropSweep/releases/latest"><strong>Download for macOS</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://dropsweep.itstimo.me">Website</a>
+  &nbsp;·&nbsp;
+  <a href="#development">Development</a>
+</p>
 
-## Installation
+<p align="center">
+  <img src="website/public/Image.png" alt="DropSweep menu showing Downloads grouped by file type, item counts and sizes, with an action to move listed items to the Trash" width="860">
+</p>
+
+## Less clutter, a clearer overview
+
+See what has piled up in Downloads, review it at a glance, and clear the listed items when you’re ready.
+
+| | What DropSweep does |
+| :--- | :--- |
+| **Always within reach** | [A compact menu bar interface](docs/features/menu-bar-access.md) without another window on your desktop. |
+| **Clutter, grouped** | [Installers, archives, PDFs, screenshots, images, folders, and other files](docs/features/download-categories.md), with item counts and sizes. |
+| **Recoverable cleanup** | [Confirm before moving listed items to the macOS Trash](docs/features/move-to-trash.md), where they remain recoverable until you empty it. |
+| **Ready when you are** | Optional [launch at login](docs/features/launch-at-login.md) and built-in [update checks](docs/features/app-updates.md). |
+
+## Get started
+
+**Requires macOS 26 or later.**
 
 1. Download the latest version from [GitHub Releases](https://github.com/timokoethe/DropSweep/releases/latest).
 2. Unzip the downloaded archive.
 3. Move `DropSweep.app` to your Applications folder and open it.
 
-## Features
+Open DropSweep from the menu bar to review your Downloads. Choose **Move Listed Items to Trash** and confirm to clean up.
 
-- [Access DropSweep from the menu bar](docs/features/menu-bar-access.md)
-- [Scan the macOS Downloads folder](docs/features/downloads-scanning.md)
-- [Group downloads by common file type and size](docs/features/download-categories.md)
-- [Move listed Downloads items to the Trash](docs/features/move-to-trash.md)
-- [Launch DropSweep at login](docs/features/launch-at-login.md)
-- [Check for app updates](docs/features/app-updates.md)
+## Your files stay on your Mac
 
-Detailed behavior and acceptance criteria for each native app feature are documented in [`docs/features/`](docs/features/).
+DropSweep [scans your Downloads folder locally](docs/features/downloads-scanning.md) and does not upload file names or contents. Network access is only used to check for and download app updates through Sparkle.
 
-## System Requirements
-
-- macOS 26 or later
-
-## Privacy
-
-DropSweep scans your Downloads folder locally and does not upload file names or contents. Network access is only used to check for and download app updates through Sparkle.
+Cleanup is limited to listed items in Downloads. Hidden items directly in the Downloads folder are skipped; contents inside a listed folder move to the Trash together with that folder.
 
 ## Development
 
@@ -52,7 +66,15 @@ Open the project in Xcode and run the `DropSweep` scheme:
 open DropSweep.xcodeproj
 ```
 
-The native SwiftUI app is located in [`DropSweep/`](DropSweep/).
+The native app uses Swift 6, SwiftUI, AppKit, and Observation. Its source is in [`DropSweep/`](DropSweep/), with feature behavior and acceptance criteria in [`docs/features/`](docs/features/).
+
+For a command-line build:
+
+```sh
+xcodebuild -project DropSweep.xcodeproj -scheme DropSweep build
+```
+
+See the [implementation reference](https://itstimo.me/projects/dropsweep) for more project context.
 
 ### Website
 
