@@ -122,14 +122,25 @@ class MenuViewModel {
     func setLaunchAtLogin(_ isEnabled: Bool) {
         do {
             if isEnabled {
-                try SMAppService.mainApp.register()
+                // An existing registration may only be waiting for user approval.
+                if SMAppService.mainApp.status != .requiresApproval {
+                    try SMAppService.mainApp.register()
+                }
             } else {
                 try SMAppService.mainApp.unregister()
             }
-            launchAtLoginEnabled = SMAppService.mainApp.status == .enabled
+            refreshLaunchAtLoginStatus()
+
+            if isEnabled && SMAppService.mainApp.status == .requiresApproval {
+                showLaunchAtLoginApprovalRequired()
+            }
         } catch {
-            launchAtLoginEnabled = SMAppService.mainApp.status == .enabled
-            showLaunchAtLoginError(error)
+            refreshLaunchAtLoginStatus()
+            if isEnabled && SMAppService.mainApp.status == .requiresApproval {
+                showLaunchAtLoginApprovalRequired()
+            } else {
+                showLaunchAtLoginError(error)
+            }
         }
     }
 
@@ -167,6 +178,20 @@ class MenuViewModel {
     
     func quitApp() {
         NSApplication.shared.terminate(nil)
+    }
+
+    private func showLaunchAtLoginApprovalRequired() {
+        let alert = NSAlert()
+
+        alert.messageText = "Launch at Login Needs Approval"
+        alert.informativeText = "Allow DropSweep in Login Items in System Settings to launch it automatically when you sign in. Launch at Login will remain off until you approve it."
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "Open System Settings")
+        alert.addButton(withTitle: "Not Now")
+
+        if alert.runModal() == .alertFirstButtonReturn {
+            SMAppService.openSystemSettingsLoginItems()
+        }
     }
 
     private func showLaunchAtLoginError(_ error: Error) {
