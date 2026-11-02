@@ -68,10 +68,10 @@ open DropSweep.xcodeproj
 
 The native app uses Swift 6, SwiftUI, AppKit, and Observation. Its source is in [`DropSweep/`](DropSweep/), with feature behavior and acceptance criteria in [`docs/features/`](docs/features/).
 
-For a command-line build:
+For signed builds, follow the [local signing setup](CONTRIBUTING.md#getting-started). To build without signing:
 
 ```sh
-xcodebuild -project DropSweep.xcodeproj -scheme DropSweep build
+xcodebuild -project DropSweep.xcodeproj -scheme DropSweep CODE_SIGNING_ALLOWED=NO build
 ```
 
 See the [implementation reference](https://itstimo.me/projects/dropsweep) for more project context.
@@ -82,7 +82,7 @@ The DropSweep website is developed separately in [`website/`](website/). Its
 Next.js application code is located in [`website/app/`](website/app/), with the
 landing page in [`website/app/page.tsx`](website/app/page.tsx).
 
-To run the website locally:
+Requires Node.js 24 or later. To run the website locally:
 
 ```sh
 cd website
