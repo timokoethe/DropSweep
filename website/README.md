@@ -6,6 +6,8 @@ Built with **Next.js 16**, **React 19**, **Tailwind CSS 4**, and **TypeScript**.
 
 ## Development
 
+Requires Node.js 24 or later. Run from the `website/` directory:
+
 ```bash
 npm install
 npm run dev
