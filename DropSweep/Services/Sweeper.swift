@@ -200,7 +200,7 @@ actor Sweeper {
     ]
     
     @discardableResult
-    func deleteItemsInDownloads(_ items: [DownloadsItem], moveToTrash: Bool = true) -> (deleted: Int, failures: [(url: URL, error: Error)]) {
+    func deleteItemsInDownloads(_ items: [DownloadsItem]) -> (deleted: Int, failures: [(url: URL, error: Error)]) {
         let downloadsURL = downloadsURL.standardizedFileURL
         var deleted = 0
         var failures: [(url: URL, error: Error)] = []
@@ -222,11 +222,7 @@ actor Sweeper {
                     throw CocoaError(.fileReadUnknown)
                 }
 
-                if moveToTrash {
-                    try fileManager.trashItem(at: url, resultingItemURL: nil)
-                } else {
-                    try fileManager.removeItem(at: url)
-                }
+                try fileManager.trashItem(at: url, resultingItemURL: nil)
                 sizeCache[url] = nil
                 deleted += 1
             } catch {
