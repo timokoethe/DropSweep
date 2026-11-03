@@ -199,6 +199,7 @@ export default async function Home() {
                 href={release.downloadUrl}
                 label="Download for macOS"
                 version={release.version}
+                location="hero"
               />
               <a
                 href={REPO_URL}
@@ -370,13 +371,14 @@ export default async function Home() {
             Review your Downloads from the menu bar and decide when to move all
             listed items to the Trash.
           </p>
-          <a
+          <DownloadButton
             href={release.downloadUrl}
+            label={downloadLabel}
+            version={release.version}
+            location="bottom-cta"
+            icon={<Logo className="h-4 w-4" />}
             className="mt-8 inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-foreground px-6 text-sm font-medium text-background transition-opacity hover:opacity-90"
-          >
-            <Logo className="h-4 w-4" />
-            {downloadLabel}
-          </a>
+          />
         </section>
       </main>
 
