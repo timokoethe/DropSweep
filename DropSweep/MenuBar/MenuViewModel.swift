@@ -36,14 +36,6 @@ class MenuViewModel {
         !isScanning && !isDeleting && downloadsHasItems
     }
 
-    var downloadsSummary: String {
-        guard totalSizeBytes > 0 else {
-            return "Downloads: \(itemsSummary)"
-        }
-
-        return "Downloads: \(itemsSummary) · \(totalDisplaySize)"
-    }
-
     var itemsSummary: String {
         "\(itemsCount) \(itemsCount == 1 ? "item" : "items")"
     }
@@ -149,10 +141,6 @@ class MenuViewModel {
                 showLaunchAtLoginError(error)
             }
         }
-    }
-
-    func toggleLaunchAtLogin() {
-        setLaunchAtLogin(!launchAtLoginEnabled)
     }
 
     func showAboutPanel() {
