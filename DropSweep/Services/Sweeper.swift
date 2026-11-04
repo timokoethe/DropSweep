@@ -7,12 +7,31 @@
 
 import Foundation
 
-actor Sweeper {
-    private let fileManager = FileManager.default
+nonisolated protocol DownloadsSweeping: Sendable {
+    func scanDownloadsFolder() async -> DownloadsScanResult
+    func deleteItemsInDownloads(_ items: [DownloadsItem]) async -> (deleted: Int, failures: [(url: URL, error: Error)])
+}
+
+actor Sweeper: DownloadsSweeping {
+    private let fileManager: FileManager
+    private let downloadsURL: URL
+    private let trashItem: @Sendable (URL) throws -> Void
     private var sizeCache: [URL: CachedSize] = [:]
 
-    private var downloadsURL: URL {
-        fileManager.urls(for: .downloadsDirectory, in: .userDomainMask).first!
+    init() {
+        self.fileManager = .default
+        self.downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
+        self.trashItem = { url in
+            try FileManager.default.trashItem(at: url, resultingItemURL: nil)
+        }
+    }
+
+    // Require an explicit trash operation when supplying a directory so tests
+    // cannot accidentally use the real macOS Trash.
+    init(downloadsURL: URL, trashItem: @escaping @Sendable (URL) throws -> Void) {
+        self.fileManager = .default
+        self.downloadsURL = downloadsURL
+        self.trashItem = trashItem
     }
 
     func scanDownloadsFolder() -> DownloadsScanResult {
@@ -222,7 +241,7 @@ actor Sweeper {
                     throw CocoaError(.fileReadUnknown)
                 }
 
-                try fileManager.trashItem(at: url, resultingItemURL: nil)
+                try trashItem(url)
                 sizeCache[url] = nil
                 deleted += 1
             } catch {

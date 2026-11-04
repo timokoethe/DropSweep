@@ -76,6 +76,14 @@ xcodebuild -project DropSweep.xcodeproj -scheme DropSweep CODE_SIGNING_ALLOWED=N
 
 See the [implementation reference](https://itstimo.me/projects/dropsweep) for more project context.
 
+Run the native Swift Testing suites with **Product → Test** (`⌘U`) in Xcode, or:
+
+```sh
+xcodebuild -project DropSweep.xcodeproj -scheme DropSweep -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO test
+```
+
+See the [testing guide](docs/testing.md) for coverage, temporary-file fixtures, and how to add tests.
+
 ### Website
 
 The DropSweep website is developed separately in [`website/`](website/). Its

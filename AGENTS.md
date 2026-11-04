@@ -42,4 +42,4 @@ Useful command-line checks when available:
 xcodebuild -project DropSweep.xcodeproj -scheme DropSweep build
 ```
 
-There is no dedicated test target at the moment. For changes that affect scanning or deletion behavior, include clear manual test steps and cover empty Downloads, mixed file categories, folders, and trash failures where practical.
+The `DropSweepTests` target uses Swift Testing and runs without launching the app. Run it with `xcodebuild -project DropSweep.xcodeproj -scheme DropSweep -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO test`. See `docs/testing.md` for the test structure and fixture conventions. For changes that affect scanning or deletion behavior, extend the relevant tests and include clear manual test steps for macOS integration where practical.
