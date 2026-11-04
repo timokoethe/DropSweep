@@ -11,7 +11,7 @@ import ServiceManagement
 
 @Observable
 class MenuViewModel {
-    private let sweeper: Sweeper = .init()
+    private let sweeper: any DownloadsSweeping
     @ObservationIgnored private var scanTask: Task<Void, Never>?
     @ObservationIgnored private var deleteTask: Task<Void, Never>?
     
@@ -21,11 +21,19 @@ class MenuViewModel {
     var totalSizeBytes: Int64 = 0
     var categories: [CategorySummary] = []
     var scanErrorMessage: String?
-    var launchAtLoginEnabled: Bool = SMAppService.mainApp.status == .enabled
+    var launchAtLoginEnabled: Bool
     @ObservationIgnored private var deletableItems: [DownloadsItem] = []
 
-    init() {
-        scanDownloadsFolder()
+    init(
+        sweeper: any DownloadsSweeping = Sweeper(),
+        launchAtLoginEnabled: Bool = SMAppService.mainApp.status == .enabled,
+        scanOnInit: Bool = true
+    ) {
+        self.sweeper = sweeper
+        self.launchAtLoginEnabled = launchAtLoginEnabled
+        if scanOnInit {
+            scanDownloadsFolder()
+        }
     }
 
     var downloadsHasItems: Bool {
@@ -44,11 +52,12 @@ class MenuViewModel {
         Self.sizeFormatter.string(fromByteCount: totalSizeBytes)
     }
 
-    func scanDownloadsFolder() {
+    @discardableResult
+    func scanDownloadsFolder() -> Task<Void, Never> {
         scanTask?.cancel()
         isScanning = true
 
-        scanTask = Task {
+        let task = Task {
             let result = await sweeper.scanDownloadsFolder()
 
             guard !Task.isCancelled else {
@@ -58,6 +67,8 @@ class MenuViewModel {
             applyScanResult(result)
             isScanning = false
         }
+        scanTask = task
+        return task
     }
 
     private func applyScanResult(_ result: DownloadsScanResult) {
@@ -88,16 +99,17 @@ class MenuViewModel {
         return deletableItems
     }
 
-    func deleteDownloads(_ confirmedItems: [DownloadsItem]) {
+    @discardableResult
+    func deleteDownloads(_ confirmedItems: [DownloadsItem]) -> Task<Void, Never>? {
         guard !isDeleting && !confirmedItems.isEmpty else {
-            return
+            return nil
         }
 
         scanTask?.cancel()
         isScanning = true
         isDeleting = true
 
-        deleteTask = Task {
+        let task = Task {
             defer {
                 isScanning = false
                 isDeleting = false
@@ -116,6 +128,8 @@ class MenuViewModel {
                 showDeleteDownloadsError(deletedCount: deleteResult.deleted, failures: deleteResult.failures)
             }
         }
+        deleteTask = task
+        return task
     }
 
     func setLaunchAtLogin(_ isEnabled: Bool) {

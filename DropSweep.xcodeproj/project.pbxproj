@@ -9,12 +9,19 @@
 /* Begin PBXBuildFile section */
 		252B5A632FDDAC5400A66506 /* Icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 252B5A622FDDAC5400A66506 /* Icon.icon */; };
 		806DCC9B2FD5C1EE0088AF53 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 806DCC9A2FD5C1EE0088AF53 /* Sparkle */; };
+		D50D00000000000000000001 /* Sweeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50D00000000000000000003 /* Sweeper.swift */; };
+		D50D00000000000000000002 /* CategorySummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50D00000000000000000004 /* CategorySummary.swift */; };
+		D50D00000000000000000011 /* MenuViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50D00000000000000000012 /* MenuViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		D50C00000000000000000001 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		252B5A622FDDAC5400A66506 /* Icon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Icon.icon; sourceTree = "<group>"; };
 		259B1BAA2FC36D4600C564A8 /* DropSweep.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DropSweep.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D50D00000000000000000003 /* Sweeper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropSweep/Services/Sweeper.swift; sourceTree = SOURCE_ROOT; };
+		D50D00000000000000000004 /* CategorySummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropSweep/MenuBar/CategorySummary.swift; sourceTree = SOURCE_ROOT; };
+		D50D00000000000000000005 /* DropSweepTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DropSweepTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D50D00000000000000000012 /* MenuViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropSweep/MenuBar/MenuViewModel.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +43,11 @@
 			path = DropSweep;
 			sourceTree = "<group>";
 		};
+		D50D00000000000000000006 /* DropSweepTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = DropSweepTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +56,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				806DCC9B2FD5C1EE0088AF53 /* Sparkle in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D50D00000000000000000009 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,6 +81,8 @@
 			isa = PBXGroup;
 			children = (
 				259B1BAC2FC36D4600C564A8 /* DropSweep */,
+				D50D00000000000000000006 /* DropSweepTests */,
+				D50D00000000000000000010 /* Tested Sources */,
 				D50C00000000000000000002 /* Config */,
 				259B1BAB2FC36D4600C564A8 /* Products */,
 				252B5A622FDDAC5400A66506 /* Icon.icon */,
@@ -72,8 +93,19 @@
 			isa = PBXGroup;
 			children = (
 				259B1BAA2FC36D4600C564A8 /* DropSweep.app */,
+				D50D00000000000000000005 /* DropSweepTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D50D00000000000000000010 /* Tested Sources */ = {
+			isa = PBXGroup;
+			children = (
+				D50D00000000000000000003 /* Sweeper.swift */,
+				D50D00000000000000000004 /* CategorySummary.swift */,
+				D50D00000000000000000012 /* MenuViewModel.swift */,
+			);
+			name = "Tested Sources";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -101,6 +133,24 @@
 			productName = DropSweep;
 			productReference = 259B1BAA2FC36D4600C564A8 /* DropSweep.app */;
 			productType = "com.apple.product-type.application";
+		};
+		D50D00000000000000000007 /* DropSweepTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D50D0000000000000000000B /* Build configuration list for PBXNativeTarget "DropSweepTests" */;
+			buildPhases = (
+				D50D00000000000000000008 /* Sources */,
+				D50D00000000000000000009 /* Frameworks */,
+				D50D0000000000000000000A /* Resources */,
+			);
+			buildRules = ();
+			dependencies = ();
+			fileSystemSynchronizedGroups = (
+				D50D00000000000000000006 /* DropSweepTests */,
+			);
+			name = DropSweepTests;
+			productName = DropSweepTests;
+			productReference = D50D00000000000000000005 /* DropSweepTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -135,6 +185,7 @@
 			projectRoot = "";
 			targets = (
 				259B1BA92FC36D4600C564A8 /* DropSweep */,
+				D50D00000000000000000007 /* DropSweepTests */,
 			);
 		};
 /* End PBXProject section */
@@ -148,6 +199,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D50D0000000000000000000A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -155,6 +213,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D50D00000000000000000008 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D50D00000000000000000001 /* Sweeper.swift in Sources */,
+				D50D00000000000000000002 /* CategorySummary.swift in Sources */,
+				D50D00000000000000000011 /* MenuViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -357,6 +425,34 @@
 			};
 			name = Release;
 		};
+		D50D0000000000000000000C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@loader_path/../Frameworks", "@executable_path/../Frameworks");
+				PRODUCT_BUNDLE_IDENTIFIER = com.dropsweep.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		D50D0000000000000000000D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@loader_path/../Frameworks", "@executable_path/../Frameworks");
+				PRODUCT_BUNDLE_IDENTIFIER = com.dropsweep.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -374,6 +470,15 @@
 			buildConfigurations = (
 				259B1BB62FC36D4700C564A8 /* Debug */,
 				259B1BB72FC36D4700C564A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D50D0000000000000000000B /* Build configuration list for PBXNativeTarget "DropSweepTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D50D0000000000000000000C /* Debug */,
+				D50D0000000000000000000D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
