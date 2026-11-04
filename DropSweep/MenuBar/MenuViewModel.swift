@@ -20,6 +20,7 @@ class MenuViewModel {
     var itemsCount: Int = 0
     var totalSizeBytes: Int64 = 0
     var categories: [CategorySummary] = []
+    var selectedCategories: Set<DownloadsCategory> = Set(DownloadsCategory.allCases)
     var scanErrorMessage: String?
     var launchAtLoginEnabled: Bool
     @ObservationIgnored private var deletableItems: [DownloadsItem] = []
@@ -36,12 +37,29 @@ class MenuViewModel {
         }
     }
 
-    var downloadsHasItems: Bool {
-        itemsCount > 0
+    var canDeleteDownloads: Bool {
+        !isScanning && !isDeleting && scanErrorMessage == nil && selectedItemsCount > 0
     }
 
-    var canDeleteDownloads: Bool {
-        !isScanning && !isDeleting && downloadsHasItems
+    subscript(isSelected category: DownloadsCategory) -> Bool {
+        get { selectedCategories.contains(category) }
+        set {
+            if newValue {
+                selectedCategories.insert(category)
+            } else {
+                selectedCategories.remove(category)
+            }
+        }
+    }
+
+    var selectedItemsCount: Int {
+        categories.filter { selectedCategories.contains($0.category) }.reduce(0) { $0 + $1.count }
+    }
+
+    var selectionSummary: String {
+        let bytes = categories.filter { selectedCategories.contains($0.category) }.reduce(Int64(0)) { $0 + $1.sizeBytes }
+        let size = Self.sizeFormatter.string(fromByteCount: bytes)
+        return "\(selectedItemsCount) \(selectedItemsCount == 1 ? "item" : "items") selected · \(size)"
     }
 
     var itemsSummary: String {
@@ -77,13 +95,13 @@ class MenuViewModel {
         itemsCount = result.totalFiles + result.folderCount
         totalSizeBytes = result.totalSizeBytes
         categories = [
-            CategorySummary(singularTitle: "Installer", pluralTitle: "Installers", count: result.installerCount, sizeBytes: result.installerSizeBytes),
-            CategorySummary(singularTitle: "Archive", pluralTitle: "Archives", count: result.archiveCount, sizeBytes: result.archiveSizeBytes),
-            CategorySummary(singularTitle: "PDF", pluralTitle: "PDFs", count: result.pdfCount, sizeBytes: result.pdfSizeBytes),
-            CategorySummary(singularTitle: "Screenshot", pluralTitle: "Screenshots", count: result.screenshotCount, sizeBytes: result.screenshotSizeBytes),
-            CategorySummary(singularTitle: "Image", pluralTitle: "Images", count: result.imageCount, sizeBytes: result.imageSizeBytes),
-            CategorySummary(singularTitle: "Folder", pluralTitle: "Folders", count: result.folderCount, sizeBytes: result.folderSizeBytes),
-            CategorySummary(singularTitle: "Other File", pluralTitle: "Other Files", count: result.otherCount, sizeBytes: result.otherSizeBytes)
+            CategorySummary(category: .installer, singularTitle: "Installer", pluralTitle: "Installers", count: result.installerCount, sizeBytes: result.installerSizeBytes),
+            CategorySummary(category: .archive, singularTitle: "Archive", pluralTitle: "Archives", count: result.archiveCount, sizeBytes: result.archiveSizeBytes),
+            CategorySummary(category: .pdf, singularTitle: "PDF", pluralTitle: "PDFs", count: result.pdfCount, sizeBytes: result.pdfSizeBytes),
+            CategorySummary(category: .screenshot, singularTitle: "Screenshot", pluralTitle: "Screenshots", count: result.screenshotCount, sizeBytes: result.screenshotSizeBytes),
+            CategorySummary(category: .image, singularTitle: "Image", pluralTitle: "Images", count: result.imageCount, sizeBytes: result.imageSizeBytes),
+            CategorySummary(category: .folder, singularTitle: "Folder", pluralTitle: "Folders", count: result.folderCount, sizeBytes: result.folderSizeBytes),
+            CategorySummary(category: .other, singularTitle: "Other File", pluralTitle: "Other Files", count: result.otherCount, sizeBytes: result.otherSizeBytes)
         ].filter { $0.count > 0 }
     }
 
@@ -96,7 +114,7 @@ class MenuViewModel {
             return nil
         }
 
-        return deletableItems
+        return deletableItems.filter { selectedCategories.contains($0.category) }
     }
 
     @discardableResult

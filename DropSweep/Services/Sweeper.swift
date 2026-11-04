@@ -66,7 +66,8 @@ actor Sweeper: DownloadsSweeping {
             let values = try? item.resourceValues(forKeys: [.isDirectoryKey, .isRegularFileKey, .fileResourceIdentifierKey])
             let downloadsItem = DownloadsItem(
                 url: item,
-                fileResourceIdentifier: values?.fileResourceIdentifier as? Data
+                fileResourceIdentifier: values?.fileResourceIdentifier as? Data,
+                category: values?.isDirectory == true ? .folder : category(for: item)
             )
 
             if values?.isDirectory == true {
@@ -87,24 +88,27 @@ actor Sweeper: DownloadsSweeping {
             result.totalFiles += 1
             result.totalSizeBytes += sizeBytes
 
-            if isInstaller(item) {
+            switch downloadsItem.category {
+            case .installer:
                 result.installerCount += 1
                 result.installerSizeBytes += sizeBytes
-            } else if isArchive(item) {
+            case .archive:
                 result.archiveCount += 1
                 result.archiveSizeBytes += sizeBytes
-            } else if isPDF(item) {
+            case .pdf:
                 result.pdfCount += 1
                 result.pdfSizeBytes += sizeBytes
-            } else if isScreenshot(item) {
+            case .screenshot:
                 result.screenshotCount += 1
                 result.screenshotSizeBytes += sizeBytes
-            } else if isImage(item) {
+            case .image:
                 result.imageCount += 1
                 result.imageSizeBytes += sizeBytes
-            } else {
+            case .other:
                 result.otherCount += 1
                 result.otherSizeBytes += sizeBytes
+            case .folder:
+                break
             }
         }
 
@@ -163,6 +167,15 @@ actor Sweeper: DownloadsSweeping {
         }
 
         return sizeBytes
+    }
+
+    private func category(for url: URL) -> DownloadsCategory {
+        if isInstaller(url) { return .installer }
+        if isArchive(url) { return .archive }
+        if isPDF(url) { return .pdf }
+        if isScreenshot(url) { return .screenshot }
+        if isImage(url) { return .image }
+        return .other
     }
 
     private func isInstaller(_ url: URL) -> Bool {
@@ -281,6 +294,7 @@ nonisolated struct DownloadsScanResult {
 nonisolated struct DownloadsItem: Sendable {
     let url: URL
     let fileResourceIdentifier: Data?
+    let category: DownloadsCategory
 }
 
 nonisolated private struct CachedSize {
@@ -307,4 +321,14 @@ nonisolated private struct CachedSize {
             && totalFileSize == values.totalFileSize
             && totalFileAllocatedSize == values.totalFileAllocatedSize
     }
+}
+
+nonisolated enum DownloadsCategory: String, CaseIterable, Sendable {
+    case installer = "Installer"
+    case archive = "Archive"
+    case pdf = "PDF"
+    case screenshot = "Screenshot"
+    case image = "Image"
+    case folder = "Folder"
+    case other = "Other File"
 }
