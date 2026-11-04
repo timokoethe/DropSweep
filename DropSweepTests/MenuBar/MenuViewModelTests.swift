@@ -136,13 +136,90 @@ struct MenuViewModelTests {
         #expect(model.itemsCount == 0)
     }
 
+    @Test func categorySelectionOnlyTrashesConfirmedCategories() async throws {
+        let fixture = try DownloadsFixture()
+        let files: [(name: String, category: DownloadsCategory, bytes: Int)] = [
+            ("installer.dmg", .installer, 100), ("archive.zip", .archive, 200),
+            ("document.pdf", .pdf, 30), ("second.pdf", .pdf, 70),
+            ("Screenshot.png", .screenshot, 40), ("photo.png", .image, 500),
+            ("Folder.pdf/nested.txt", .folder, 60), ("notes.txt", .other, 800)
+        ]
+        for file in files {
+            try fixture.file(file.name, bytes: file.bytes)
+        }
+        let model = MenuViewModel(sweeper: fixture.makeSweeper(), launchAtLoginEnabled: false, scanOnInit: false)
+        await model.scanDownloadsFolder().value
+        let allItems = try #require(model.itemsForDeletionConfirmation())
+        #expect(allItems.count == 8)
+        #expect(Set(allItems.map(\.category)) == Set(DownloadsCategory.allCases))
+
+        // Each category must select the right paths, not merely a matching count.
+        for category in DownloadsCategory.allCases {
+            model.selectedCategories = [category]
+            let expected = files.filter { $0.category == category }
+            let selected = try #require(model.itemsForDeletionConfirmation())
+            let expectedNames = Set(expected.map { String($0.name.split(separator: "/")[0]) })
+            #expect(Set(selected.map { $0.url.lastPathComponent }) == expectedNames)
+            #expect(model.selectedItemsCount == expected.count)
+        }
+
+        model.selectedCategories = [.pdf, .screenshot, .folder]
+        #expect(model.selectedItemsCount == 4)
+        let selectedSize = ByteCountFormatter.string(fromByteCount: 200, countStyle: .file)
+        #expect(model.selectionSummary == "4 items selected · \(selectedSize)")
+        #expect(model.itemsCount == 8)
+        #expect(model.totalSizeBytes == 1800)
+        let confirmed = try #require(model.itemsForDeletionConfirmation())
+        #expect(Set(confirmed.map { $0.url.lastPathComponent }) == ["document.pdf", "second.pdf", "Screenshot.png", "Folder.pdf"])
+        // Later selection changes must not alter the confirmed snapshot.
+        model.selectedCategories = [.image]
+        await (try #require(model.deleteDownloads(confirmed))).value
+        #expect(model.itemsCount == 4)
+        #expect(model.selectedItemsCount == 1)
+        let imageSize = ByteCountFormatter.string(fromByteCount: 500, countStyle: .file)
+        #expect(model.selectionSummary == "1 item selected · \(imageSize)")
+        for file in files {
+            let wasSelected = [DownloadsCategory.pdf, .screenshot, .folder].contains(file.category)
+            #expect(fixture.exists(fixture.downloads.appendingPathComponent(file.name)) == !wasSelected)
+        }
+        #expect(fixture.exists(fixture.trash.appendingPathComponent("Folder.pdf/nested.txt")))
+    }
+
+    @Test func emptySelectionDisablesCleanupAndSurvivesRescans() async {
+        let service = ControlledSweeper()
+        let model = makeModel(service)
+        service.scanResult = result("document.pdf")
+        await model.scanDownloadsFolder().value
+        #expect(model.selectedItemsCount == 1)
+        #expect(model.selectionSummary == "1 item selected · \(model.totalDisplaySize)")
+        model[isSelected: .pdf] = false
+        #expect(!model.canDeleteDownloads)
+        #expect(model.selectedItemsCount == 0)
+        let emptySize = ByteCountFormatter.string(fromByteCount: 0, countStyle: .file)
+        #expect(model.selectionSummary == "0 items selected · \(emptySize)")
+        #expect(model.itemsForDeletionConfirmation() == nil)
+
+        // Keep the choice even when the category disappears or a scan fails.
+        service.scanResult = DownloadsScanResult()
+        await model.scanDownloadsFolder().value
+        service.scanResult = DownloadsScanResult(scanErrorMessage: "Scan failed")
+        await model.scanDownloadsFolder().value
+        service.scanResult = result("new.pdf")
+        await model.scanDownloadsFolder().value
+        #expect(!model[isSelected: .pdf])
+        #expect(!model.canDeleteDownloads)
+        model[isSelected: .pdf] = true
+        #expect(model.canDeleteDownloads)
+        #expect(model.itemsForDeletionConfirmation()?.first?.url.lastPathComponent == "new.pdf")
+    }
+
     private func makeModel(_ service: ControlledSweeper) -> MenuViewModel {
         MenuViewModel(sweeper: service, launchAtLoginEnabled: false, scanOnInit: false)
     }
 
     private func result(_ name: String) -> DownloadsScanResult {
         DownloadsScanResult(
-            items: [DownloadsItem(url: URL(fileURLWithPath: "/test-downloads/\(name)"), fileResourceIdentifier: Data(name.utf8))],
+            items: [DownloadsItem(url: URL(fileURLWithPath: "/test-downloads/\(name)"), fileResourceIdentifier: Data(name.utf8), category: .pdf)],
             totalFiles: 1,
             pdfCount: 1,
             totalSizeBytes: 10,

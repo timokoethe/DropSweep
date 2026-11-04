@@ -22,7 +22,8 @@ The app is built alongside the tests to check integration, but is not launched.
 - `DropSweepTests/MenuBar/CategorySummaryTests.swift`: singular/plural titles,
   size summaries and stable identity. Formatting expectations use the current locale.
 - `DropSweepTests/MenuBar/MenuViewModelTests.swift`: confirmed snapshots after
-  rescans, busy states, error recovery and cancellation of outdated scans.
+  rescans, category selection, selected-only cleanup, busy states, error recovery
+  and cancellation of outdated scans.
 - `DropSweepTests/Support/DownloadsFixture.swift`: unique temporary directories
   and a simulated Trash shared by the service suites.
 - `DropSweepTests/Support/ControlledSweeper.swift`: a controllable implementation

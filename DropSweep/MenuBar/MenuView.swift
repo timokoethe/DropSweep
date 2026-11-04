@@ -121,10 +121,10 @@ struct MenuView: View {
                     statusMessage("All clear", detail: "Your Downloads folder has no items to clean up.", symbol: "checkmark.circle")
                 } else {
                     ForEach(vm.categories) { category in
-                        DownloadCategoryRow(category: category)
+                        DownloadCategoryRow(category: category, isSelected: $vm[isSelected: category.category])
                         if category.id != vm.categories.last?.id {
                             Divider()
-                                .padding(.leading, 50)
+                                .padding(.leading, 74)
                                 .padding(.trailing, 16)
                         }
                     }
@@ -145,14 +145,20 @@ struct MenuView: View {
     }
 
     private var footer: some View {
-        Button(action: confirmDeleteDownloads) {
-            Label("Move Listed Items to Trash", systemImage: "trash")
-                .font(.system(size: 13, weight: .semibold))
-                .frame(maxWidth: .infinity, minHeight: 26)
+        VStack(spacing: 8) {
+            Text(vm.selectionSummary)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .monospacedDigit()
+            Button(action: confirmDeleteDownloads) {
+                Label("Move Selection to Trash", systemImage: "trash")
+                    .font(.system(size: 13, weight: .semibold))
+                    .frame(maxWidth: .infinity, minHeight: 26)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.regular)
+            .disabled(!vm.canDeleteDownloads)
         }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.regular)
-        .disabled(!vm.canDeleteDownloads)
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
     }
@@ -166,7 +172,7 @@ struct MenuView: View {
         let alert = NSAlert()
 
         alert.messageText = "Move \(confirmedItems.count) \(itemLabel) to the Trash?"
-        alert.informativeText = "This moves all listed items from Downloads to the Trash."
+        alert.informativeText = "This moves only the selected items from Downloads to the Trash."
         alert.alertStyle = .warning
         alert.addButton(withTitle: "Move to Trash")
         alert.addButton(withTitle: "Cancel")

@@ -85,7 +85,7 @@ nonisolated struct SweeperDeletionTests {
         let fixture = try DownloadsFixture()
         let url = try fixture.file("unverified.txt")
         let result = await fixture.makeSweeper().deleteItemsInDownloads([
-            DownloadsItem(url: url, fileResourceIdentifier: nil)
+            DownloadsItem(url: url, fileResourceIdentifier: nil, category: .other)
         ])
         #expect(result.deleted == 0)
         #expect(result.failures.count == 1)
@@ -101,7 +101,8 @@ nonisolated struct SweeperDeletionTests {
         let items = try [nested, outside, traversal].map { url in
             DownloadsItem(
                 url: url,
-                fileResourceIdentifier: try url.resourceValues(forKeys: [.fileResourceIdentifierKey]).fileResourceIdentifier as? Data
+                fileResourceIdentifier: try url.resourceValues(forKeys: [.fileResourceIdentifierKey]).fileResourceIdentifier as? Data,
+                category: .other
             )
         }
         let result = await fixture.makeSweeper().deleteItemsInDownloads(items)
