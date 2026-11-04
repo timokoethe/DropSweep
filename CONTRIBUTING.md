@@ -19,6 +19,9 @@ Alternatively, build without signing:
 xcodebuild -project DropSweep.xcodeproj -scheme DropSweep CODE_SIGNING_ALLOWED=NO build
 ```
 
+Run native tests with **Product → Test** (`⌘U`); see the [testing guide](docs/testing.md).
+For website changes, follow the [website setup](website/README.md) and run `npm run lint` and `npm run build` from `website/`.
+
 ## Guidelines
 
 - Keep pull requests small and focused.
@@ -27,6 +30,7 @@ xcodebuild -project DropSweep.xcodeproj -scheme DropSweep CODE_SIGNING_ALLOWED=N
 - Prefer moving files to the Trash over permanent deletion.
 - Add or update the corresponding file in [`docs/features/`](docs/features/) when changing a native app feature; use [`_template.md`](docs/features/_template.md) for new features.
 - Include clear manual test steps in your pull request.
+- Label website-only pull requests `website` to exclude them from app release notes.
 
 ## Issues
 
