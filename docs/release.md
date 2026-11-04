@@ -14,6 +14,8 @@ A release tag must use this format:
 
 ## Preparing a Release
 
+Releases are operated strictly one at a time. Before pushing another release tag or rerunning a release workflow, ensure the previous release has fully completed, including appcast publication and website deployment. Resolve any partial failure before starting the next release. Maintainers enforce this rule; the workflow's tag-scoped concurrency group does not prevent different tags from running concurrently.
+
 Before creating a tag, make sure that:
 
 1. All intended changes have been merged into `main` through pull requests.
