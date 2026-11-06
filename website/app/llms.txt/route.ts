@@ -11,8 +11,8 @@ const body = `# ${SITE_NAME}
 
 ${SITE_NAME} is a free and open-source macOS menu bar app. It scans the visible
 items directly inside the user's Downloads folder, groups them into categories,
-and moves the confirmed set to the Trash. Scanning and cleanup happen locally on
-the Mac; nothing is uploaded. macOS 26 or later is required. MIT licensed.
+and moves items in the selected categories to the Trash after confirmation.
+Scanning and cleanup happen locally on the Mac; nothing is uploaded. macOS 26 or later is required. MIT licensed.
 
 ## Pages
 
@@ -23,7 +23,7 @@ the Mac; nothing is uploaded. macOS 26 or later is required. MIT licensed.
 ## Key facts
 
 - Categories: installers, archives, PDFs, screenshots, images, other files, and folders.
-- Cleanup includes all listed items; individual selection and automatic cleanup are not supported.
+- Cleanup includes only items in selected categories. Individual file selection and automatic cleanup are not supported.
 - Recognized incomplete downloads are skipped.
 - Category grouping is a summary, not file organization.
 - Files can be restored while still in the Trash. DropSweep does not empty it or immediately free disk space.

@@ -4,7 +4,7 @@ export const SITE_TITLE =
   "DropSweep - Clean up your Downloads from the menu bar";
 
 export const SITE_DESCRIPTION =
-  "See what is in your Downloads, then move all listed items to the Trash after confirmation. Free, open source, and local to your Mac. Requires macOS 26 or later.";
+  "Choose which Downloads categories to clear, review your selection, then move it to the Trash after confirmation. Free, open source, and local to your Mac. Requires macOS 26 or later.";
 
 export const SITE_URL = "https://dropsweep.itstimo.me";
 
