@@ -9,7 +9,6 @@ import {
   SITE_TITLE,
   SOCIAL_IMAGE_PATH,
 } from "@/lib/seo";
-import { Logo } from "@/components/Logo";
 import { DownloadButton } from "@/components/DownloadButton";
 import Image from "next/image";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -134,15 +133,15 @@ const features = [
   },
   {
     title: "Groups the clutter",
-    body: "Files and folders are shown by category, with item counts and sizes.",
+    body: "Choose which categories to clear, with item counts and sizes for each.",
   },
   {
     title: "Confirm before moving",
-    body: "Review the summary before confirming that all listed items should move.",
+    body: "Review the count and size of your selection before moving it to the Trash.",
   },
   {
     title: "Moves items to the Trash",
-    body: "DropSweep moves items to the macOS Trash without emptying it.",
+    body: "Selected items go to the macOS Trash. File names and contents stay on your Mac.",
   },
 ];
 
@@ -173,26 +172,18 @@ export default async function Home() {
 
       <SiteHeader />
 
-      <main className="mx-auto w-full max-w-[1480px] flex-1 px-6 lg:px-10">
+      <main className="mx-auto w-full max-w-[1440px] flex-1 px-6 lg:px-10">
         <section className="home-hero">
           <div className="hero-copy">
-            <span className="hero-badge">
-              <span
-                aria-hidden="true"
-                className="h-2 w-2 rounded-full bg-emerald-500"
-              />
-              A tiny app for your Mac&apos;s menu bar
-            </span>
+            <p className="hero-eyebrow">A small app for your Mac&apos;s menu bar</p>
             <h1>
               Clear your
               <br />
-              Downloads.
-              <br />
-              Get back to work.
+              Downloads
             </h1>
             <p className="hero-description">
-              See what&apos;s in your Downloads, then move all listed items to
-              the Trash after confirmation.
+              Choose the categories you want to clear, review your selection,
+              then move it to the Trash. All from your Mac&apos;s menu bar.
             </p>
             <div className="hero-actions">
               <DownloadButton
@@ -205,32 +196,30 @@ export default async function Home() {
                 href={REPO_URL}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-3 text-muted transition-colors hover:text-foreground"
+                className="inline-flex items-center gap-2 text-muted transition-colors hover:text-foreground"
               >
-                <GitHubIcon className="h-6 w-6" />
+                <GitHubIcon className="h-4 w-4" />
                 View on GitHub
               </a>
             </div>
             <p className="mt-4 text-sm text-muted">
               Free · Open source · macOS 26+
             </p>
-            <ul className="hero-reassurance">
-              <li>Files go to the Trash.</li>
-              <li>File names and contents stay on your Mac.</li>
-            </ul>
           </div>
           <figure className="hero-preview">
-            <Image
-              src="/Image.png"
-              width={1600}
-              height={1100}
-              unoptimized
-              preload
-              alt="DropSweep in the macOS menu bar, showing Downloads grouped by category and a Move Listed Items to Trash button."
-              className="h-auto w-full rounded-[20px] border border-border shadow-2xl"
-            />
+            <div className="hero-image-frame">
+              <Image
+                src="/Image.png"
+                width={1670}
+                height={1100}
+                unoptimized
+                preload
+                alt="DropSweep in the macOS menu bar, showing category checkboxes, item counts and sizes, and a Move Selection to Trash button."
+                className="hero-image"
+              />
+            </div>
             <figcaption className="mt-4 text-center text-sm text-muted">
-              Your Downloads, at a glance.
+              Your Downloads, your selection
             </figcaption>
           </figure>
         </section>
@@ -253,23 +242,20 @@ export default async function Home() {
         {/* Categories */}
         <section className="border-t border-border py-20">
           <h2 className="text-2xl font-semibold tracking-tight">
-            Your Downloads, grouped.
+            Your Downloads, grouped
           </h2>
           <p className="mt-2 max-w-md text-sm text-muted">
-            See the types of files in Downloads and how much space each category
-            uses.
+            See how much space each category uses, then choose which categories
+            to move to the Trash.
           </p>
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {categories.map((c) => (
-              <div
-                key={c.title}
-                className="rounded-xl border border-border bg-card px-4 py-3"
-              >
-                <p className="text-sm font-medium">{c.title}</p>
-                <p className="text-xs text-muted">{c.hint}</p>
+          <dl className="category-list">
+            {categories.map((category) => (
+              <div key={category.title} className="category-row">
+                <dt className="text-sm font-medium">{category.title}</dt>
+                <dd className="text-sm text-muted">{category.hint}</dd>
               </div>
             ))}
-          </div>
+          </dl>
         </section>
 
         <section className="grid gap-8 border-t border-border py-16 md:grid-cols-[1fr_1.2fr] md:gap-16">
@@ -278,7 +264,7 @@ export default async function Home() {
             <h2 className="mt-3 max-w-sm text-3xl font-semibold tracking-tight">
               From download
               <br />
-              to menu bar.
+              to menu bar
             </h2>
             <p className="mt-4 max-w-sm text-sm leading-6 text-muted">
               A quick setup, then your Downloads are a glance away.
@@ -322,17 +308,17 @@ export default async function Home() {
 
         <section className="border-t border-border py-16">
           <h2 className="text-2xl font-semibold tracking-tight">
-            Before you sweep.
+            Before you sweep
           </h2>
           <div className="mt-8 grid gap-8 md:grid-cols-3">
             <div>
               <h3 className="font-semibold">What gets moved?</h3>
               <p className="mt-3 text-sm leading-7 text-muted">
-                After confirmation, DropSweep attempts to move all listed files
-                and folders from Downloads to the Trash. You cannot select
-                individual items. Hidden items directly in Downloads and
-                recognized incomplete downloads are skipped. A listed folder
-                moves with all its contents, including hidden files. Any
+                You choose categories, not individual files. After confirmation,
+                DropSweep attempts to move the files and folders in those
+                categories from Downloads to the Trash. Hidden items directly in
+                Downloads and recognized incomplete downloads are skipped. A
+                selected folder moves with all its contents, including hidden files. Any
                 failures are reported.
               </p>
             </div>
@@ -368,16 +354,15 @@ export default async function Home() {
             Ready to sweep?
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm text-muted">
-            Review your Downloads from the menu bar and decide when to move all
-            listed items to the Trash.
+            Choose what to clear by category. Review your selection before
+            moving it to the Trash.
           </p>
           <DownloadButton
             href={release.downloadUrl}
             label={downloadLabel}
             version={release.version}
             location="bottom-cta"
-            icon={<Logo className="h-4 w-4" />}
-            className="mt-8 inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-foreground px-6 text-sm font-medium text-background transition-opacity hover:opacity-90"
+            className="download-button mt-8"
           />
         </section>
       </main>

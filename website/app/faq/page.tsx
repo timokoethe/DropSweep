@@ -15,12 +15,12 @@ const questions = [
   {
     question: "What does DropSweep do?",
     answer:
-      "DropSweep is a macOS menu bar app that scans the visible items directly inside your Downloads folder, groups them into useful categories, and lets you move the listed set to the Trash after confirmation.",
+      "DropSweep is a macOS menu bar app that scans the visible items directly inside your Downloads folder, groups them into useful categories, and lets you choose categories to move to the Trash after confirmation.",
   },
   {
     question: "Does DropSweep permanently delete my files?",
     answer:
-      "No. DropSweep moves confirmed items to the macOS Trash instead of permanently deleting them. You can review the item count and categories before starting a sweep. All listed items are included; individual selection is not supported. While items remain in the Trash, you can restore them using Put Back in Finder. DropSweep does not empty the Trash, and moving files there does not immediately free disk space.",
+      "No. DropSweep moves confirmed items to the macOS Trash instead of permanently deleting them. You can review the item count and categories before starting a sweep. You can select categories; individual file selection is not supported. Only items in the selected categories are moved. While items remain in the Trash, you can restore them using Put Back in Finder. DropSweep does not empty the Trash, and moving files there does not immediately free disk space.",
   },
   {
     question: "Which files does DropSweep scan?",

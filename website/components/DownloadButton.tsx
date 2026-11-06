@@ -23,7 +23,7 @@ export function DownloadButton({ href, label, version, location, className, icon
           href,
         });
       }}
-      className={className ?? "inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-foreground px-6 text-base font-medium text-background transition-opacity hover:opacity-90"}
+      className={className ?? "download-button"}
     >
       {icon ?? <span aria-hidden="true" className="download-icon" />}
       {label}
