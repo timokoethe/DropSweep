@@ -21,6 +21,36 @@ nonisolated struct SweeperScanTests {
         #expect(result.totalSizeBytes == 0)
     }
 
+    @Test(arguments: ["Unreadable", "Visible/Unreadable"])
+    func unreadableFolderRejectsPartialScanAndRecovers(folderPath: String) async throws {
+        let fixture = try DownloadsFixture()
+        let folder = try fixture.folder(folderPath)
+        try fixture.file("\(folderPath)/contents.txt", bytes: 42)
+        try fixture.file("readable.pdf", bytes: 10)
+        let sweeper = fixture.makeSweeper()
+        let initial = await sweeper.scanDownloadsFolder()
+        #expect(initial.totalSizeBytes == 52)
+        #expect(initial.scanErrorMessage == nil)
+
+        // Restore access before fixture cleanup, including when an assertion fails.
+        defer {
+            try? FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: folder.path)
+        }
+        try FileManager.default.setAttributes([.posixPermissions: 0o000], ofItemAtPath: folder.path)
+        let failed = await sweeper.scanDownloadsFolder()
+        #expect(failed.scanErrorMessage != nil)
+        #expect(failed.items.isEmpty)
+        #expect(failed.totalFiles == 0)
+        #expect(failed.folderCount == 0)
+        #expect(failed.totalSizeBytes == 0)
+
+        try FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: folder.path)
+        let recovered = await sweeper.scanDownloadsFolder()
+        #expect(recovered.scanErrorMessage == nil)
+        #expect(recovered.items.count == 2)
+        #expect(recovered.totalSizeBytes == 52)
+    }
+
     @Test func mixedCategoriesHaveIndependentCountsAndSizes() async throws {
         let fixture = try DownloadsFixture()
         try fixture.file("Installer.dmg", bytes: 11)
