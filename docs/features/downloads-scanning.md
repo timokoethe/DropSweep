@@ -23,6 +23,7 @@ As a user, I want DropSweep to scan my Downloads folder so that I can see what c
 - Files and folders directly inside Downloads with `.crdownload`, `.download`, `.part`, `.partial`, `.opdownload`, or `.filepart` extensions are skipped, case-insensitively. These entries do not contribute to counts, sizes, categories, or the cleanup list, regardless of whether a download is still active.
 - Once an entry is renamed to a visible filename without an excluded extension, it is included on the next scan.
 - A scan failure is shown in the menu.
+- If an item’s metadata, size, or folder contents cannot be read, the scan is treated as failed. Partial counts and sizes are not shown as a complete result, and cleanup stays disabled until a successful scan.
 
 ## Manual Verification
 
@@ -33,6 +34,7 @@ As a user, I want DropSweep to scan my Downloads folder so that I can see what c
 - Move the listed test items to the Trash and verify entries with the excluded extensions directly inside Downloads remain untouched. Verify hidden root items also remain untouched and hidden contents inside a normal listed folder move with that folder.
 - Add a `.crdownload` test file inside a normal visible folder. Verify its size contributes to the folder size and that it moves with the folder when cleanup is confirmed.
 - Where practical, make a listed test item inaccessible before confirming cleanup and verify the existing partial-failure alert still appears.
+- In a disposable test folder inside Downloads, remove read access to a visible subfolder (also test one nested inside another visible folder). Refresh and verify a scan error appears and cleanup is disabled. Restore access, refresh, and verify normal counts, sizes, and cleanup are available again.
 
 ## Limitations
 

@@ -35,9 +35,6 @@ actor Sweeper: DownloadsSweeping {
     }
 
     func scanDownloadsFolder() -> DownloadsScanResult {
-        var result = DownloadsScanResult()
-        var visitedCacheURLs = Set<URL>()
-
         let items: [URL]
         do {
             items = try fileManager.contentsOfDirectory(
@@ -49,9 +46,23 @@ actor Sweeper: DownloadsSweeping {
             )
         } catch {
             print("Failed to read Downloads folder:", error)
-            result.scanErrorMessage = "Could not read Downloads folder."
-            return result
+            return DownloadsScanResult(scanErrorMessage: "Could not read Downloads folder.")
         }
+
+        do {
+            return try scanItems(items)
+        } catch {
+            // Never present partial counts or sizes as a complete cleanup snapshot.
+            sizeCache.removeAll()
+            return DownloadsScanResult(
+                scanErrorMessage: "Could not read all Downloads items. Check access permissions and try again."
+            )
+        }
+    }
+
+    private func scanItems(_ items: [URL]) throws -> DownloadsScanResult {
+        var result = DownloadsScanResult()
+        var visitedCacheURLs = Set<URL>()
 
         for item in items {
             guard !Task.isCancelled else {
@@ -63,27 +74,27 @@ actor Sweeper: DownloadsSweeping {
                 continue
             }
 
-            let values = try? item.resourceValues(forKeys: [.isDirectoryKey, .isRegularFileKey, .fileResourceIdentifierKey])
+            let values = try item.resourceValues(forKeys: [.isDirectoryKey, .isRegularFileKey, .fileResourceIdentifierKey])
             let downloadsItem = DownloadsItem(
                 url: item,
-                fileResourceIdentifier: values?.fileResourceIdentifier as? Data,
-                category: values?.isDirectory == true ? .folder : category(for: item)
+                fileResourceIdentifier: values.fileResourceIdentifier as? Data,
+                category: values.isDirectory == true ? .folder : category(for: item)
             )
 
-            if values?.isDirectory == true {
+            if values.isDirectory == true {
                 result.items.append(downloadsItem)
                 result.folderCount += 1
-                let sizeBytes = sizeOfDirectory(item, visitedCacheURLs: &visitedCacheURLs)
+                let sizeBytes = try sizeOfDirectory(item, visitedCacheURLs: &visitedCacheURLs)
                 result.folderSizeBytes += sizeBytes
                 result.totalSizeBytes += sizeBytes
                 continue
             }
 
-            guard values?.isRegularFile == true else {
+            guard values.isRegularFile == true else {
                 continue
             }
 
-            let sizeBytes = sizeOfFile(item, visitedCacheURLs: &visitedCacheURLs)
+            let sizeBytes = try sizeOfFile(item, visitedCacheURLs: &visitedCacheURLs)
             result.items.append(downloadsItem)
             result.totalFiles += 1
             result.totalSizeBytes += sizeBytes
@@ -116,38 +127,41 @@ actor Sweeper: DownloadsSweeping {
         return result
     }
 
-    private func sizeOfFile(_ url: URL, visitedCacheURLs: inout Set<URL>) -> Int64 {
+    private func sizeOfFile(_ url: URL, visitedCacheURLs: inout Set<URL>) throws -> Int64 {
         visitedCacheURLs.insert(url)
 
-        guard let values = try? url.resourceValues(forKeys: Set(Self.cacheKeys)) else {
-            return 0
-        }
+        let values = try url.resourceValues(forKeys: Set(Self.cacheKeys))
 
         if let cachedSize = sizeCache[url], cachedSize.matches(values: values) {
             return cachedSize.sizeBytes
         }
 
-        let sizeBytes = Int64(
-            values.totalFileSize
+        guard let size = values.totalFileSize
                 ?? values.fileSize
                 ?? values.totalFileAllocatedSize
-                ?? values.fileAllocatedSize
-                ?? 0
-        )
+                ?? values.fileAllocatedSize else {
+            throw CocoaError(.fileReadUnknown)
+        }
+        let sizeBytes = Int64(size)
 
         sizeCache[url] = CachedSize(values: values, sizeBytes: sizeBytes)
         return sizeBytes
     }
 
-    private func sizeOfDirectory(_ url: URL, visitedCacheURLs: inout Set<URL>) -> Int64 {
+    private func sizeOfDirectory(_ url: URL, visitedCacheURLs: inout Set<URL>) throws -> Int64 {
         visitedCacheURLs.insert(url)
 
+        var enumerationError: Error?
         guard let enumerator = fileManager.enumerator(
             at: url,
             includingPropertiesForKeys: Self.cacheKeys,
-            options: []
+            options: [],
+            errorHandler: { _, error in
+                enumerationError = error
+                return false
+            }
         ) else {
-            return 0
+            throw CocoaError(.fileReadUnknown)
         }
 
         var sizeBytes: Int64 = 0
@@ -157,13 +171,17 @@ actor Sweeper: DownloadsSweeping {
                 return sizeBytes
             }
 
-            let values = try? item.resourceValues(forKeys: [.isRegularFileKey])
+            let values = try item.resourceValues(forKeys: [.isRegularFileKey])
 
-            guard values?.isRegularFile == true else {
+            guard values.isRegularFile == true else {
                 continue
             }
 
-            sizeBytes += sizeOfFile(item, visitedCacheURLs: &visitedCacheURLs)
+            sizeBytes += try sizeOfFile(item, visitedCacheURLs: &visitedCacheURLs)
+        }
+
+        if let enumerationError {
+            throw enumerationError
         }
 
         return sizeBytes
