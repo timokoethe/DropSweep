@@ -15,10 +15,14 @@ The app is built alongside the tests to check integration, but is not launched.
 
 - `DropSweepTests/Services/SweeperScanTests.swift`: empty/missing directories,
   counts and sizes, root exclusions, nested contents, completed downloads and rescans.
+  Symlink cases cover external file/folder targets and dangling links at the root
+  and inside a visible folder, ensuring targets do not contribute to scan results.
 - `DropSweepTests/Services/SweeperClassificationTests.swift`: parameterized file
   extensions, screenshot precedence and directories with file-like names.
 - `DropSweepTests/Services/SweeperDeletionTests.swift`: confirmed snapshots,
-  file identity, scope restrictions and partial failures.
+  file identity, scope restrictions and partial failures. Symlink cases verify
+  that replacing a scanned file with a link is rejected and that moving a visible
+  folder preserves its links and leaves external targets unchanged.
 - `DropSweepTests/MenuBar/CategorySummaryTests.swift`: singular/plural titles,
   size summaries and stable identity. Formatting expectations use the current locale.
 - `DropSweepTests/MenuBar/MenuViewModelTests.swift`: confirmed snapshots after

@@ -66,6 +66,67 @@ nonisolated struct SweeperDeletionTests {
         #expect(!fixture.exists(fixture.trash.appendingPathComponent("original.txt")))
     }
 
+    @Test(arguments: ["external.txt", "External", "missing"])
+    func fileReplacedBySymlinkIsRejected(destinationName: String) async throws {
+        let fixture = try DownloadsFixture()
+        let externalFile = fixture.root.appendingPathComponent("external.txt")
+        let externalFolder = fixture.root.appendingPathComponent("External", isDirectory: true)
+        let contents = Data("external contents".utf8)
+        try contents.write(to: externalFile)
+        try FileManager.default.createDirectory(at: externalFolder, withIntermediateDirectories: true)
+        let nested = externalFolder.appendingPathComponent("nested.txt")
+        try contents.write(to: nested)
+        let original = try fixture.file("original.txt")
+        let sweeper = fixture.makeSweeper()
+        let snapshot = await sweeper.scanDownloadsFolder()
+        try #require(snapshot.items.count == 1)
+        // Preserve the scanned inode so the link cannot reuse its identity.
+        try FileManager.default.moveItem(at: original, to: fixture.root.appendingPathComponent("saved-original.txt"))
+        let destination = fixture.root.appendingPathComponent(destinationName)
+        let link = try fixture.symlink("original.txt", to: destination)
+
+        let result = await sweeper.deleteItemsInDownloads(snapshot.items)
+
+        #expect(result.deleted == 0)
+        #expect(result.failures.map(\.url) == snapshot.items.map { $0.url.standardizedFileURL })
+        #expect(try FileManager.default.destinationOfSymbolicLink(atPath: link.path) == destination.path)
+        #expect(!fixture.exists(fixture.trash.appendingPathComponent("original.txt")))
+        #expect(try Data(contentsOf: externalFile) == contents)
+        #expect(try Data(contentsOf: nested) == contents)
+    }
+
+    @Test func trashingFolderMovesSymlinksButPreservesExternalTargets() async throws {
+        let fixture = try DownloadsFixture()
+        let externalFile = fixture.root.appendingPathComponent("external.txt")
+        let externalFolder = fixture.root.appendingPathComponent("External", isDirectory: true)
+        let contents = Data("external contents".utf8)
+        try contents.write(to: externalFile)
+        try FileManager.default.createDirectory(at: externalFolder, withIntermediateDirectories: true)
+        let nested = externalFolder.appendingPathComponent("nested.txt")
+        try contents.write(to: nested)
+        let destinations = [externalFile, externalFolder, fixture.root.appendingPathComponent("missing")]
+        for (index, destination) in destinations.enumerated() {
+            try fixture.symlink("Visible/link-\(index)", to: destination)
+        }
+        let sweeper = fixture.makeSweeper()
+        let snapshot = await sweeper.scanDownloadsFolder()
+        try #require(snapshot.scanErrorMessage == nil)
+        try #require(snapshot.items.map { $0.url.lastPathComponent } == ["Visible"])
+
+        let result = await sweeper.deleteItemsInDownloads(snapshot.items)
+
+        #expect(result.deleted == 1)
+        #expect(result.failures.isEmpty)
+        #expect(!fixture.exists(fixture.downloads.appendingPathComponent("Visible")))
+        for (index, destination) in destinations.enumerated() {
+            let movedLink = fixture.trash.appendingPathComponent("Visible/link-\(index)")
+            #expect(try FileManager.default.destinationOfSymbolicLink(atPath: movedLink.path) == destination.path)
+        }
+        #expect(try Data(contentsOf: externalFile) == contents)
+        #expect(try Data(contentsOf: nested) == contents)
+        #expect(!fixture.exists(fixture.root.appendingPathComponent("missing")))
+    }
+
     @Test func missingFileIsReported() async throws {
         let fixture = try DownloadsFixture()
         let url = try fixture.file("missing.txt")

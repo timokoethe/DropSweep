@@ -33,6 +33,14 @@ nonisolated final class DownloadsFixture: Sendable {
         return url
     }
 
+    @discardableResult
+    func symlink(_ name: String, to destination: URL) throws -> URL {
+        let url = downloads.appendingPathComponent(name)
+        try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try FileManager.default.createSymbolicLink(at: url, withDestinationURL: destination)
+        return url
+    }
+
     func makeSweeper(failingNames: Set<String> = []) -> Sweeper {
         let trash = trash
         return Sweeper(downloadsURL: downloads) { url in
