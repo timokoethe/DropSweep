@@ -18,7 +18,7 @@ As a user, I want to select categories with checkboxes so that I can remove clut
 ## Acceptance Criteria
 
 - Each nonempty category has a checkbox that selects all listed top-level items in that category.
-- All categories are selected when the app starts. Changes remain in effect during the app session, including refreshes, reopening the menu, scan failures, and categories disappearing and returning.
+- All categories are selected on first launch. Changes are saved automatically and restored on subsequent app launches, including an empty selection. Choices remain in effect during refreshes, reopening the menu, scan failures, and categories disappearing and returning. Newly introduced categories remain unselected when restoring an existing selection.
 - The footer shows the selected item count and combined size. The Downloads overview continues to show the totals for all listed items.
 - The cleanup action is disabled when no listed items are selected, during scans, and during cleanup.
 - Confirmation shows the selected item count and captures only selected items, including their scanned identities. Later scans or selection changes do not alter the confirmed snapshot.
@@ -27,11 +27,12 @@ As a user, I want to select categories with checkboxes so that I can remove clut
 
 ## Manual Verification
 
-- Put files from several categories and a visible folder in Downloads. Verify all categories initially have checked boxes.
+- Put files from several categories and a visible folder in Downloads. On a fresh preferences domain, verify all categories initially have checked boxes.
 - Uncheck a category and verify the selected count and size decrease while the overview totals remain unchanged.
 - Uncheck every visible category and verify cleanup is disabled. Check one category and verify it becomes available.
 - Refresh and close/reopen the menu. Verify unchecked categories remain unchecked. Check keyboard navigation and that VoiceOver announces each checkbox label and state.
 - Select only PDFs and screenshots, open confirmation, and verify its count. Cancel and verify nothing moves.
 - Confirm the same selection and verify only those categories move to the macOS Trash. Verify the remaining list and selected totals refresh.
 - Select a folder containing files from unselected categories and verify the whole folder moves to the Trash.
-- Restart the app and verify all categories are selected again.
+- Uncheck some categories, quit with Quit DropSweep, and relaunch. Verify the same categories remain unchecked, including any that disappeared and returned in Downloads.
+- Uncheck every category, quit, and relaunch. Verify no categories are selected and cleanup remains disabled. Recheck a category, restart again, and verify that change is also restored.

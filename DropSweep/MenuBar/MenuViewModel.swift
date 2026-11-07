@@ -12,6 +12,7 @@ import ServiceManagement
 @Observable
 class MenuViewModel {
     private let sweeper: any DownloadsSweeping
+    @ObservationIgnored private let selectionStore: CategorySelectionStore
     @ObservationIgnored private let deletionErrorHandler: ((Int, [(url: URL, error: Error)]) -> Void)?
     @ObservationIgnored private var scanTask: Task<Void, Never>?
     @ObservationIgnored private var deleteTask: Task<Void, Never>?
@@ -21,7 +22,13 @@ class MenuViewModel {
     var itemsCount: Int = 0
     var totalSizeBytes: Int64 = 0
     var categories: [CategorySummary] = []
-    var selectedCategories: Set<DownloadsCategory> = Set(DownloadsCategory.allCases)
+    var selectedCategories: Set<DownloadsCategory> {
+        didSet {
+            if selectedCategories != oldValue {
+                selectionStore.save(selectedCategories)
+            }
+        }
+    }
     var scanErrorMessage: String?
     var launchAtLoginEnabled: Bool
     @ObservationIgnored private var deletableItems: [DownloadsItem] = []
@@ -30,9 +37,12 @@ class MenuViewModel {
         sweeper: any DownloadsSweeping = Sweeper(),
         launchAtLoginEnabled: Bool = SMAppService.mainApp.status == .enabled,
         scanOnInit: Bool = true,
+        selectionStore: CategorySelectionStore = CategorySelectionStore(),
         deletionErrorHandler: ((Int, [(url: URL, error: Error)]) -> Void)? = nil
     ) {
         self.sweeper = sweeper
+        self.selectionStore = selectionStore
+        self.selectedCategories = selectionStore.load()
         self.deletionErrorHandler = deletionErrorHandler
         self.launchAtLoginEnabled = launchAtLoginEnabled
         if scanOnInit {

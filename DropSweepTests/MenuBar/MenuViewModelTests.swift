@@ -4,6 +4,8 @@ import Testing
 @MainActor
 @Suite(.timeLimit(.minutes(1)))
 struct MenuViewModelTests {
+    private let preferences = PreferencesFixture()
+
     @Test func scanUpdatesSummaryAndErrorState() async {
         let service = ControlledSweeper()
         let model = makeModel(service)
@@ -86,6 +88,7 @@ struct MenuViewModelTests {
             sweeper: fixture.makeSweeper(failingNames: ["blocked.pdf"]),
             launchAtLoginEnabled: false,
             scanOnInit: false,
+            selectionStore: CategorySelectionStore(defaults: preferences.defaults),
             deletionErrorHandler: { deleted, failures in
                 reportedErrors.append((deleted, failures))
             }
@@ -187,7 +190,7 @@ struct MenuViewModelTests {
         for file in files {
             try fixture.file(file.name, bytes: file.bytes)
         }
-        let model = MenuViewModel(sweeper: fixture.makeSweeper(), launchAtLoginEnabled: false, scanOnInit: false)
+        let model = MenuViewModel(sweeper: fixture.makeSweeper(), launchAtLoginEnabled: false, scanOnInit: false, selectionStore: CategorySelectionStore(defaults: preferences.defaults))
         await model.scanDownloadsFolder().value
         let allItems = try #require(model.itemsForDeletionConfirmation())
         #expect(allItems.count == 8)
@@ -253,8 +256,42 @@ struct MenuViewModelTests {
         #expect(model.itemsForDeletionConfirmation()?.first?.url.lastPathComponent == "new.pdf")
     }
 
+    @Test func selectionSurvivesModelRecreationAndEmptyScans() async {
+        let service = ControlledSweeper()
+        let original = makeModel(service)
+        original[isSelected: .pdf] = false
+        original[isSelected: .folder] = false
+
+        let restored = makeModel(service)
+        #expect(restored.selectedCategories == original.selectedCategories)
+        await restored.scanDownloadsFolder().value
+        service.scanResult = result("new.pdf")
+        await restored.scanDownloadsFolder().value
+        #expect(!restored[isSelected: .pdf])
+        #expect(!restored[isSelected: .folder])
+        #expect(!restored.canDeleteDownloads)
+        #expect(restored.itemsForDeletionConfirmation() == nil)
+
+        restored[isSelected: .pdf] = true
+        #expect(makeModel(service)[isSelected: .pdf])
+        #expect(restored.canDeleteDownloads)
+    }
+
+    @Test func emptySelectionSurvivesModelRecreation() async {
+        let service = ControlledSweeper()
+        let original = makeModel(service)
+        original.selectedCategories = []
+
+        let restored = makeModel(service)
+        service.scanResult = result("document.pdf")
+        await restored.scanDownloadsFolder().value
+        #expect(restored.selectedCategories.isEmpty)
+        #expect(!restored.canDeleteDownloads)
+        #expect(restored.itemsForDeletionConfirmation() == nil)
+    }
+
     private func makeModel(_ service: ControlledSweeper) -> MenuViewModel {
-        MenuViewModel(sweeper: service, launchAtLoginEnabled: false, scanOnInit: false)
+        MenuViewModel(sweeper: service, launchAtLoginEnabled: false, scanOnInit: false, selectionStore: CategorySelectionStore(defaults: preferences.defaults))
     }
 
     private func result(_ name: String) -> DownloadsScanResult {

@@ -25,8 +25,10 @@ The app is built alongside the tests to check integration, but is not launched.
   folder preserves its links and leaves external targets unchanged.
 - `DropSweepTests/MenuBar/CategorySummaryTests.swift`: singular/plural titles,
   size summaries and stable identity. Formatting expectations use the current locale.
+- `DropSweepTests/MenuBar/CategorySelectionStoreTests.swift`: first-launch defaults,
+  invalid preferences and unknown category identifiers.
 - `DropSweepTests/MenuBar/MenuViewModelTests.swift`: confirmed snapshots after
-  rescans, category selection, selected-only cleanup, busy states, error recovery
+  rescans, persisted category selection across model recreation, selected-only cleanup, busy states, error recovery
   and cancellation of outdated scans. A partial-deletion integration test uses
   the fixture-backed Sweeper and captures error reporting through an injected
   handler, verifying the remaining selection and reset busy states without a modal alert.
@@ -39,7 +41,7 @@ The app is built alongside the tests to check integration, but is not launched.
 ## Isolation and extension
 
 This is a hostless unit-test bundle. The target compiles the actual `Sweeper.swift`,
-`CategorySummary.swift` and `MenuViewModel.swift` files directly, with the same Swift concurrency settings
+`CategorySummary.swift`, `CategorySelectionStore.swift` and `MenuViewModel.swift` files directly, with the same Swift concurrency settings
 as the app. Xcode lists those source references under **Tested Sources**; they are
 references, not copies. This keeps tests independent of the menu-bar app lifecycle,
 Sparkle startup and login-item registration without adding a framework or package.
@@ -56,6 +58,8 @@ filesystem permissions or system dialogs.
 
 ViewModel tests inject `ControlledSweeper`, an explicit login status, and
 `scanOnInit: false` to avoid reading system state or starting an uncontrolled scan.
+Each test injects a `CategorySelectionStore` backed by a unique UserDefaults suite through
+`PreferencesFixture`, which removes its domain after use. Tests never change app preferences.
 Scan and deletion methods return discardable task handles so tests can await their
 completion. Tests release pending continuations in `defer`, including on failures.
 
