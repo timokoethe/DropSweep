@@ -102,6 +102,32 @@ nonisolated struct SweeperScanTests {
         #expect(result.totalSizeBytes == 0)
     }
 
+    @Test(arguments: ["", "Visible/"])
+    func symlinksAreSkippedWithoutFollowingExternalTargets(prefix: String) async throws {
+        let fixture = try DownloadsFixture()
+        // Targets are outside simulated Downloads, but remain inside the fixture.
+        let externalFile = fixture.root.appendingPathComponent("external.txt")
+        let externalFolder = fixture.root.appendingPathComponent("External", isDirectory: true)
+        try Data(repeating: 0x62, count: 100).write(to: externalFile)
+        try FileManager.default.createDirectory(at: externalFolder, withIntermediateDirectories: true)
+        try Data(repeating: 0x63, count: 200).write(to: externalFolder.appendingPathComponent("nested.txt"))
+        try fixture.symlink("\(prefix)file-link.txt", to: externalFile)
+        try fixture.symlink("\(prefix)folder-link", to: externalFolder)
+        let broken = try fixture.symlink("\(prefix)broken-link", to: fixture.root.appendingPathComponent("missing"))
+        try fixture.file("\(prefix)local.txt", bytes: 7)
+
+        let result = await fixture.makeSweeper().scanDownloadsFolder()
+
+        #expect(result.scanErrorMessage == nil)
+        #expect(result.items.map { $0.url.lastPathComponent } == [prefix.isEmpty ? "local.txt" : "Visible"])
+        #expect(result.totalFiles == (prefix.isEmpty ? 1 : 0))
+        #expect(result.folderCount == (prefix.isEmpty ? 0 : 1))
+        #expect(result.folderSizeBytes == (prefix.isEmpty ? 0 : 7))
+        #expect(result.totalSizeBytes == 7)
+        // fileExists follows links, so inspect the link itself for a dangling target.
+        #expect(try FileManager.default.destinationOfSymbolicLink(atPath: broken.path) == fixture.root.appendingPathComponent("missing").path)
+    }
+
     @Test func completedDownloadAppearsOnNextScan() async throws {
         let fixture = try DownloadsFixture()
         let incomplete = try fixture.file("archive.zip.download", bytes: 21)
