@@ -12,6 +12,7 @@
 		D50D00000000000000000001 /* Sweeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50D00000000000000000003 /* Sweeper.swift */; };
 		D50D00000000000000000002 /* CategorySummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50D00000000000000000004 /* CategorySummary.swift */; };
 		D50D00000000000000000011 /* MenuViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50D00000000000000000012 /* MenuViewModel.swift */; };
+		D50D00000000000000000013 /* CategorySelectionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50D00000000000000000014 /* CategorySelectionStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		D50D00000000000000000004 /* CategorySummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropSweep/MenuBar/CategorySummary.swift; sourceTree = SOURCE_ROOT; };
 		D50D00000000000000000005 /* DropSweepTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DropSweepTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D50D00000000000000000012 /* MenuViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropSweep/MenuBar/MenuViewModel.swift; sourceTree = SOURCE_ROOT; };
+		D50D00000000000000000014 /* CategorySelectionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropSweep/MenuBar/CategorySelectionStore.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -104,6 +106,7 @@
 				D50D00000000000000000003 /* Sweeper.swift */,
 				D50D00000000000000000004 /* CategorySummary.swift */,
 				D50D00000000000000000012 /* MenuViewModel.swift */,
+				D50D00000000000000000014 /* CategorySelectionStore.swift */,
 			);
 			name = "Tested Sources";
 			sourceTree = "<group>";
@@ -223,6 +226,7 @@
 				D50D00000000000000000001 /* Sweeper.swift in Sources */,
 				D50D00000000000000000002 /* CategorySummary.swift in Sources */,
 				D50D00000000000000000011 /* MenuViewModel.swift in Sources */,
+				D50D00000000000000000013 /* CategorySelectionStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
