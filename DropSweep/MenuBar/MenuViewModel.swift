@@ -12,6 +12,7 @@ import ServiceManagement
 @Observable
 class MenuViewModel {
     private let sweeper: any DownloadsSweeping
+    @ObservationIgnored private let deletionErrorHandler: ((Int, [(url: URL, error: Error)]) -> Void)?
     @ObservationIgnored private var scanTask: Task<Void, Never>?
     @ObservationIgnored private var deleteTask: Task<Void, Never>?
     
@@ -28,9 +29,11 @@ class MenuViewModel {
     init(
         sweeper: any DownloadsSweeping = Sweeper(),
         launchAtLoginEnabled: Bool = SMAppService.mainApp.status == .enabled,
-        scanOnInit: Bool = true
+        scanOnInit: Bool = true,
+        deletionErrorHandler: ((Int, [(url: URL, error: Error)]) -> Void)? = nil
     ) {
         self.sweeper = sweeper
+        self.deletionErrorHandler = deletionErrorHandler
         self.launchAtLoginEnabled = launchAtLoginEnabled
         if scanOnInit {
             scanDownloadsFolder()
@@ -143,7 +146,11 @@ class MenuViewModel {
             applyScanResult(scanResult)
 
             if !deleteResult.failures.isEmpty {
-                showDeleteDownloadsError(deletedCount: deleteResult.deleted, failures: deleteResult.failures)
+                if let deletionErrorHandler {
+                    deletionErrorHandler(deleteResult.deleted, deleteResult.failures)
+                } else {
+                    showDeleteDownloadsError(deletedCount: deleteResult.deleted, failures: deleteResult.failures)
+                }
             }
         }
         deleteTask = task

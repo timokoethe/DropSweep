@@ -77,6 +77,46 @@ struct MenuViewModelTests {
         #expect(service.deletionRequests.count == 1)
     }
 
+    @Test func partialDeletionFailureReportsErrorAndRefreshesRemainingItems() async throws {
+        let fixture = try DownloadsFixture()
+        try fixture.file("removed.pdf", bytes: 20)
+        let blocked = try fixture.file("blocked.pdf", bytes: 30)
+        var reportedErrors: [(deleted: Int, failures: [(url: URL, error: Error)])] = []
+        let model = MenuViewModel(
+            sweeper: fixture.makeSweeper(failingNames: ["blocked.pdf"]),
+            launchAtLoginEnabled: false,
+            scanOnInit: false,
+            deletionErrorHandler: { deleted, failures in
+                reportedErrors.append((deleted, failures))
+            }
+        )
+        await model.scanDownloadsFolder().value
+        let confirmed = try #require(model.itemsForDeletionConfirmation())
+        try #require(confirmed.count == 2)
+
+        let task = try #require(model.deleteDownloads(confirmed))
+        #expect(model.isDeleting && model.isScanning)
+        #expect(!model.canDeleteDownloads)
+        await task.value
+
+        #expect(reportedErrors.count == 1)
+        let report = try #require(reportedErrors.first)
+        #expect(report.deleted == 1)
+        #expect(report.failures.map(\.url) == [blocked])
+        #expect((report.failures.first?.error as? CocoaError)?.code == .fileWriteNoPermission)
+        #expect(!model.isDeleting && !model.isScanning)
+        #expect(model.scanErrorMessage == nil)
+        #expect(model.itemsCount == 1)
+        #expect(model.totalSizeBytes == 30)
+        #expect(model.categories.map(\.category) == [.pdf])
+        #expect(model.categories.first?.count == 1)
+        #expect(model.categories.first?.sizeBytes == 30)
+        #expect(model.canDeleteDownloads)
+        #expect(model.itemsForDeletionConfirmation()?.map { $0.url.standardizedFileURL } == [blocked.standardizedFileURL])
+        #expect(fixture.exists(blocked))
+        #expect(fixture.exists(fixture.trash.appendingPathComponent("removed.pdf")))
+    }
+
     @Test(arguments: [true, false])
     func cancelledScanCannotOverwriteNewScanOrClearItsBusyState(oldFinishesFirst: Bool) async {
         let service = ControlledSweeper()
