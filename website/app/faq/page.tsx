@@ -23,9 +23,24 @@ const questions = [
       "No. DropSweep moves confirmed items to the macOS Trash instead of permanently deleting them. You can review the item count and categories before starting a sweep. You can select categories; individual file selection is not supported. Only items in the selected categories are moved. While items remain in the Trash, you can restore them using Put Back in Finder. DropSweep does not empty the Trash, and moving files there does not immediately free disk space.",
   },
   {
+    question: "Does DropSweep remember my category selection?",
+    answer:
+      "Yes. All categories are selected on first launch. Changes are saved on your Mac and restored after restarting the app, including an empty selection. Use Select All or Deselect All in the footer to change every category at once. The footer shows the selected item count and size; the Downloads overview shows totals for all listed items.",
+  },
+  {
+    question: "Can I sort categories by size?",
+    answer:
+      "Yes. Open the sort menu beside the Downloads summary and choose Category Order, Largest First, or Smallest First. Your sort choice is saved across app restarts. Sorting changes the display order without changing your category selection.",
+  },
+  {
     question: "Which files does DropSweep scan?",
     answer:
-      "It scans visible top-level entries in Downloads and groups regular files as installers, archives, PDFs, screenshots, images, or other files. Visible folders are listed separately and their size is included in the summary. Recognized incomplete downloads are skipped.",
+      "It scans visible top-level entries in Downloads and groups regular files as installers, archives, PDFs, screenshots, images, or other files. Visible folders are listed separately and their size is included in the summary. Entries with recognized incomplete-download extensions directly inside Downloads are skipped.",
+  },
+  {
+    question: "Are downloads still in progress protected?",
+    answer:
+      "DropSweep skips files and folders directly inside Downloads whose names end in .crdownload, .download, .part, .partial, .opdownload, or .filepart, regardless of capitalization. This filter uses filenames, not browser activity: active downloads with other extensions or a final filename are not protected, and abandoned files with a listed extension stay excluded. Incomplete downloads inside a selected folder count toward its size and move to the Trash with that folder. Review your selection before confirming cleanup.",
   },
   {
     question: "What happens to hidden items?",

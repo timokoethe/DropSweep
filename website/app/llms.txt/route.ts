@@ -24,7 +24,9 @@ Scanning and cleanup happen locally on the Mac; nothing is uploaded. macOS 26 or
 
 - Categories: installers, archives, PDFs, screenshots, images, other files, and folders.
 - Cleanup includes only items in selected categories. Individual file selection and automatic cleanup are not supported.
-- Recognized incomplete downloads are skipped.
+- All categories are selected on first launch. Category choices, including an empty selection, are saved locally across app restarts. Select All / Deselect All changes every category at once.
+- Categories can be sorted by Category Order, Largest First, or Smallest First. The sort choice is saved and does not change the selection.
+- Files and folders directly inside Downloads ending in .crdownload, .download, .part, .partial, .opdownload, or .filepart are skipped, case-insensitively. This filename filter does not protect active downloads with other extensions or final filenames. Incomplete downloads inside a selected folder count toward its size and move with it.
 - Category grouping is a summary, not file organization.
 - Files can be restored while still in the Trash. DropSweep does not empty it or immediately free disk space.
 - Items are moved to the macOS Trash, never permanently deleted, and only after confirmation.

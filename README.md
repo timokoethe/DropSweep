@@ -24,18 +24,20 @@
 </p>
 
 <p align="center">
-  <img src="website/public/Image.png" alt="DropSweep menu showing Downloads grouped by file type, item counts and sizes, with an action to move listed items to the Trash" width="860">
+  <img src="website/public/Image.png" alt="DropSweep menu showing category checkboxes, item counts and sizes, and a Move Selection to Trash button" width="860">
 </p>
 
 ## Less clutter, a clearer overview
 
-See what has piled up in Downloads, review it at a glance, and clear the listed items when you’re ready.
+See what has piled up in Downloads, choose the categories to clear, and move your selection to the Trash when you’re ready.
 
 | | What DropSweep does |
 | :--- | :--- |
 | **Always within reach** | [A compact menu bar interface](docs/features/menu-bar-access.md) without another window on your desktop. |
 | **Clutter, grouped** | [Installers, archives, PDFs, screenshots, images, folders, and other files](docs/features/download-categories.md), with item counts and sizes. |
-| **Recoverable cleanup** | [Confirm before moving listed items to the macOS Trash](docs/features/move-to-trash.md), where they remain recoverable until you empty it. |
+| **Your selection, remembered** | [Choose categories with checkboxes or Select All / Deselect All](docs/features/category-selection.md). Your choices are saved across app restarts. |
+| **Find the largest clutter** | [Sort categories by size in either direction](docs/features/category-sorting.md), or keep the default category order. Your sort choice is saved too. |
+| **Recoverable cleanup** | [Confirm before moving selected items to the macOS Trash](docs/features/move-to-trash.md), where they remain recoverable until you empty it. |
 | **Ready when you are** | Optional [launch at login](docs/features/launch-at-login.md) and built-in [update checks](docs/features/app-updates.md). |
 
 ## Get started
@@ -46,13 +48,13 @@ See what has piled up in Downloads, review it at a glance, and clear the listed 
 2. Unzip the downloaded archive.
 3. Move `DropSweep.app` to your Applications folder and open it.
 
-Open DropSweep from the menu bar to review your Downloads. Choose **Move Listed Items to Trash** and confirm to clean up.
+Open DropSweep from the menu bar to review your Downloads. Use the category checkboxes or **Select All / Deselect All** to choose what to clear, review the selected count and size, then choose **Move Selection to Trash** and confirm. All categories are selected on first launch; later launches restore your saved selection.
 
 ## Your files stay on your Mac
 
 DropSweep [scans your Downloads folder locally](docs/features/downloads-scanning.md) and does not upload file names or contents. Network access is only used to check for and download app updates through Sparkle.
 
-Cleanup is limited to listed items in Downloads. Hidden items directly in the Downloads folder are skipped; contents inside a listed folder move to the Trash together with that folder.
+Cleanup is limited to selected items in Downloads. Hidden items directly in Downloads and entries ending in `.crdownload`, `.download`, `.part`, `.partial`, `.opdownload`, or `.filepart` are skipped, case-insensitively. This filename filter does not detect every active download. A selected folder moves with all its contents, including hidden files and incomplete downloads. See [scanning behavior and limitations](docs/features/downloads-scanning.md).
 
 ## Development
 
