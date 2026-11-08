@@ -54,6 +54,19 @@ class MenuViewModel {
         !isScanning && !isDeleting && scanErrorMessage == nil && selectedItemsCount > 0
     }
 
+    var canChangeCategorySelection: Bool {
+        !isScanning && !isDeleting && scanErrorMessage == nil && !categories.isEmpty
+    }
+
+    var areAllCategoriesSelected: Bool {
+        !categories.isEmpty && categories.allSatisfy { selectedCategories.contains($0.category) }
+    }
+
+    func toggleAllCategories() {
+        guard canChangeCategorySelection else { return }
+        selectedCategories = areAllCategoriesSelected ? [] : Set(DownloadsCategory.allCases)
+    }
+
     subscript(isSelected category: DownloadsCategory) -> Bool {
         get { selectedCategories.contains(category) }
         set {
