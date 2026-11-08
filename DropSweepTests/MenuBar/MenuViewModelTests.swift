@@ -290,6 +290,73 @@ struct MenuViewModelTests {
         #expect(restored.itemsForDeletionConfirmation() == nil)
     }
 
+    @Test func bulkSelectionUpdatesConfirmedItemsAndPersistsBothStates() async throws {
+        let fixture = try DownloadsFixture()
+        try fixture.file("document.pdf", bytes: 10)
+        try fixture.file("archive.zip", bytes: 20)
+        let model = MenuViewModel(
+            sweeper: fixture.makeSweeper(), launchAtLoginEnabled: false, scanOnInit: false,
+            selectionStore: CategorySelectionStore(defaults: preferences.defaults)
+        )
+        await model.scanDownloadsFolder().value
+        #expect(model.canChangeCategorySelection)
+
+        // Only the visible categories need to be selected to offer Deselect All.
+        model.selectedCategories = [.pdf, .archive]
+        #expect(model.areAllCategoriesSelected)
+        model.toggleAllCategories()
+        #expect(model.selectedCategories.isEmpty)
+        #expect(!model.areAllCategoriesSelected)
+        #expect(model.selectedItemsCount == 0)
+        #expect(!model.canDeleteDownloads)
+        #expect(model.itemsForDeletionConfirmation() == nil)
+        #expect(makeModel(ControlledSweeper()).selectedCategories.isEmpty)
+
+        model.toggleAllCategories()
+        #expect(model.areAllCategoriesSelected)
+        #expect(model.selectedCategories == Set(DownloadsCategory.allCases))
+        #expect(model.selectedItemsCount == model.itemsCount)
+        #expect(model.selectionSummary == "2 items selected · \(model.totalDisplaySize)")
+        #expect(Set(try #require(model.itemsForDeletionConfirmation()).map(\.category)) == [.pdf, .archive])
+        #expect(makeModel(ControlledSweeper()).selectedCategories == model.selectedCategories)
+
+        model[isSelected: .archive] = false
+        #expect(!model.areAllCategoriesSelected)
+        model.toggleAllCategories()
+        #expect(model.areAllCategoriesSelected)
+        #expect(model.selectedItemsCount == 2)
+    }
+
+    @Test func bulkSelectionIgnoresUnavailableStates() async {
+        let service = ControlledSweeper()
+        let model = makeModel(service)
+        model.selectedCategories = []
+        #expect(!model.areAllCategoriesSelected)
+        #expect(!model.canChangeCategorySelection)
+        model.toggleAllCategories()
+        #expect(model.selectedCategories.isEmpty)
+
+        service.scanResult = result("document.pdf")
+        await model.scanDownloadsFolder().value
+        model.isScanning = true
+        #expect(!model.canChangeCategorySelection)
+        model.toggleAllCategories()
+        #expect(model.selectedCategories.isEmpty)
+        model.isScanning = false
+
+        model.isDeleting = true
+        #expect(!model.canChangeCategorySelection)
+        model.toggleAllCategories()
+        #expect(model.selectedCategories.isEmpty)
+        model.isDeleting = false
+
+        service.scanResult = DownloadsScanResult(scanErrorMessage: "Scan failed")
+        await model.scanDownloadsFolder().value
+        #expect(!model.canChangeCategorySelection)
+        model.toggleAllCategories()
+        #expect(model.selectedCategories.isEmpty)
+    }
+
     private func makeModel(_ service: ControlledSweeper) -> MenuViewModel {
         MenuViewModel(sweeper: service, launchAtLoginEnabled: false, scanOnInit: false, selectionStore: CategorySelectionStore(defaults: preferences.defaults))
     }

@@ -146,10 +146,12 @@ struct MenuView: View {
 
     private var footer: some View {
         VStack(spacing: 8) {
-            Text(vm.selectionSummary)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .monospacedDigit()
+            CategorySelectionControls(
+                summary: vm.selectionSummary,
+                allSelected: vm.areAllCategoriesSelected,
+                isEnabled: vm.canChangeCategorySelection,
+                toggleSelection: vm.toggleAllCategories
+            )
             Button(action: confirmDeleteDownloads) {
                 Label("Move Selection to Trash", systemImage: "trash")
                     .font(.system(size: 13, weight: .semibold))
