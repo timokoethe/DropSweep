@@ -23,6 +23,7 @@ As a user, I want to access DropSweep from the menu bar so that I can quickly re
 - The menu bar opens a 340-point-wide thick-material panel that follows system appearance; the app remains menu-bar-only without a Dock window.
 - A Downloads heading shows the item count and total size, with an Open in Finder action.
 - Category rows show a colored icon, title, item count, and right-aligned size; long category lists scroll above the fixed footer.
+- A sort menu beside the Downloads summary switches between the original category order and either size direction; see [Category Sorting](category-sorting.md).
 - The footer contains only the existing all-listed-items Trash action; totals appear once below Downloads. Confirmation still appears after clicking the button; no explanatory sentences appear below the Downloads summary or Trash button. Category rows are summaries, not selection controls.
 - Refresh (Command-R) rescans Downloads; opening the panel also refreshes the scan unless a Trash operation is running.
 - A gear menu exposes Launch at Login, Check for Updates, About, and Quit.
