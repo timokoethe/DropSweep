@@ -22,9 +22,10 @@ As a user, I want to access DropSweep from the menu bar so that I can quickly re
 - The app can be quit from the menu or with Command-Q.
 - The menu bar opens a 340-point-wide thick-material panel that follows system appearance; the app remains menu-bar-only without a Dock window.
 - A Downloads heading shows the item count and total size, with an Open in Finder action.
-- Category rows show a colored icon, title, item count, and right-aligned size; long category lists scroll above the fixed footer.
+- Category rows show a selection checkbox, colored icon, title, item count, and right-aligned size; long category lists scroll above the fixed footer.
 - A sort menu beside the Downloads summary switches between the original category order and either size direction; see [Category Sorting](category-sorting.md).
-- The footer contains only the existing all-listed-items Trash action; totals appear once below Downloads. Confirmation still appears after clicking the button; no explanatory sentences appear below the Downloads summary or Trash button. Category rows are summaries, not selection controls.
+- The footer shows the selected item count and combined size, a Select All or Deselect All button, and the Move Selection to Trash action. The Downloads overview shows totals for all listed items. Category choices are saved across app restarts; see [Category Selection](category-selection.md).
+- Move Selection to Trash requires confirmation and moves only the confirmed selection. The action is disabled when no listed items are selected, during scans and cleanup, and after a scan error.
 - Refresh (Command-R) rescans Downloads; opening the panel also refreshes the scan unless a Trash operation is running.
 - A gear menu exposes Launch at Login, Check for Updates, About, and Quit.
 - Scanning, moving, empty-folder, and scan-error states have dedicated presentations.
@@ -34,5 +35,6 @@ As a user, I want to access DropSweep from the menu bar so that I can quickly re
 
 - Open and reopen the panel with empty Downloads and with mixed categories, including visible folders; check counts and sizes against Finder.
 - Check light and dark appearance, keyboard navigation, Refresh, Open in Finder, and every gear-menu action.
-- Cancel the Trash confirmation and verify nothing moves. With disposable test files, confirm and verify the same listed items move to Trash and the panel refreshes.
+- Change category checkboxes and verify the selected count and size update while the Downloads totals stay unchanged. Check Select All and Deselect All, then restart the app and verify the selection is restored.
+- Cancel the Trash confirmation and verify nothing moves. With disposable test files, confirm and verify only the selected items move to Trash and the panel refreshes.
 - Remove a test item while confirmation is open to exercise existing failure reporting. Verify hidden root items remain excluded.

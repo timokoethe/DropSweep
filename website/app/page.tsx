@@ -136,6 +136,14 @@ const features = [
     body: "Choose which categories to clear, with item counts and sizes for each.",
   },
   {
+    title: "Remembers your selection",
+    body: "Use category checkboxes or Select All / Deselect All. Your choices are saved across app restarts.",
+  },
+  {
+    title: "Sorts by size",
+    body: "Choose Category Order, Largest First, or Smallest First from the sort menu. Your sort choice is saved too.",
+  },
+  {
     title: "Confirm before moving",
     body: "Review the count and size of your selection before moving it to the Trash.",
   },
@@ -316,10 +324,12 @@ export default async function Home() {
               <p className="mt-3 text-sm leading-7 text-muted">
                 You choose categories, not individual files. After confirmation,
                 DropSweep attempts to move the files and folders in those
-                categories from Downloads to the Trash. Hidden items directly in
-                Downloads and recognized incomplete downloads are skipped. A
-                selected folder moves with all its contents, including hidden files. Any
-                failures are reported.
+                categories from Downloads to the Trash. Hidden items and entries
+                with recognized incomplete-download extensions directly inside
+                Downloads are skipped. This filename filter does not protect every
+                active download. A selected folder moves with all its contents,
+                including hidden files and incomplete downloads. Any failures are
+                reported.
               </p>
             </div>
             <div>
