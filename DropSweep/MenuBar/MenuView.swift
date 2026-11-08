@@ -10,6 +10,7 @@ import SwiftUI
 
 struct MenuView: View {
     @Bindable var vm: MenuViewModel
+    @AppStorage("categorySortOrder") private var categorySortOrder: CategorySortOrder = .category
 
     var canCheckForUpdates = false
     var checkForUpdates: () -> Void = {}
@@ -99,17 +100,23 @@ struct MenuView: View {
                 .buttonStyle(.borderless)
                 .tint(.accentColor)
             }
-            Text("\(vm.itemsSummary) · \(vm.totalDisplaySize)")
-                .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(.secondary)
-                .monospacedDigit()
+            HStack {
+                Text("\(vm.itemsSummary) · \(vm.totalDisplaySize)")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
+                Spacer()
+                CategorySortMenu(selection: $categorySortOrder)
+            }
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 12)
     }
 
     private var categoryList: some View {
-        ScrollView {
+        let categories = categorySortOrder.sorted(vm.categories)
+
+        return ScrollView {
             VStack(spacing: 0) {
                 if vm.isScanning || vm.isDeleting {
                     ProgressView(vm.isDeleting ? "Moving items to Trash…" : "Scanning Downloads…")
@@ -120,9 +127,9 @@ struct MenuView: View {
                 } else if vm.categories.isEmpty {
                     statusMessage("All clear", detail: "Your Downloads folder has no items to clean up.", symbol: "checkmark.circle")
                 } else {
-                    ForEach(vm.categories) { category in
+                    ForEach(categories) { category in
                         DownloadCategoryRow(category: category, isSelected: $vm[isSelected: category.category])
-                        if category.id != vm.categories.last?.id {
+                        if category.id != categories.last?.id {
                             Divider()
                                 .padding(.leading, 74)
                                 .padding(.trailing, 16)

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D50D00000000000000000015 /* CategorySortOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50D00000000000000000016 /* CategorySortOrder.swift */; };
 		252B5A632FDDAC5400A66506 /* Icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 252B5A622FDDAC5400A66506 /* Icon.icon */; };
 		806DCC9B2FD5C1EE0088AF53 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 806DCC9A2FD5C1EE0088AF53 /* Sparkle */; };
 		D50D00000000000000000001 /* Sweeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50D00000000000000000003 /* Sweeper.swift */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D50D00000000000000000016 /* CategorySortOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropSweep/MenuBar/CategorySortOrder.swift; sourceTree = SOURCE_ROOT; };
 		D50C00000000000000000001 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		252B5A622FDDAC5400A66506 /* Icon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Icon.icon; sourceTree = "<group>"; };
 		259B1BAA2FC36D4600C564A8 /* DropSweep.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DropSweep.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -107,6 +109,7 @@
 				D50D00000000000000000004 /* CategorySummary.swift */,
 				D50D00000000000000000012 /* MenuViewModel.swift */,
 				D50D00000000000000000014 /* CategorySelectionStore.swift */,
+				D50D00000000000000000016 /* CategorySortOrder.swift */,
 			);
 			name = "Tested Sources";
 			sourceTree = "<group>";
@@ -227,6 +230,7 @@
 				D50D00000000000000000002 /* CategorySummary.swift in Sources */,
 				D50D00000000000000000011 /* MenuViewModel.swift in Sources */,
 				D50D00000000000000000013 /* CategorySelectionStore.swift in Sources */,
+				D50D00000000000000000015 /* CategorySortOrder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

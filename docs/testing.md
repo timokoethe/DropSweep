@@ -25,6 +25,7 @@ The app is built alongside the tests to check integration, but is not launched.
   folder preserves its links and leaves external targets unchanged.
 - `DropSweepTests/MenuBar/CategorySummaryTests.swift`: singular/plural titles,
   size summaries and stable identity. Formatting expectations use the current locale.
+- `DropSweepTests/MenuBar/CategorySortOrderTests.swift`: byte-based ordering in both directions, stable ties, and empty/single-category lists.
 - `DropSweepTests/MenuBar/CategorySelectionStoreTests.swift`: first-launch defaults,
   invalid preferences and unknown category identifiers.
 - `DropSweepTests/MenuBar/MenuViewModelTests.swift`: confirmed snapshots after
@@ -41,7 +42,7 @@ The app is built alongside the tests to check integration, but is not launched.
 ## Isolation and extension
 
 This is a hostless unit-test bundle. The target compiles the actual `Sweeper.swift`,
-`CategorySummary.swift`, `CategorySelectionStore.swift` and `MenuViewModel.swift` files directly, with the same Swift concurrency settings
+`CategorySummary.swift`, `CategorySortOrder.swift`, `CategorySelectionStore.swift` and `MenuViewModel.swift` files directly, with the same Swift concurrency settings
 as the app. Xcode lists those source references under **Tested Sources**; they are
 references, not copies. This keeps tests independent of the menu-bar app lifecycle,
 Sparkle startup and login-item registration without adding a framework or package.
