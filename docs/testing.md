@@ -57,8 +57,8 @@ user's Downloads. Fixtures remove their temporary root after use and can run in
 parallel. Failure tests inject a throwing trash operation rather than relying on
 filesystem permissions or system dialogs.
 
-ViewModel tests inject `ControlledSweeper`, an explicit login status, and
-`scanOnInit: false` to avoid reading system state or starting an uncontrolled scan.
+ViewModel tests inject `ControlledSweeper` and an explicit login status to avoid
+reading system state. Initialization does not start a scan; tests request scans explicitly.
 Each test injects a `CategorySelectionStore` backed by a unique UserDefaults suite through
 `PreferencesFixture`, which removes its domain after use. Tests never change app preferences.
 Scan and deletion methods return discardable task handles so tests can await their

@@ -35,7 +35,6 @@ class MenuViewModel {
     init(
         sweeper: any DownloadsSweeping = Sweeper(),
         launchAtLoginEnabled: Bool = SMAppService.mainApp.status == .enabled,
-        scanOnInit: Bool = true,
         selectionStore: CategorySelectionStore = CategorySelectionStore(),
         deletionErrorHandler: ((Int, [(url: URL, error: Error)]) -> Void)? = nil
     ) {
@@ -44,9 +43,6 @@ class MenuViewModel {
         self.selectedCategories = selectionStore.load()
         self.deletionErrorHandler = deletionErrorHandler
         self.launchAtLoginEnabled = launchAtLoginEnabled
-        if scanOnInit {
-            scanDownloadsFolder()
-        }
     }
 
     var canDeleteDownloads: Bool {
