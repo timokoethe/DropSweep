@@ -13,15 +13,20 @@ This repository is public and DropSweep is a released product. Treat every commi
 - `DropSweep/Services/Sweeper.swift`: Downloads scanning, classification, and trashing logic.
 - `DropSweep/Updates/CheckForUpdatesViewModel.swift`: Sparkle update state.
 - `DropSweep/Info.plist`: app bundle configuration.
+- `DropSweepTests/`: hostless Swift Testing suites with isolated filesystem and preferences fixtures; see `docs/testing.md`.
 - `docs/features/`: native macOS app feature documentation and its `_template.md`.
 - `website/`: separate Next.js site; follow `website/AGENTS.md` before editing it.
 
 ## Development Guidelines
 
 - Keep changes small and aligned with the existing Swift style.
+- The project defaults to `MainActor` isolation; keep scanning and trashing in the `Sweeper` actor.
+- Start automatic scans when the menu opens, not in the ViewModel initializer. Skip menu-open scans during cleanup; cleanup performs its own final scan.
+- Category raw values are persisted identifiers; changing them requires migration. Keep display titles in `CategorySummary`.
 - Prefer SwiftUI for menu UI and AppKit only for macOS-specific APIs such as `NSApplication`, `NSMenu`, `NSColor`, or file trashing behavior.
 - Treat filesystem operations carefully. DropSweep targets the user's Downloads folder, so prefer `FileManager.trashItem` over permanent deletion and preserve failure reporting paths where possible.
 - Do not broaden cleanup scope beyond Downloads unless the user explicitly asks for it.
+- Trash only the confirmed item snapshot and preserve the file-identity check before moving each item.
 - Hidden items directly in the Downloads root are intentionally skipped during scans and cleanup. Hidden contents inside a visible subfolder are moved to the Trash together with that folder; keep this behavior unless changing product requirements.
 - Document each native macOS app feature in its own `docs/features/` Markdown file using `_template.md`. Do not document website features there.
 - Avoid introducing an Xcode-project dependency or build-system change unless it is needed for the requested work.
