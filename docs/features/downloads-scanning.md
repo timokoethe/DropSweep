@@ -17,7 +17,8 @@ As a user, I want DropSweep to scan my Downloads folder so that I can see what c
 
 ## Acceptance Criteria
 
-- The Downloads folder is scanned when DropSweep starts and whenever its menu opens.
+- The Downloads folder is scanned whenever the menu opens, including the first opening after launch. Initializing the app does not start a scan.
+- Opening the menu during cleanup does not start a competing scan; cleanup refreshes the results when it finishes.
 - Files and folders directly inside Downloads are included unless excluded by the rules below.
 - Hidden items at the Downloads root are skipped.
 - Files and folders directly inside Downloads with `.crdownload`, `.download`, `.part`, `.partial`, `.opdownload`, or `.filepart` extensions are skipped, case-insensitively. These entries do not contribute to counts, sizes, categories, or the cleanup list, regardless of whether a download is still active.
@@ -26,6 +27,9 @@ As a user, I want DropSweep to scan my Downloads folder so that I can see what c
 - If an item’s metadata, size, or folder contents cannot be read, the scan is treated as failed. Partial counts and sizes are not shown as a complete result, and cleanup stays disabled until a successful scan.
 
 ## Manual Verification
+
+- Launch DropSweep, open its menu, and verify the Downloads summary appears. Add an item while the menu is closed and verify reopening updates the summary.
+- Reopen the menu during cleanup and verify the cleanup progress remains visible until the final refresh completes.
 
 - With empty Downloads, verify that no items or categories appear.
 - Add a PDF, an image, a ZIP archive, and a normal visible folder. Verify their counts and sizes are included.

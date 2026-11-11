@@ -87,7 +87,6 @@ struct MenuViewModelTests {
         let model = MenuViewModel(
             sweeper: fixture.makeSweeper(failingNames: ["blocked.pdf"]),
             launchAtLoginEnabled: false,
-            scanOnInit: false,
             selectionStore: CategorySelectionStore(defaults: preferences.defaults),
             deletionErrorHandler: { deleted, failures in
                 reportedErrors.append((deleted, failures))
@@ -190,7 +189,7 @@ struct MenuViewModelTests {
         for file in files {
             try fixture.file(file.name, bytes: file.bytes)
         }
-        let model = MenuViewModel(sweeper: fixture.makeSweeper(), launchAtLoginEnabled: false, scanOnInit: false, selectionStore: CategorySelectionStore(defaults: preferences.defaults))
+        let model = MenuViewModel(sweeper: fixture.makeSweeper(), launchAtLoginEnabled: false, selectionStore: CategorySelectionStore(defaults: preferences.defaults))
         await model.scanDownloadsFolder().value
         let allItems = try #require(model.itemsForDeletionConfirmation())
         #expect(allItems.count == 8)
@@ -295,7 +294,7 @@ struct MenuViewModelTests {
         try fixture.file("document.pdf", bytes: 10)
         try fixture.file("archive.zip", bytes: 20)
         let model = MenuViewModel(
-            sweeper: fixture.makeSweeper(), launchAtLoginEnabled: false, scanOnInit: false,
+            sweeper: fixture.makeSweeper(), launchAtLoginEnabled: false,
             selectionStore: CategorySelectionStore(defaults: preferences.defaults)
         )
         await model.scanDownloadsFolder().value
@@ -358,7 +357,7 @@ struct MenuViewModelTests {
     }
 
     private func makeModel(_ service: ControlledSweeper) -> MenuViewModel {
-        MenuViewModel(sweeper: service, launchAtLoginEnabled: false, scanOnInit: false, selectionStore: CategorySelectionStore(defaults: preferences.defaults))
+        MenuViewModel(sweeper: service, launchAtLoginEnabled: false, selectionStore: CategorySelectionStore(defaults: preferences.defaults))
     }
 
     private func result(_ name: String) -> DownloadsScanResult {
