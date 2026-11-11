@@ -15,7 +15,6 @@ class MenuViewModel {
     @ObservationIgnored private let selectionStore: CategorySelectionStore
     @ObservationIgnored private let deletionErrorHandler: ((Int, [(url: URL, error: Error)]) -> Void)?
     @ObservationIgnored private var scanTask: Task<Void, Never>?
-    @ObservationIgnored private var deleteTask: Task<Void, Never>?
     
     var isScanning: Bool = false
     var isDeleting: Bool = false
@@ -176,7 +175,6 @@ class MenuViewModel {
                 }
             }
         }
-        deleteTask = task
         return task
     }
 
