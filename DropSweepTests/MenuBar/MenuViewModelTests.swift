@@ -361,12 +361,11 @@ struct MenuViewModelTests {
     }
 
     private func result(_ name: String) -> DownloadsScanResult {
-        DownloadsScanResult(
-            items: [DownloadsItem(url: URL(fileURLWithPath: "/test-downloads/\(name)"), fileResourceIdentifier: Data(name.utf8), category: .pdf)],
-            totalFiles: 1,
-            pdfCount: 1,
-            totalSizeBytes: 10,
-            pdfSizeBytes: 10
+        var result = DownloadsScanResult()
+        result.append(
+            DownloadsItem(url: URL(fileURLWithPath: "/test-downloads/\(name)"), fileResourceIdentifier: Data(name.utf8), category: .pdf),
+            sizeBytes: 10
         )
+        return result
     }
 }

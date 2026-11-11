@@ -113,17 +113,13 @@ class MenuViewModel {
     private func applyScanResult(_ result: DownloadsScanResult) {
         scanErrorMessage = result.scanErrorMessage
         deletableItems = result.items
-        itemsCount = result.totalFiles + result.folderCount
+        itemsCount = result.items.count
         totalSizeBytes = result.totalSizeBytes
-        categories = [
-            CategorySummary(category: .installer, singularTitle: "Installer", pluralTitle: "Installers", count: result.installerCount, sizeBytes: result.installerSizeBytes),
-            CategorySummary(category: .archive, singularTitle: "Archive", pluralTitle: "Archives", count: result.archiveCount, sizeBytes: result.archiveSizeBytes),
-            CategorySummary(category: .pdf, singularTitle: "PDF", pluralTitle: "PDFs", count: result.pdfCount, sizeBytes: result.pdfSizeBytes),
-            CategorySummary(category: .screenshot, singularTitle: "Screenshot", pluralTitle: "Screenshots", count: result.screenshotCount, sizeBytes: result.screenshotSizeBytes),
-            CategorySummary(category: .image, singularTitle: "Image", pluralTitle: "Images", count: result.imageCount, sizeBytes: result.imageSizeBytes),
-            CategorySummary(category: .folder, singularTitle: "Folder", pluralTitle: "Folders", count: result.folderCount, sizeBytes: result.folderSizeBytes),
-            CategorySummary(category: .other, singularTitle: "Other File", pluralTitle: "Other Files", count: result.otherCount, sizeBytes: result.otherSizeBytes)
-        ].filter { $0.count > 0 }
+        categories = DownloadsCategory.allCases.compactMap { category in
+            let statistics = result[category]
+            guard statistics.count > 0 else { return nil }
+            return CategorySummary(category: category, count: statistics.count, sizeBytes: statistics.sizeBytes)
+        }
     }
 
     func refreshLaunchAtLoginStatus() {

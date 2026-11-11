@@ -10,13 +10,20 @@ import Foundation
 struct CategorySummary: Identifiable {
     var id: String { category.rawValue }
     let category: DownloadsCategory
-    let singularTitle: String
-    let pluralTitle: String
     let count: Int
     let sizeBytes: Int64
 
     var displayTitle: String {
-        count == 1 ? singularTitle : pluralTitle
+        let titles: (singular: String, plural: String) = switch category {
+        case .installer: ("Installer", "Installers")
+        case .archive: ("Archive", "Archives")
+        case .pdf: ("PDF", "PDFs")
+        case .screenshot: ("Screenshot", "Screenshots")
+        case .image: ("Image", "Images")
+        case .folder: ("Folder", "Folders")
+        case .other: ("Other File", "Other Files")
+        }
+        return count == 1 ? titles.singular : titles.plural
     }
 
     var displaySize: String {

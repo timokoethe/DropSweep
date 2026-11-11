@@ -32,6 +32,6 @@ struct CategorySortOrderTests {
     }
 
     private func summary(_ category: DownloadsCategory, count: Int = 1, bytes: Int64) -> CategorySummary {
-        CategorySummary(category: category, singularTitle: category.rawValue, pluralTitle: category.rawValue, count: count, sizeBytes: bytes)
+        CategorySummary(category: category, count: count, sizeBytes: bytes)
     }
 }

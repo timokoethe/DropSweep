@@ -6,8 +6,7 @@ nonisolated struct SweeperScanTests {
         let fixture = try DownloadsFixture()
         let result = await fixture.makeSweeper().scanDownloadsFolder()
         #expect(result.items.isEmpty)
-        #expect(result.totalFiles == 0)
-        #expect(result.folderCount == 0)
+        #expect(result[.folder].count == 0)
         #expect(result.totalSizeBytes == 0)
         #expect(result.scanErrorMessage == nil)
     }
@@ -40,8 +39,7 @@ nonisolated struct SweeperScanTests {
         let failed = await sweeper.scanDownloadsFolder()
         #expect(failed.scanErrorMessage != nil)
         #expect(failed.items.isEmpty)
-        #expect(failed.totalFiles == 0)
-        #expect(failed.folderCount == 0)
+        #expect(failed[.folder].count == 0)
         #expect(failed.totalSizeBytes == 0)
 
         try FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: folder.path)
@@ -56,22 +54,24 @@ nonisolated struct SweeperScanTests {
         try fixture.file("Installer.dmg", bytes: 11)
         try fixture.file("Archive.zip", bytes: 12)
         try fixture.file("Document.pdf", bytes: 13)
+        try fixture.file("Second.pdf", bytes: 19)
+        try fixture.file("Empty.pdf", bytes: 0)
         try fixture.file("Screenshot.png", bytes: 14)
         try fixture.file("Photo.heic", bytes: 15)
         try fixture.file("Notes.txt", bytes: 16)
         try fixture.file("Folder/nested.txt", bytes: 17)
         let result = await fixture.makeSweeper().scanDownloadsFolder()
-        #expect(result.totalFiles == 6)
-        #expect(result.folderCount == 1)
-        #expect(result.items.count == 7)
-        #expect(result.installerCount == 1 && result.installerSizeBytes == 11)
-        #expect(result.archiveCount == 1 && result.archiveSizeBytes == 12)
-        #expect(result.pdfCount == 1 && result.pdfSizeBytes == 13)
-        #expect(result.screenshotCount == 1 && result.screenshotSizeBytes == 14)
-        #expect(result.imageCount == 1 && result.imageSizeBytes == 15)
-        #expect(result.otherCount == 1 && result.otherSizeBytes == 16)
-        #expect(result.folderSizeBytes == 17)
-        #expect(result.totalSizeBytes == 98)
+        #expect(result.items.filter { $0.category != .folder }.count == 8)
+        #expect(result[.folder].count == 1)
+        #expect(result.items.count == 9)
+        #expect(result[.installer].count == 1 && result[.installer].sizeBytes == 11)
+        #expect(result[.archive].count == 1 && result[.archive].sizeBytes == 12)
+        #expect(result[.pdf].count == 3 && result[.pdf].sizeBytes == 32)
+        #expect(result[.screenshot].count == 1 && result[.screenshot].sizeBytes == 14)
+        #expect(result[.image].count == 1 && result[.image].sizeBytes == 15)
+        #expect(result[.other].count == 1 && result[.other].sizeBytes == 16)
+        #expect(result[.folder].sizeBytes == 17)
+        #expect(result.totalSizeBytes == 117)
         #expect(result.items.allSatisfy { $0.fileResourceIdentifier != nil })
     }
 
@@ -84,9 +84,9 @@ nonisolated struct SweeperScanTests {
         try fixture.folder("Empty")
         let result = await fixture.makeSweeper().scanDownloadsFolder()
         #expect(Set(result.items.map { $0.url.lastPathComponent }) == ["Visible", "Empty"])
-        #expect(result.totalFiles == 0)
-        #expect(result.folderCount == 2)
-        #expect(result.folderSizeBytes == 16)
+        #expect(result.items.filter { $0.category != .folder }.count == 0)
+        #expect(result[.folder].count == 2)
+        #expect(result[.folder].sizeBytes == 16)
         #expect(result.totalSizeBytes == 16)
     }
 
@@ -97,8 +97,7 @@ nonisolated struct SweeperScanTests {
         try fixture.file("bundle.\(ext)/contents", bytes: 30)
         let result = await fixture.makeSweeper().scanDownloadsFolder()
         #expect(result.items.isEmpty)
-        #expect(result.totalFiles == 0)
-        #expect(result.folderCount == 0)
+        #expect(result[.folder].count == 0)
         #expect(result.totalSizeBytes == 0)
     }
 
@@ -120,9 +119,9 @@ nonisolated struct SweeperScanTests {
 
         #expect(result.scanErrorMessage == nil)
         #expect(result.items.map { $0.url.lastPathComponent } == [prefix.isEmpty ? "local.txt" : "Visible"])
-        #expect(result.totalFiles == (prefix.isEmpty ? 1 : 0))
-        #expect(result.folderCount == (prefix.isEmpty ? 0 : 1))
-        #expect(result.folderSizeBytes == (prefix.isEmpty ? 0 : 7))
+        #expect(result.items.filter { $0.category != .folder }.count == (prefix.isEmpty ? 1 : 0))
+        #expect(result[.folder].count == (prefix.isEmpty ? 0 : 1))
+        #expect(result[.folder].sizeBytes == (prefix.isEmpty ? 0 : 7))
         #expect(result.totalSizeBytes == 7)
         // fileExists follows links, so inspect the link itself for a dangling target.
         #expect(try FileManager.default.destinationOfSymbolicLink(atPath: broken.path) == fixture.root.appendingPathComponent("missing").path)
@@ -136,8 +135,8 @@ nonisolated struct SweeperScanTests {
         #expect(first.items.isEmpty)
         try FileManager.default.moveItem(at: incomplete, to: fixture.downloads.appendingPathComponent("archive.zip"))
         let second = await sweeper.scanDownloadsFolder()
-        #expect(second.archiveCount == 1)
-        #expect(second.archiveSizeBytes == 21)
+        #expect(second[.archive].count == 1)
+        #expect(second[.archive].sizeBytes == 21)
     }
 
     @Test func repeatedScansReflectChangedRemovedAndRecreatedFiles() async throws {

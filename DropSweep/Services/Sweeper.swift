@@ -81,46 +81,16 @@ actor Sweeper: DownloadsSweeping {
                 category: values.isDirectory == true ? .folder : category(for: item)
             )
 
+            let sizeBytes: Int64
             if values.isDirectory == true {
-                result.items.append(downloadsItem)
-                result.folderCount += 1
-                let sizeBytes = try sizeOfDirectory(item, visitedCacheURLs: &visitedCacheURLs)
-                result.folderSizeBytes += sizeBytes
-                result.totalSizeBytes += sizeBytes
+                sizeBytes = try sizeOfDirectory(item, visitedCacheURLs: &visitedCacheURLs)
+            } else if values.isRegularFile == true {
+                sizeBytes = try sizeOfFile(item, visitedCacheURLs: &visitedCacheURLs)
+            } else {
                 continue
             }
 
-            guard values.isRegularFile == true else {
-                continue
-            }
-
-            let sizeBytes = try sizeOfFile(item, visitedCacheURLs: &visitedCacheURLs)
-            result.items.append(downloadsItem)
-            result.totalFiles += 1
-            result.totalSizeBytes += sizeBytes
-
-            switch downloadsItem.category {
-            case .installer:
-                result.installerCount += 1
-                result.installerSizeBytes += sizeBytes
-            case .archive:
-                result.archiveCount += 1
-                result.archiveSizeBytes += sizeBytes
-            case .pdf:
-                result.pdfCount += 1
-                result.pdfSizeBytes += sizeBytes
-            case .screenshot:
-                result.screenshotCount += 1
-                result.screenshotSizeBytes += sizeBytes
-            case .image:
-                result.imageCount += 1
-                result.imageSizeBytes += sizeBytes
-            case .other:
-                result.otherCount += 1
-                result.otherSizeBytes += sizeBytes
-            case .folder:
-                break
-            }
+            result.append(downloadsItem, sizeBytes: sizeBytes)
         }
 
         sizeCache = sizeCache.filter { visitedCacheURLs.contains($0.key) }
@@ -289,24 +259,28 @@ actor Sweeper: DownloadsSweeping {
 }
 
 nonisolated struct DownloadsScanResult {
-    var items: [DownloadsItem] = []
+    private(set) var items: [DownloadsItem] = []
     var scanErrorMessage: String?
-    var totalFiles: Int = 0
-    var installerCount: Int = 0
-    var archiveCount: Int = 0
-    var pdfCount: Int = 0
-    var screenshotCount: Int = 0
-    var imageCount: Int = 0
-    var folderCount: Int = 0
-    var otherCount: Int = 0
-    var totalSizeBytes: Int64 = 0
-    var installerSizeBytes: Int64 = 0
-    var archiveSizeBytes: Int64 = 0
-    var pdfSizeBytes: Int64 = 0
-    var screenshotSizeBytes: Int64 = 0
-    var imageSizeBytes: Int64 = 0
-    var folderSizeBytes: Int64 = 0
-    var otherSizeBytes: Int64 = 0
+    private var categoryStatistics: [DownloadsCategory: DownloadsCategoryStatistics] = [:]
+
+    var totalSizeBytes: Int64 {
+        categoryStatistics.values.reduce(0) { $0 + $1.sizeBytes }
+    }
+
+    subscript(category: DownloadsCategory) -> DownloadsCategoryStatistics {
+        categoryStatistics[category, default: DownloadsCategoryStatistics()]
+    }
+
+    mutating func append(_ item: DownloadsItem, sizeBytes: Int64) {
+        items.append(item)
+        categoryStatistics[item.category, default: DownloadsCategoryStatistics()].count += 1
+        categoryStatistics[item.category, default: DownloadsCategoryStatistics()].sizeBytes += sizeBytes
+    }
+}
+
+nonisolated struct DownloadsCategoryStatistics {
+    var count: Int = 0
+    var sizeBytes: Int64 = 0
 }
 
 nonisolated struct DownloadsItem: Sendable {
