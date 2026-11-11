@@ -15,6 +15,8 @@ The app is built alongside the tests to check integration, but is not launched.
 
 - `DropSweepTests/Services/SweeperScanTests.swift`: empty/missing directories,
   counts and sizes, root exclusions, nested contents, completed downloads and rescans.
+  Mixed-category fixtures include multiple PDFs and a zero-byte PDF to verify
+  category accumulation and the overall size.
   Symlink cases cover external file/folder targets and dangling links at the root
   and inside a visible folder, ensuring targets do not contribute to scan results.
 - `DropSweepTests/Services/SweeperClassificationTests.swift`: parameterized file
@@ -24,7 +26,7 @@ The app is built alongside the tests to check integration, but is not launched.
   that replacing a scanned file with a link is rejected and that moving a visible
   folder preserves its links and leaves external targets unchanged.
 - `DropSweepTests/MenuBar/CategorySummaryTests.swift`: singular/plural titles,
-  size summaries and stable identity. Formatting expectations use the current locale.
+  size summaries, singular/plural titles for every category and stable identity. Formatting expectations use the current locale.
 - `DropSweepTests/MenuBar/CategorySortOrderTests.swift`: byte-based ordering in both directions, stable ties, and empty/single-category lists.
 - `DropSweepTests/MenuBar/CategorySelectionStoreTests.swift`: first-launch defaults,
   invalid preferences and unknown category identifiers.

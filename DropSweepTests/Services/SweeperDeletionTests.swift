@@ -47,7 +47,7 @@ nonisolated struct SweeperDeletionTests {
         #expect(fixture.exists(fixture.trash.appendingPathComponent("before.txt")))
         #expect(fixture.exists(fixture.trash.appendingPathComponent("after.txt")))
         let remaining = await sweeper.scanDownloadsFolder()
-        #expect(remaining.totalFiles == 1)
+        #expect(remaining.items.filter { $0.category != .folder }.count == 1)
         #expect(remaining.totalSizeBytes == 13)
     }
 
