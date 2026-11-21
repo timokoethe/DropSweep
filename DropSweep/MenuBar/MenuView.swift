@@ -177,16 +177,7 @@ struct MenuView: View {
             return
         }
 
-        let itemLabel = confirmedItems.count == 1 ? "item" : "items"
-        let alert = NSAlert()
-
-        alert.messageText = "Move \(confirmedItems.count) \(itemLabel) to the Trash?"
-        alert.informativeText = "This moves only the selected items from Downloads to the Trash."
-        alert.alertStyle = .warning
-        alert.addButton(withTitle: "Move to Trash")
-        alert.addButton(withTitle: "Cancel")
-
-        guard alert.runModal() == .alertFirstButtonReturn else {
+        guard vm.confirmMovingToTrash(itemCount: confirmedItems.count) else {
             return
         }
 

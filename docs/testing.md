@@ -34,7 +34,8 @@ The app is built alongside the tests to check integration, but is not launched.
   rescans, persisted category selection across model recreation, selected-only cleanup, busy states, error recovery
   and cancellation of outdated scans. A partial-deletion integration test uses
   the fixture-backed Sweeper and captures error reporting through an injected
-  handler, verifying the remaining selection and reset busy states without a modal alert.
+  `RecordingMenuPresenter`, verifying the remaining selection and reset busy states without a modal alert.
+  Presentation tests also verify About-panel delegation and confirmation responses.
 - `DropSweepTests/Support/DownloadsFixture.swift`: unique temporary directories
   and a simulated Trash shared by the service suites.
 - `DropSweepTests/Support/ControlledSweeper.swift`: a controllable implementation
@@ -45,7 +46,9 @@ The app is built alongside the tests to check integration, but is not launched.
 
 This is a hostless unit-test bundle. The target compiles the actual `Sweeper.swift`,
 `CategorySummary.swift`, `CategorySortOrder.swift`, `CategorySelectionStore.swift` and `MenuViewModel.swift` files directly, with the same Swift concurrency settings
-as the app. Xcode lists those source references under **Tested Sources**; they are
+as the app. The menu presentation protocol, presenter, and its AppKit components
+are also compiled so the default presenter is checked without displaying dialogs.
+Xcode lists those source references under **Tested Sources**; they are
 references, not copies. This keeps tests independent of the menu-bar app lifecycle,
 Sparkle startup and login-item registration without adding a framework or package.
 New test files under `DropSweepTests/` are automatically included by Xcode.
