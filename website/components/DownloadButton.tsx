@@ -1,7 +1,6 @@
 "use client";
 
 import { track } from "@vercel/analytics";
-import type { ReactNode } from "react";
 
 type DownloadButtonProps = {
   href: string;
@@ -9,10 +8,9 @@ type DownloadButtonProps = {
   version: string | null;
   location: "hero" | "bottom-cta";
   className?: string;
-  icon?: ReactNode;
 };
 
-export function DownloadButton({ href, label, version, location, className, icon }: DownloadButtonProps) {
+export function DownloadButton({ href, label, version, location, className }: DownloadButtonProps) {
   return (
     <a
       href={href}
@@ -25,7 +23,7 @@ export function DownloadButton({ href, label, version, location, className, icon
       }}
       className={className ?? "download-button"}
     >
-      {icon ?? <span aria-hidden="true" className="download-icon" />}
+      <span aria-hidden="true" className="download-icon" />
       {label}
     </a>
   );
