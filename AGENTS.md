@@ -10,6 +10,7 @@ This repository is public and DropSweep is a released product. Treat every commi
 
 - `DropSweep/App/DropSweepApp.swift`: app entry point and `MenuBarExtra`.
 - `DropSweep/MenuBar/`: menu UI, menu state, and menu-specific presentation models/components.
+- `DropSweep/MenuBar/Presentation/`: native modal presentation behind `MenuPresenting`; `Alerts/` contains cleanup and login-item dialogs, and `AboutPanel.swift` owns the About panel. Keep SwiftUI building blocks in `MenuBar/Components/`.
 - `DropSweep/Services/Sweeper.swift`: Downloads scanning, classification, and trashing logic.
 - `DropSweep/Updates/CheckForUpdatesViewModel.swift`: Sparkle update state.
 - `DropSweep/Info.plist`: app bundle configuration.

@@ -13,7 +13,7 @@ import ServiceManagement
 class MenuViewModel {
     private let sweeper: any DownloadsSweeping
     @ObservationIgnored private let selectionStore: CategorySelectionStore
-    @ObservationIgnored private let deletionErrorHandler: ((Int, [(url: URL, error: Error)]) -> Void)?
+    @ObservationIgnored private let presenter: any MenuPresenting
     @ObservationIgnored private var scanTask: Task<Void, Never>?
     
     var isScanning: Bool = false
@@ -36,12 +36,12 @@ class MenuViewModel {
         sweeper: any DownloadsSweeping = Sweeper(),
         launchAtLoginEnabled: Bool = SMAppService.mainApp.status == .enabled,
         selectionStore: CategorySelectionStore = CategorySelectionStore(),
-        deletionErrorHandler: ((Int, [(url: URL, error: Error)]) -> Void)? = nil
+        presenter: any MenuPresenting = MenuPresenter()
     ) {
         self.sweeper = sweeper
         self.selectionStore = selectionStore
         self.selectedCategories = selectionStore.load()
-        self.deletionErrorHandler = deletionErrorHandler
+        self.presenter = presenter
         self.launchAtLoginEnabled = launchAtLoginEnabled
     }
 
@@ -160,11 +160,7 @@ class MenuViewModel {
             applyScanResult(scanResult)
 
             if !deleteResult.failures.isEmpty {
-                if let deletionErrorHandler {
-                    deletionErrorHandler(deleteResult.deleted, deleteResult.failures)
-                } else {
-                    showDeleteDownloadsError(deletedCount: deleteResult.deleted, failures: deleteResult.failures)
-                }
+                presenter.showTrashError(deletedCount: deleteResult.deleted, failures: deleteResult.failures)
             }
         }
         return task
@@ -183,90 +179,28 @@ class MenuViewModel {
             refreshLaunchAtLoginStatus()
 
             if isEnabled && SMAppService.mainApp.status == .requiresApproval {
-                showLaunchAtLoginApprovalRequired()
+                presenter.showLaunchAtLoginApprovalRequired()
             }
         } catch {
             refreshLaunchAtLoginStatus()
             if isEnabled && SMAppService.mainApp.status == .requiresApproval {
-                showLaunchAtLoginApprovalRequired()
+                presenter.showLaunchAtLoginApprovalRequired()
             } else {
-                showLaunchAtLoginError(error)
+                presenter.showLaunchAtLoginError(error)
             }
         }
     }
 
     func showAboutPanel() {
-        let bundle = Bundle.main
-        let version = bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Unknown"
-        let build = bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "Unknown"
-        let currentYear = Calendar.current.component(.year, from: Date())
-        let sourceText = "Source on GitHub"
-        let copyrightText = "Copyright © \(currentYear) Timo Köthe"
-        let credits = NSMutableAttributedString(string: "\(sourceText)\n\(copyrightText)")
-        let sourceRange = NSRange(location: 0, length: "Source on GitHub".count)
-        let copyrightRange = NSRange(location: sourceText.count + 1, length: copyrightText.count)
-        let copyrightParagraphStyle = NSMutableParagraphStyle()
-
-        copyrightParagraphStyle.paragraphSpacingBefore = 8
-
-        credits.addAttribute(.link, value: "https://github.com/timokoethe/DropSweep", range: sourceRange)
-        credits.addAttribute(.foregroundColor, value: NSColor.linkColor, range: sourceRange)
-        credits.addAttribute(.font, value: NSFont.systemFont(ofSize: NSFont.smallSystemFontSize), range: copyrightRange)
-        credits.addAttribute(.foregroundColor, value: NSColor.secondaryLabelColor, range: copyrightRange)
-        credits.addAttribute(.paragraphStyle, value: copyrightParagraphStyle, range: copyrightRange)
-
-        NSApplication.shared.orderFrontStandardAboutPanel(options: [
-            .applicationName: "DropSweep",
-            .applicationVersion: version,
-            .version: "Build \(build)",
-            .credits: credits
-        ])
+        presenter.showAboutPanel()
     }
-    
+
+    func confirmMovingToTrash(itemCount: Int) -> Bool {
+        presenter.confirmMovingToTrash(itemCount: itemCount)
+    }
+
     func quitApp() {
         NSApplication.shared.terminate(nil)
-    }
-
-    private func showLaunchAtLoginApprovalRequired() {
-        let alert = NSAlert()
-
-        alert.messageText = "Launch at Login Needs Approval"
-        alert.informativeText = "Allow DropSweep in Login Items in System Settings to launch it automatically when you sign in. Launch at Login will remain off until you approve it."
-        alert.alertStyle = .informational
-        alert.addButton(withTitle: "Open System Settings")
-        alert.addButton(withTitle: "Not Now")
-
-        if alert.runModal() == .alertFirstButtonReturn {
-            SMAppService.openSystemSettingsLoginItems()
-        }
-    }
-
-    private func showLaunchAtLoginError(_ error: Error) {
-        let alert = NSAlert()
-
-        alert.messageText = "Could Not Update Login Setting"
-        alert.informativeText = error.localizedDescription
-        alert.alertStyle = .warning
-        alert.addButton(withTitle: "OK")
-        alert.runModal()
-    }
-
-    private func showDeleteDownloadsError(deletedCount: Int, failures: [(url: URL, error: Error)]) {
-        let alert = NSAlert()
-        let failedItems = failures
-            .prefix(3)
-            .map { $0.url.lastPathComponent }
-            .joined(separator: "\n")
-        let remainingItems = failures.count > 3 ? "\n…and \(failures.count - 3) more" : ""
-        let failureReason = failures.allSatisfy { failure in
-            (failure.error as NSError).code == NSFileNoSuchFileError
-        } ? "They may have already been moved or deleted while the confirmation was open." : "Some items may have changed or could not be accessed."
-
-        alert.messageText = "Some Items Could Not Be Moved to the Trash"
-        alert.informativeText = "\(deletedCount) item\(deletedCount == 1 ? "" : "s") moved to the Trash. \(failures.count) item\(failures.count == 1 ? "" : "s") could not be moved.\n\(failureReason)\n\n\(failedItems)\(remainingItems)"
-        alert.alertStyle = .warning
-        alert.addButton(withTitle: "OK")
-        alert.runModal()
     }
 
     private static let sizeFormatter: ByteCountFormatter = {

@@ -14,6 +14,11 @@
 		D50D00000000000000000002 /* CategorySummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50D00000000000000000004 /* CategorySummary.swift */; };
 		D50D00000000000000000011 /* MenuViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50D00000000000000000012 /* MenuViewModel.swift */; };
 		D50D00000000000000000013 /* CategorySelectionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50D00000000000000000014 /* CategorySelectionStore.swift */; };
+		D50E00000000000000000000 /* MenuPresenting.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50F00000000000000000000 /* MenuPresenting.swift */; };
+		D50E00000000000000000001 /* MenuPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50F00000000000000000001 /* MenuPresenter.swift */; };
+		D50E00000000000000000002 /* AboutPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50F00000000000000000002 /* AboutPanel.swift */; };
+		D50E00000000000000000003 /* TrashAlerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50F00000000000000000003 /* TrashAlerts.swift */; };
+		D50E00000000000000000004 /* LaunchAtLoginAlerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50F00000000000000000004 /* LaunchAtLoginAlerts.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +31,11 @@
 		D50D00000000000000000005 /* DropSweepTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DropSweepTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D50D00000000000000000012 /* MenuViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropSweep/MenuBar/MenuViewModel.swift; sourceTree = SOURCE_ROOT; };
 		D50D00000000000000000014 /* CategorySelectionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropSweep/MenuBar/CategorySelectionStore.swift; sourceTree = SOURCE_ROOT; };
+		D50F00000000000000000000 /* MenuPresenting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropSweep/MenuBar/Presentation/MenuPresenting.swift; sourceTree = SOURCE_ROOT; };
+		D50F00000000000000000001 /* MenuPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropSweep/MenuBar/Presentation/MenuPresenter.swift; sourceTree = SOURCE_ROOT; };
+		D50F00000000000000000002 /* AboutPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropSweep/MenuBar/Presentation/AboutPanel.swift; sourceTree = SOURCE_ROOT; };
+		D50F00000000000000000003 /* TrashAlerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropSweep/MenuBar/Presentation/Alerts/TrashAlerts.swift; sourceTree = SOURCE_ROOT; };
+		D50F00000000000000000004 /* LaunchAtLoginAlerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropSweep/MenuBar/Presentation/Alerts/LaunchAtLoginAlerts.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -110,6 +120,11 @@
 				D50D00000000000000000012 /* MenuViewModel.swift */,
 				D50D00000000000000000014 /* CategorySelectionStore.swift */,
 				D50D00000000000000000016 /* CategorySortOrder.swift */,
+				D50F00000000000000000004 /* LaunchAtLoginAlerts.swift */,
+				D50F00000000000000000003 /* TrashAlerts.swift */,
+				D50F00000000000000000002 /* AboutPanel.swift */,
+				D50F00000000000000000001 /* MenuPresenter.swift */,
+				D50F00000000000000000000 /* MenuPresenting.swift */,
 			);
 			name = "Tested Sources";
 			sourceTree = "<group>";
@@ -231,6 +246,11 @@
 				D50D00000000000000000011 /* MenuViewModel.swift in Sources */,
 				D50D00000000000000000013 /* CategorySelectionStore.swift in Sources */,
 				D50D00000000000000000015 /* CategorySortOrder.swift in Sources */,
+				D50E00000000000000000004 /* LaunchAtLoginAlerts.swift in Sources */,
+				D50E00000000000000000003 /* TrashAlerts.swift in Sources */,
+				D50E00000000000000000002 /* AboutPanel.swift in Sources */,
+				D50E00000000000000000001 /* MenuPresenter.swift in Sources */,
+				D50E00000000000000000000 /* MenuPresenting.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

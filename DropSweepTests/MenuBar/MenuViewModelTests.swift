@@ -6,6 +6,23 @@ import Testing
 struct MenuViewModelTests {
     private let preferences = PreferencesFixture()
 
+    @Test func presentationUsesInjectedPresenter() {
+        let presenter = RecordingMenuPresenter()
+        let model = MenuViewModel(
+            sweeper: ControlledSweeper(),
+            launchAtLoginEnabled: false,
+            selectionStore: CategorySelectionStore(defaults: preferences.defaults),
+            presenter: presenter
+        )
+
+        model.showAboutPanel()
+        #expect(presenter.aboutPanelCount == 1)
+        #expect(!model.confirmMovingToTrash(itemCount: 2))
+        presenter.confirmsMovingToTrash = true
+        #expect(model.confirmMovingToTrash(itemCount: 3))
+        #expect(presenter.confirmationCounts == [2, 3])
+    }
+
     @Test func scanUpdatesSummaryAndErrorState() async {
         let service = ControlledSweeper()
         let model = makeModel(service)
@@ -83,14 +100,12 @@ struct MenuViewModelTests {
         let fixture = try DownloadsFixture()
         try fixture.file("removed.pdf", bytes: 20)
         let blocked = try fixture.file("blocked.pdf", bytes: 30)
-        var reportedErrors: [(deleted: Int, failures: [(url: URL, error: Error)])] = []
+        let presenter = RecordingMenuPresenter()
         let model = MenuViewModel(
             sweeper: fixture.makeSweeper(failingNames: ["blocked.pdf"]),
             launchAtLoginEnabled: false,
             selectionStore: CategorySelectionStore(defaults: preferences.defaults),
-            deletionErrorHandler: { deleted, failures in
-                reportedErrors.append((deleted, failures))
-            }
+            presenter: presenter
         )
         await model.scanDownloadsFolder().value
         let confirmed = try #require(model.itemsForDeletionConfirmation())
@@ -101,8 +116,8 @@ struct MenuViewModelTests {
         #expect(!model.canDeleteDownloads)
         await task.value
 
-        #expect(reportedErrors.count == 1)
-        let report = try #require(reportedErrors.first)
+        #expect(presenter.trashErrors.count == 1)
+        let report = try #require(presenter.trashErrors.first)
         #expect(report.deleted == 1)
         #expect(report.failures.map(\.url) == [blocked])
         #expect((report.failures.first?.error as? CocoaError)?.code == .fileWriteNoPermission)
