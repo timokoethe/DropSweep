@@ -13,20 +13,20 @@
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
-    "@vercel/speed-insights": "^2.0.0",
-    "next": "^16.4.3",
+    "@vercel/speed-insights": "^2.1.0",
+    "next": "^16.4.6",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.3",
+    "@tailwindcss/postcss": "^4.3.5",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@typescript/native": "npm:typescript@^7.0.2",
-    "eslint": "^10.14.0",
-    "eslint-config-next": "^16.4.3",
-    "tailwindcss": "^4.3.3",
+    "eslint": "^10.15.0",
+    "eslint-config-next": "^16.4.6",
+    "tailwindcss": "^4.3.5",
     "typescript": "npm:@typescript/typescript6@^6.0.2"
   }
 }
