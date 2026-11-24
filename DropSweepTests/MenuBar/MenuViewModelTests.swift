@@ -23,17 +23,17 @@ struct MenuViewModelTests {
         #expect(presenter.confirmationCounts == [2, 3])
     }
 
-    @Test func scanUpdatesSummaryAndErrorState() async {
+    @Test func scanUpdatesSummaryAndErrorState() async throws {
         let service = ControlledSweeper()
         let model = makeModel(service)
         #expect(model.deleteDownloads([]) == nil)
         service.scanResult = result("document.pdf")
-        let task = model.scanDownloadsFolder()
-        #expect(model.isScanning)
+        let task = try #require(model.scanDownloadsFolder())
+        #expect(model.operation == .scanning)
         #expect(!model.canDeleteDownloads)
         #expect(model.itemsForDeletionConfirmation() == nil)
         await task.value
-        #expect(!model.isScanning)
+        #expect(model.operation == .idle)
         #expect(model.canDeleteDownloads)
         #expect(model.itemsCount == 1)
         #expect(model.totalSizeBytes == 10)
@@ -41,16 +41,16 @@ struct MenuViewModelTests {
         #expect(model.categories.first?.sizeBytes == 10)
 
         service.scanResult = DownloadsScanResult(scanErrorMessage: "Scan failed")
-        await model.scanDownloadsFolder().value
+        await (try #require(model.scanDownloadsFolder())).value
         #expect(model.scanErrorMessage == "Scan failed")
-        #expect(!model.isScanning)
+        #expect(model.operation == .idle)
         #expect(!model.canDeleteDownloads)
         #expect(model.categories.isEmpty)
         #expect(model.itemsCount == 0)
         #expect(model.totalSizeBytes == 0)
 
         service.scanResult = result("recovered.pdf")
-        await model.scanDownloadsFolder().value
+        await (try #require(model.scanDownloadsFolder())).value
         #expect(model.scanErrorMessage == nil)
         #expect(model.canDeleteDownloads)
     }
@@ -60,12 +60,12 @@ struct MenuViewModelTests {
         defer { service.finishPendingOperations() }
         let model = makeModel(service)
         service.scanResult = result("confirmed.pdf")
-        await model.scanDownloadsFolder().value
+        await (try #require(model.scanDownloadsFolder())).value
         let confirmed = try #require(model.itemsForDeletionConfirmation())
         try #require(confirmed.count == 1)
 
         service.scanResult = result("new.pdf")
-        await model.scanDownloadsFolder().value
+        await (try #require(model.scanDownloadsFolder())).value
         #expect(model.itemsForDeletionConfirmation()?.first?.url.lastPathComponent == "new.pdf")
 
         service.suspendDeletion = true
@@ -75,21 +75,23 @@ struct MenuViewModelTests {
         #expect(service.deletionRequests.count == 1)
         #expect(service.deletionRequests.first?.map(\.url) == confirmed.map(\.url))
         #expect(service.deletionRequests.first?.map(\.fileResourceIdentifier) == confirmed.map(\.fileResourceIdentifier))
-        #expect(model.isDeleting && model.isScanning)
+        #expect(model.operation == .trashing)
         #expect(!model.canDeleteDownloads)
         #expect(model.itemsForDeletionConfirmation() == nil)
         #expect(model.deleteDownloads(confirmed) == nil)
         #expect(model.deleteDownloads([]) == nil)
+        try #require(model.scanDownloadsFolder() == nil)
 
         // Busy state must remain set until the post-deletion scan completes.
         service.suspendScans = true
         var scans = service.scanStarted.makeAsyncIterator()
         service.finishDeletion()
         _ = await scans.next()
-        #expect(model.isDeleting && model.isScanning)
+        #expect(model.operation == .trashing)
+        try #require(model.scanDownloadsFolder() == nil)
         service.finishScan(with: DownloadsScanResult())
         await task.value
-        #expect(!model.isDeleting && !model.isScanning)
+        #expect(model.operation == .idle)
         #expect(model.itemsCount == 0)
         #expect(model.categories.isEmpty)
         #expect(!model.canDeleteDownloads)
@@ -107,12 +109,12 @@ struct MenuViewModelTests {
             selectionStore: CategorySelectionStore(defaults: preferences.defaults),
             presenter: presenter
         )
-        await model.scanDownloadsFolder().value
+        await (try #require(model.scanDownloadsFolder())).value
         let confirmed = try #require(model.itemsForDeletionConfirmation())
         try #require(confirmed.count == 2)
 
         let task = try #require(model.deleteDownloads(confirmed))
-        #expect(model.isDeleting && model.isScanning)
+        #expect(model.operation == .trashing)
         #expect(!model.canDeleteDownloads)
         await task.value
 
@@ -121,7 +123,7 @@ struct MenuViewModelTests {
         #expect(report.deleted == 1)
         #expect(report.failures.map(\.url) == [blocked])
         #expect((report.failures.first?.error as? CocoaError)?.code == .fileWriteNoPermission)
-        #expect(!model.isDeleting && !model.isScanning)
+        #expect(model.operation == .idle)
         #expect(model.scanErrorMessage == nil)
         #expect(model.itemsCount == 1)
         #expect(model.totalSizeBytes == 30)
@@ -134,22 +136,42 @@ struct MenuViewModelTests {
         #expect(fixture.exists(fixture.trash.appendingPathComponent("removed.pdf")))
     }
 
+    @Test func cancellingCurrentScanReturnsToIdleWithoutApplyingItsResult() async throws {
+        let service = ControlledSweeper()
+        defer { service.finishPendingOperations() }
+        let model = makeModel(service)
+        service.scanResult = result("initial.pdf")
+        await (try #require(model.scanDownloadsFolder())).value
+
+        service.suspendScans = true
+        var scans = service.scanStarted.makeAsyncIterator()
+        let scan = try #require(model.scanDownloadsFolder())
+        _ = await scans.next()
+        scan.cancel()
+        service.finishScan(with: result("cancelled.pdf"))
+        await scan.value
+
+        #expect(model.operation == .idle)
+        #expect(model.itemsForDeletionConfirmation()?.first?.url.lastPathComponent == "initial.pdf")
+    }
+
     @Test(arguments: [true, false])
-    func cancelledScanCannotOverwriteNewScanOrClearItsBusyState(oldFinishesFirst: Bool) async {
+    func cancelledScanCannotOverwriteNewScanOrClearItsBusyState(oldFinishesFirst: Bool) async throws {
         let service = ControlledSweeper()
         defer { service.finishPendingOperations() }
         service.suspendScans = true
         var scans = service.scanStarted.makeAsyncIterator()
         let model = makeModel(service)
-        let old = model.scanDownloadsFolder()
+        let old = try #require(model.scanDownloadsFolder())
         _ = await scans.next()
-        let current = model.scanDownloadsFolder()
+        let current = try #require(model.scanDownloadsFolder())
+        #expect(old.isCancelled)
         _ = await scans.next()
 
         if oldFinishesFirst {
             service.finishScan(with: result("obsolete.pdf"))
             await old.value
-            #expect(model.isScanning)
+            #expect(model.operation == .scanning)
             #expect(model.itemsCount == 0)
         }
         service.finishScan(at: oldFinishesFirst ? 0 : 1, with: result("current.pdf"))
@@ -158,7 +180,7 @@ struct MenuViewModelTests {
             service.finishScan(with: result("obsolete.pdf"))
             await old.value
         }
-        #expect(!model.isScanning)
+        #expect(model.operation == .idle)
         #expect(model.itemsForDeletionConfirmation()?.first?.url.lastPathComponent == "current.pdf")
     }
 
@@ -167,21 +189,22 @@ struct MenuViewModelTests {
         defer { service.finishPendingOperations() }
         let model = makeModel(service)
         service.scanResult = result("confirmed.pdf")
-        await model.scanDownloadsFolder().value
+        await (try #require(model.scanDownloadsFolder())).value
         let confirmed = try #require(model.itemsForDeletionConfirmation())
         try #require(confirmed.count == 1)
         service.suspendScans = true
         var scans = service.scanStarted.makeAsyncIterator()
-        let pendingScan = model.scanDownloadsFolder()
+        let pendingScan = try #require(model.scanDownloadsFolder())
         _ = await scans.next()
         service.suspendDeletion = true
         var deletions = service.deletionStarted.makeAsyncIterator()
         let deletion = try #require(model.deleteDownloads(confirmed))
+        #expect(pendingScan.isCancelled)
         _ = await deletions.next()
 
         service.finishScan(with: result("obsolete.pdf"))
         await pendingScan.value
-        #expect(model.isScanning && model.isDeleting)
+        #expect(model.operation == .trashing)
         #expect(model.itemsCount == 1)
         #expect(model.itemsForDeletionConfirmation() == nil)
 
@@ -189,7 +212,7 @@ struct MenuViewModelTests {
         service.scanResult = DownloadsScanResult()
         service.finishDeletion()
         await deletion.value
-        #expect(!model.isScanning && !model.isDeleting)
+        #expect(model.operation == .idle)
         #expect(model.itemsCount == 0)
     }
 
@@ -205,7 +228,7 @@ struct MenuViewModelTests {
             try fixture.file(file.name, bytes: file.bytes)
         }
         let model = MenuViewModel(sweeper: fixture.makeSweeper(), launchAtLoginEnabled: false, selectionStore: CategorySelectionStore(defaults: preferences.defaults))
-        await model.scanDownloadsFolder().value
+        await (try #require(model.scanDownloadsFolder())).value
         let allItems = try #require(model.itemsForDeletionConfirmation())
         #expect(allItems.count == 8)
         #expect(Set(allItems.map(\.category)) == Set(DownloadsCategory.allCases))
@@ -242,11 +265,11 @@ struct MenuViewModelTests {
         #expect(fixture.exists(fixture.trash.appendingPathComponent("Folder.pdf/nested.txt")))
     }
 
-    @Test func emptySelectionDisablesCleanupAndSurvivesRescans() async {
+    @Test func emptySelectionDisablesCleanupAndSurvivesRescans() async throws {
         let service = ControlledSweeper()
         let model = makeModel(service)
         service.scanResult = result("document.pdf")
-        await model.scanDownloadsFolder().value
+        await (try #require(model.scanDownloadsFolder())).value
         #expect(model.selectedItemsCount == 1)
         #expect(model.selectionSummary == "1 item selected · \(model.totalDisplaySize)")
         model[isSelected: .pdf] = false
@@ -258,11 +281,14 @@ struct MenuViewModelTests {
 
         // Keep the choice even when the category disappears or a scan fails.
         service.scanResult = DownloadsScanResult()
-        await model.scanDownloadsFolder().value
+        await (try #require(model.scanDownloadsFolder())).value
+        #expect(model.categories.isEmpty)
+        #expect(model.scanErrorMessage == nil)
         service.scanResult = DownloadsScanResult(scanErrorMessage: "Scan failed")
-        await model.scanDownloadsFolder().value
+        await (try #require(model.scanDownloadsFolder())).value
+        #expect(model.scanErrorMessage == "Scan failed")
         service.scanResult = result("new.pdf")
-        await model.scanDownloadsFolder().value
+        await (try #require(model.scanDownloadsFolder())).value
         #expect(!model[isSelected: .pdf])
         #expect(!model.canDeleteDownloads)
         model[isSelected: .pdf] = true
@@ -270,7 +296,7 @@ struct MenuViewModelTests {
         #expect(model.itemsForDeletionConfirmation()?.first?.url.lastPathComponent == "new.pdf")
     }
 
-    @Test func selectionSurvivesModelRecreationAndEmptyScans() async {
+    @Test func selectionSurvivesModelRecreationAndEmptyScans() async throws {
         let service = ControlledSweeper()
         let original = makeModel(service)
         original[isSelected: .pdf] = false
@@ -278,9 +304,9 @@ struct MenuViewModelTests {
 
         let restored = makeModel(service)
         #expect(restored.selectedCategories == original.selectedCategories)
-        await restored.scanDownloadsFolder().value
+        await (try #require(restored.scanDownloadsFolder())).value
         service.scanResult = result("new.pdf")
-        await restored.scanDownloadsFolder().value
+        await (try #require(restored.scanDownloadsFolder())).value
         #expect(!restored[isSelected: .pdf])
         #expect(!restored[isSelected: .folder])
         #expect(!restored.canDeleteDownloads)
@@ -291,14 +317,14 @@ struct MenuViewModelTests {
         #expect(restored.canDeleteDownloads)
     }
 
-    @Test func emptySelectionSurvivesModelRecreation() async {
+    @Test func emptySelectionSurvivesModelRecreation() async throws {
         let service = ControlledSweeper()
         let original = makeModel(service)
         original.selectedCategories = []
 
         let restored = makeModel(service)
         service.scanResult = result("document.pdf")
-        await restored.scanDownloadsFolder().value
+        await (try #require(restored.scanDownloadsFolder())).value
         #expect(restored.selectedCategories.isEmpty)
         #expect(!restored.canDeleteDownloads)
         #expect(restored.itemsForDeletionConfirmation() == nil)
@@ -312,7 +338,7 @@ struct MenuViewModelTests {
             sweeper: fixture.makeSweeper(), launchAtLoginEnabled: false,
             selectionStore: CategorySelectionStore(defaults: preferences.defaults)
         )
-        await model.scanDownloadsFolder().value
+        await (try #require(model.scanDownloadsFolder())).value
         #expect(model.canChangeCategorySelection)
 
         // Only the visible categories need to be selected to offer Deselect All.
@@ -341,7 +367,7 @@ struct MenuViewModelTests {
         #expect(model.selectedItemsCount == 2)
     }
 
-    @Test func bulkSelectionIgnoresUnavailableStates() async {
+    @Test func bulkSelectionIgnoresUnavailableStates() async throws {
         let service = ControlledSweeper()
         let model = makeModel(service)
         model.selectedCategories = []
@@ -351,21 +377,25 @@ struct MenuViewModelTests {
         #expect(model.selectedCategories.isEmpty)
 
         service.scanResult = result("document.pdf")
-        await model.scanDownloadsFolder().value
-        model.isScanning = true
-        #expect(!model.canChangeCategorySelection)
-        model.toggleAllCategories()
-        #expect(model.selectedCategories.isEmpty)
-        model.isScanning = false
+        await (try #require(model.scanDownloadsFolder())).value
+        model[isSelected: .pdf] = true
+        let confirmed = try #require(model.itemsForDeletionConfirmation())
+        model.selectedCategories = []
 
-        model.isDeleting = true
+        let scan = try #require(model.scanDownloadsFolder())
         #expect(!model.canChangeCategorySelection)
         model.toggleAllCategories()
         #expect(model.selectedCategories.isEmpty)
-        model.isDeleting = false
+        await scan.value
+
+        let deletion = try #require(model.deleteDownloads(confirmed))
+        #expect(!model.canChangeCategorySelection)
+        model.toggleAllCategories()
+        #expect(model.selectedCategories.isEmpty)
+        await deletion.value
 
         service.scanResult = DownloadsScanResult(scanErrorMessage: "Scan failed")
-        await model.scanDownloadsFolder().value
+        await (try #require(model.scanDownloadsFolder())).value
         #expect(!model.canChangeCategorySelection)
         model.toggleAllCategories()
         #expect(model.selectedCategories.isEmpty)

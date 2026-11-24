@@ -27,7 +27,7 @@ struct MenuView: View {
         .frame(width: 340)
         .background(.thickMaterial)
         .onAppear {
-            if !vm.isDeleting { vm.scanDownloadsFolder() }
+            vm.scanDownloadsFolder()
             vm.refreshLaunchAtLoginStatus()
         }
     }
@@ -50,7 +50,7 @@ struct MenuView: View {
                     .frame(width: 28, height: 28)
             }
             .buttonStyle(.borderless)
-            .disabled(vm.isScanning || vm.isDeleting)
+            .disabled(vm.operation != .idle)
             .help("Refresh Downloads")
             .accessibilityLabel("Refresh Downloads")
             .keyboardShortcut("r", modifiers: .command)
@@ -118,8 +118,8 @@ struct MenuView: View {
 
         return ScrollView {
             VStack(spacing: 0) {
-                if vm.isScanning || vm.isDeleting {
-                    ProgressView(vm.isDeleting ? "Moving items to Trash…" : "Scanning Downloads…")
+                if vm.operation != .idle {
+                    ProgressView(vm.operation == .trashing ? "Moving items to Trash…" : "Scanning Downloads…")
                         .frame(maxWidth: .infinity)
                         .padding(32)
                 } else if let message = vm.scanErrorMessage {
