@@ -11,13 +11,18 @@ import ServiceManagement
 
 @Observable
 class MenuViewModel {
+    enum Operation {
+        case idle
+        case scanning
+        case trashing
+    }
+
     private let sweeper: any DownloadsSweeping
     @ObservationIgnored private let selectionStore: CategorySelectionStore
     @ObservationIgnored private let presenter: any MenuPresenting
-    @ObservationIgnored private var scanTask: Task<Void, Never>?
+    @ObservationIgnored private var activeScan: (id: UUID, task: Task<Void, Never>)?
     
-    var isScanning: Bool = false
-    var isDeleting: Bool = false
+    private(set) var operation: Operation = .idle
     var itemsCount: Int = 0
     var totalSizeBytes: Int64 = 0
     var categories: [CategorySummary] = []
@@ -46,11 +51,11 @@ class MenuViewModel {
     }
 
     var canDeleteDownloads: Bool {
-        !isScanning && !isDeleting && scanErrorMessage == nil && selectedItemsCount > 0
+        operation == .idle && scanErrorMessage == nil && selectedItemsCount > 0
     }
 
     var canChangeCategorySelection: Bool {
-        !isScanning && !isDeleting && scanErrorMessage == nil && !categories.isEmpty
+        operation == .idle && scanErrorMessage == nil && !categories.isEmpty
     }
 
     var areAllCategoriesSelected: Bool {
@@ -92,21 +97,26 @@ class MenuViewModel {
     }
 
     @discardableResult
-    func scanDownloadsFolder() -> Task<Void, Never> {
-        scanTask?.cancel()
-        isScanning = true
+    func scanDownloadsFolder() -> Task<Void, Never>? {
+        guard operation != .trashing else { return nil }
 
+        activeScan?.task.cancel()
+        operation = .scanning
+
+        let id = UUID()
         let task = Task {
             let result = await sweeper.scanDownloadsFolder()
+            guard activeScan?.id == id else { return }
 
-            guard !Task.isCancelled else {
-                return
+            defer {
+                activeScan = nil
+                operation = .idle
             }
 
+            guard !Task.isCancelled else { return }
             applyScanResult(result)
-            isScanning = false
         }
-        scanTask = task
+        activeScan = (id, task)
         return task
     }
 
@@ -136,19 +146,16 @@ class MenuViewModel {
 
     @discardableResult
     func deleteDownloads(_ confirmedItems: [DownloadsItem]) -> Task<Void, Never>? {
-        guard !isDeleting && !confirmedItems.isEmpty else {
+        guard operation != .trashing && !confirmedItems.isEmpty else {
             return nil
         }
 
-        scanTask?.cancel()
-        isScanning = true
-        isDeleting = true
+        activeScan?.task.cancel()
+        activeScan = nil
+        operation = .trashing
 
         let task = Task {
-            defer {
-                isScanning = false
-                isDeleting = false
-            }
+            defer { operation = .idle }
 
             let deleteResult = await sweeper.deleteItemsInDownloads(confirmedItems)
             let scanResult = await sweeper.scanDownloadsFolder()
